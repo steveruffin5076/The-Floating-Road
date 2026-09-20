@@ -28,6 +28,11 @@ export function createInitialState(startingStats: Stats, events: GameEvent[], rn
     suspicion: 0,
     reputation: 0,
     gi: 0,
+    // Starting loadout for the rōnin Tale: a serviceable katana (tier 1 of
+    // 0-3, GDD §5 inventory) and travel clothes (GDD §5's base armor tier,
+    // 0 bonus — better armor is a purchase this slice doesn't model yet).
+    // Foe power in events.act1.ts's two combats is calibrated against
+    // exactly this loadout; see progress.md's combat-numbers pass.
     weaponTier: 1,
     armorBonus: 0,
     eventsResolved: 0,

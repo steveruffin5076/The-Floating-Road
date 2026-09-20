@@ -58,11 +58,22 @@ re-reading the whole conversation history to pick back up.
    the title screen instead of crashing. Verified end-to-end in a real
    browser: reload mid-event, reload mid-combat, and reload after an
    ending all resume correctly; starting a new run clears the old save.
+8. **Real combat numbers** (`src/content/events.act1.ts`, `src/engine/state.ts`)
+   — replaced the sim's placeholder foe power (10/12) with values calibrated
+   against this slice's actual starting loadout (weaponTier 1, armor 0) and
+   stat ranges (Chikara+Waza 8-12 across builds/level-ups): Bandit rōnin
+   power 8, Night tsujigiri attacker power 9. Verified against the real
+   `combatResolver` formula across 200k simulated fights per case (see
+   `game-plan/06-balance-sim-report.md`'s follow-up note): base win% now
+   runs ~44-68% for the first fight and ~38-62% for the second depending on
+   combat investment, replacing the ~32% average the balance-sim report
+   flagged as backwards (Act 1 harder than Act 2/3). Starting loadout
+   (serviceable katana, travel clothes) documented as an intentional choice
+   rather than an unexamined placeholder, since this slice has no
+   shop/equip system to change it mid-run yet.
 
 ## Not done yet (known gaps)
 
-- Combat numbers (weapon tier / armor / foe power) are still the sim's
-  placeholder values, not real balanced numbers.
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
   requirements-engine behavior is untested with more than one Tale.
 - No automated tests yet (unit tests for checkResolver/combatResolver, a
@@ -76,7 +87,7 @@ re-reading the whole conversation history to pick back up.
 
 ## Suggested next steps (not started)
 
-Roughly in order of leverage: pin real combat numbers, add basic tests,
-add a second Tale, review the remaining docs, do the sensitivity pass. See
-conversation history or ask for a fresh prioritized list — priorities may
-shift once there's more playtesting.
+Roughly in order of leverage: add basic tests, add a second Tale, review
+the remaining docs, do the sensitivity pass. See conversation history or
+ask for a fresh prioritized list — priorities may shift once there's more
+playtesting.

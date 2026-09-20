@@ -105,7 +105,11 @@ export const ACT1_EVENTS: GameEvent[] = [
       'Three men step out from the tree line where the road narrows — kabukimono toughs by their dress, ' +
       'or bandit rōnin same as you might have become. They want your purse, or your blade.',
     weight: 2,
-    foe: { name: 'Bandit rōnin', power: 10 },
+    // Power 8 vs. the starting loadout (weaponTier 1, armor 0) puts base
+    // win% at ~44-68% depending on Chikara+Waza investment (see
+    // progress.md's combat-numbers pass) — winnable but not free, and no
+    // longer the sim-flagged "Act 1 harder than Act 3" placeholder (was 10).
+    foe: { name: 'Bandit rōnin', power: 8 },
     onWin: {
       text: 'One breaks and runs; the other two follow. You take their dropped coin as a toll for the trouble.',
       effects: { money: 60 },
@@ -217,7 +221,10 @@ export const ACT1_EVENTS: GameEvent[] = [
       'You wake to a shape crossing the road ahead in the moonlight — a tsujigiri, a night-cutter who ' +
       'tests his blade on whoever walks past. The law banned this decades ago. The law is far away tonight.',
     weight: 1,
-    foe: { name: 'Night tsujigiri attacker', power: 12 },
+    // One step harder than the ambush (power 9, ~38-62% base win%) for the
+    // "surprise night attack" flavor, without the encounter order guarantee
+    // to lean on — the bag can draw either combat event first (was 12).
+    foe: { name: 'Night tsujigiri attacker', power: 9 },
     onWin: {
       text: 'He misjudged you. You leave him where he falls and take back the road.',
       effects: { money: 20 },
