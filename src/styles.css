@@ -1,0 +1,121 @@
+/* GDD §12: typography-first, sumi-on-washi with a single vermillion accent. */
+:root {
+  --washi: #f3ecdc;
+  --sumi: #1c1a17;
+  --sumi-soft: #4a453d;
+  --vermillion: #c0392b;
+  --line: #cfc4a8;
+  --danger: #8b2e22;
+  --ok: #3c6e47;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--washi);
+  color: var(--sumi);
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', Georgia, serif;
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 720px;
+  min-width: 320px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+}
+
+.card {
+  border-left: 4px solid var(--vermillion);
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.35);
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  margin: 0 0 4px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+  color: var(--vermillion);
+}
+
+p.body-text {
+  white-space: pre-wrap;
+  margin: 0 0 16px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+button.choice {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--washi);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--sumi);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+button.choice:hover { border-color: var(--vermillion); }
+button.choice .odds { float: right; color: var(--sumi-soft); font-size: 0.85em; }
+
+button.primary {
+  padding: 10px 18px;
+  background: var(--vermillion);
+  color: var(--washi);
+  border: none;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.vitals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0;
+  margin: 16px 0;
+  font-size: 0.9rem;
+  color: var(--sumi-soft);
+}
+.vitals strong { color: var(--sumi); }
+
+.log-line { color: var(--sumi-soft); font-style: italic; margin: 0 0 16px; }
+
+.title-screen { text-align: center; padding-top: 20vh; }
+.title-screen h1 { font-size: 2.2rem; }
+.title-screen p { color: var(--sumi-soft); margin-bottom: 32px; }
+
+.trait-option {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.trait-option.selected { border-color: var(--vermillion); background: rgba(192,57,43,0.08); }
+.trait-option .desc { font-size: 0.85em; color: var(--sumi-soft); }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
