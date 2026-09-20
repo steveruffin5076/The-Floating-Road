@@ -8,6 +8,7 @@ import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, 
 import { STARTING_STATS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { ENDINGS } from './content/endings';
+import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
 
 const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS];
 const EVENTS_BY_ID = new Map(ALL_EVENTS.map((e) => [e.id, e]));
@@ -28,6 +29,10 @@ let screen: Screen = { kind: 'title' };
 const app = document.getElementById('app')!;
 
 function render(): void {
+  if (state) {
+    const saved = toSavedScreen(screen);
+    if (saved) saveGame(state, rng, saved);
+  }
   app.innerHTML = '';
   switch (screen.kind) {
     case 'title': return renderTitle();
@@ -40,6 +45,56 @@ function render(): void {
   }
 }
 
+// ---------- save/resume ----------
+function toSavedScreen(s: Screen): SavedScreen | null {
+  switch (s.kind) {
+    case 'event':
+      return { kind: 'event', eventId: s.event.id };
+    case 'combat':
+      return {
+        kind: 'combat',
+        eventId: s.event.id,
+        step: s.step,
+        setup: s.setup,
+        winPct: s.winPct,
+        betResult: s.betResult,
+        outcomeText: s.outcomeText,
+      };
+    case 'levelup':
+      return { kind: 'levelup' };
+    case 'rest':
+      return { kind: 'rest' };
+    case 'ending':
+      return { kind: 'ending', endingId: s.endingId };
+    default:
+      return null;
+  }
+}
+
+// Throws if the save references content that no longer exists (e.g. an
+// event id from a build before a content change), so the caller can fall
+// back to a fresh title screen instead of crashing on a stale save.
+function fromSavedScreen(s: SavedScreen): Screen {
+  switch (s.kind) {
+    case 'event': {
+      const event = EVENTS_BY_ID.get(s.eventId);
+      if (!event || event.type !== 'story') throw new Error('missing event');
+      return { kind: 'event', event };
+    }
+    case 'combat': {
+      const event = EVENTS_BY_ID.get(s.eventId);
+      if (!event || event.type !== 'combat') throw new Error('missing event');
+      return { kind: 'combat', event, step: s.step, setup: s.setup, winPct: s.winPct, betResult: s.betResult, outcomeText: s.outcomeText };
+    }
+    case 'levelup':
+      return { kind: 'levelup' };
+    case 'rest':
+      return { kind: 'rest' };
+    case 'ending':
+      return { kind: 'ending', endingId: s.endingId };
+  }
+}
+
 // ---------- title ----------
 function renderTitle(): void {
   const div = document.createElement('div');
@@ -48,6 +103,21 @@ function renderTitle(): void {
     <h1>浮 THE FLOATING ROAD</h1>
     <p>A vertical slice — Act 1, "${TALE_NAME}"</p>
   `;
+  if (hasSavedGame()) {
+    const continueBtn = mkPrimaryButton('Continue Your Journey', () => {
+      const loaded = loadGame();
+      if (!loaded) return render();
+      try {
+        screen = fromSavedScreen(loaded.screen);
+        state = loaded.state;
+        rng = loaded.rng;
+      } catch {
+        clearSavedGame();
+      }
+      render();
+    });
+    div.appendChild(continueBtn);
+  }
   const btn = mkPrimaryButton('Begin Your Journey', () => {
     screen = { kind: 'creation', selectedTrait: null };
     render();
@@ -399,6 +469,7 @@ function renderEnding(endingId: string): void {
   `;
   if (state) renderVitals(card);
   const btn = mkPrimaryButton('Begin a New Run', () => {
+    clearSavedGame();
     state = null;
     screen = { kind: 'title' };
     render();

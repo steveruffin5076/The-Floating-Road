@@ -1,16 +1,22 @@
 // Seeded RNG (mulberry32), matching sim/balance-sim.mjs and the RNG choice
 // in game-plan/04-technical-plan.md §1 ("Seeded (mulberry32/xorshift)").
-export type Rng = () => number;
+export type Rng = (() => number) & { getState(): number };
 
+// mulberry32's entire state is the `a` word, and mulberry32(seed) just sets
+// a's initial value — so passing a previously-saved `a` back in as the
+// "seed" resumes the exact same sequence. getState() exposes that word so
+// save/resume can round-trip the RNG deterministically.
 export function mulberry32(seed: number): Rng {
   let a = seed >>> 0;
-  return function () {
+  const rng = (() => {
     a |= 0;
     a = (a + 0x6d2b79f5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+  }) as Rng;
+  rng.getState = () => a;
+  return rng;
 }
 
 export function makeSeed(): number {

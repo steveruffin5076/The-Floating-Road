@@ -49,11 +49,18 @@ re-reading the whole conversation history to pick back up.
    events" now that the pool supports it.
 6. **Git** — repo initialized, `.gitignore` added, pushed as the initial
    commit to the GitHub remote above.
+7. **Save/resume** (`src/engine/save.ts`) — single localStorage slot,
+   checkpointed on every screen transition (including mid-combat, between
+   the chō-han bet and the stance choice), closing the GDD §14 "save
+   anywhere" gap. Title screen offers "Continue Your Journey" when a save
+   exists; starting a fresh run after an ending clears it. A save
+   referencing content that no longer exists (stale build) falls back to
+   the title screen instead of crashing. Verified end-to-end in a real
+   browser: reload mid-event, reload mid-combat, and reload after an
+   ending all resume correctly; starting a new run clears the old save.
 
 ## Not done yet (known gaps)
 
-- No save/resume (localStorage) — GDD §14 calls for "save anywhere"; the
-  slice currently loses all progress on refresh.
 - Combat numbers (weapon tier / armor / foe power) are still the sim's
   placeholder values, not real balanced numbers.
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -69,7 +76,7 @@ re-reading the whole conversation history to pick back up.
 
 ## Suggested next steps (not started)
 
-Roughly in order of leverage: add save/resume, pin real combat numbers,
-add a second Tale, add basic tests, review the remaining docs, do the
-sensitivity pass. See conversation history or ask for a fresh prioritized
-list — priorities may shift once there's more playtesting.
+Roughly in order of leverage: pin real combat numbers, add basic tests,
+add a second Tale, review the remaining docs, do the sensitivity pass. See
+conversation history or ask for a fresh prioritized list — priorities may
+shift once there's more playtesting.
