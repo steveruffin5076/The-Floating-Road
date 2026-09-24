@@ -12,7 +12,10 @@ export function createInitialState(startingStats: Stats, events: GameEvent[], rn
     stats: { ...startingStats },
     health: 20,
     healthMax: 20,
-    resolve: 10,
+    // Starts worn, not full (Tale 1: 33 years after Osaka, walking east with
+    // nothing). At 10/10, Act 1 never pushed any sim policy below Resolve 3;
+    // at 7 it becomes a visible second clock (game-plan/12-act1-balance-report.md).
+    resolve: 7,
     resolveMax: 10,
     money: 300,
     suspicion: 0,

@@ -124,7 +124,7 @@ adjust this cadence or the ×8 coefficient in §6 before touching content.
 | Track | Range | Falls from | Rises from | At zero / max |
 |---|---|---|---|---|
 | **Health (Karada)** 体 | 0–20 (grows w/ level) | Wounds, hunger, illness, disasters | Food, rest, medicine, baths | 0 = death → ending |
-| **Resolve (Kokoro)** 心 | 0–10 | Humiliation, atrocity witnessed, starvation, betrayal, rain-sodden nights | Sake, festivals, kindness given/received, victories, shrine prayer | 0 = "The Road Ends Here" — character gives up (despair ending family) |
+| **Resolve (Kokoro)** 心 | 0–10, starts at 7 (Tale 1; `12` report) | Humiliation, atrocity witnessed, starvation, betrayal, rain-sodden nights | Sake, festivals, kindness given/received, victories, shrine prayer | 0 = "The Road Ends Here" — character gives up (despair ending family) |
 | **Money (Seni)** 銭 | mon; 1 ryō = 1,000 mon (game-fixed rate) | Everything | Work, gambling, loot, trade | Gates shops, bribes, inns |
 | **Suspicion (Ayashisa)** 怪 | hidden 0–5 | Crimes, violence witnessed-by-others, failed bluffs, owning illegal goods | Time, bribes, good deeds with witnesses, new identity papers | 3+ = patrol/checkpoint events turn hostile; 5 = wanted-poster event chain, arrest possible |
 | **Reputation (Na)** 名 | −5 … +5 | Heroic/devious public acts | — | Gates endings, employer quality, duel invitations |

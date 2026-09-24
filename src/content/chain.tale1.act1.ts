@@ -196,7 +196,7 @@ export const TALE1_ACT1_CHAIN: GameEvent[] = [
         text: 'Walk on.',
         onResolve: {
           text: 'You do not look back. You hear the crowd’s silence break behind you, and you do not look back.',
-          effects: { resolve: -1 },
+          effects: { resolve: -2 },
           setFlags: ['fujieda_walked'],
         },
       },

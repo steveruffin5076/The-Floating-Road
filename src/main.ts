@@ -1,12 +1,11 @@
 import { mulberry32, makeSeed, type Rng } from './engine/rng';
-import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Choice, Outcome } from './engine/types';
+import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Outcome } from './engine/types';
 import { STAT_LABELS } from './engine/types';
-import { previewCheck, resolveCheck } from './engine/checkResolver';
-import { setupCombat, applyChoHan, resolveCombat, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
+import { previewCheck } from './engine/checkResolver';
+import { setupCombat, applyChoHan, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
 import { checkModPct, meetsRequirement } from './engine/requirements';
-import { createInitialState, applyOutcomeEffects, grantLevelUp, noteCombatWin, withTraitRiders, REST_INTERVAL } from './engine/state';
-import { actSpec, enterNode, nextStep, recordResolved, runCompleteEnding } from './engine/director';
-import { forcedEnding } from './engine/endings';
+import { createInitialState } from './engine/state';
+import * as runner from './engine/runner';
 import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { TALE1_ACT1_CHAIN } from './content/chain.tale1.act1';
@@ -14,7 +13,8 @@ import { ENDINGS } from './content/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
 
 const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
-const EVENTS_BY_ID = new Map(ALL_EVENTS.map((e) => [e.id, e]));
+const CONTENT = runner.makeContent(ALL_EVENTS, ACTS, ENDINGS);
+const EVENTS_BY_ID = CONTENT.byId;
 
 type CombatResult = 'won' | 'lost' | 'escaped';
 
@@ -233,84 +233,36 @@ function renderEvent(event: StoryEvent): void {
       label = `${choice.text} <span class="odds">[${STAT_LABELS[choice.check.stat].split(' ')[0]}] ${oddsLabel}</span>`;
     }
     btn.innerHTML = label;
-    btn.addEventListener('click', () => resolveChoice(choice));
+    btn.addEventListener('click', () => {
+      if (!state) return;
+      afterOutcome(runner.resolveChoice(state, choice, rng).outcome);
+    });
     choicesEl.appendChild(btn);
   }
   card.appendChild(choicesEl);
   app.appendChild(card);
 }
 
-function resolveChoice(choice: Choice): void {
-  if (!state) return;
-  if (choice.check) {
-    const statVal = state.stats[choice.check.stat];
-    const outcome = resolveCheck(rng, statVal, choice.check.dc, state.consecutiveFails, checkModPct(state, choice.check));
-    state.consecutiveFails = outcome.passed ? 0 : state.consecutiveFails + 1;
-    const raw = outcome.passed ? choice.onSuccess : choice.onFailure;
-    const result = raw && withTraitRiders(state, choice.check, outcome.passed, raw);
-    if (result) applyOutcomeEffects(state, result);
-    afterOutcome(result);
-  } else if (choice.onResolve) {
-    applyOutcomeEffects(state, choice.onResolve);
-    afterOutcome(choice.onResolve);
-  }
-}
-
-// Effects have already been applied; this decides what the player sees next.
+// Effects have already been applied; the runner decides what comes next.
 function afterOutcome(outcome?: Outcome): void {
   if (!state) return;
   const current = screen.kind === 'event' || screen.kind === 'combat' ? screen.event.id : null;
-  const forced = outcome?.endingId ?? forcedEnding(state, ENDINGS);
-  if (forced) return showEnding(forced);
-
-  if (outcome?.goto && current) {
-    enterNode(state, current, outcome.goto);
-    return showEvent(EVENTS_BY_ID.get(outcome.goto)!);
-  }
-
-  if (current) recordResolved(state, current, ALL_EVENTS, rng);
-  state.eventsSinceLevel += 1;
-  state.eventsSinceRest += 1;
-
-  const endingId = runCompleteEnding(state, ALL_EVENTS, ACTS, ENDINGS);
-  if (endingId) return showEnding(endingId);
-
-  if (state.eventsSinceLevel >= actSpec(ACTS, state.act).levelInterval) {
-    state.eventsSinceLevel = 0;
-    screen = { kind: 'levelup' };
-    return render();
-  }
-
-  if (state.eventsSinceRest >= REST_INTERVAL) {
-    state.eventsSinceRest = 0;
-    screen = { kind: 'rest' };
-    return render();
-  }
-
-  drawAndShowNext();
+  go(runner.afterOutcome(state, CONTENT, current, outcome, rng));
 }
 
-function showEnding(endingId: string): void {
-  if (!state) return;
-  state.ended = true;
-  state.endingId = endingId;
-  screen = { kind: 'ending', endingId };
-  render();
-}
-
-function drawAndShowNext(): void {
-  if (!state) return;
-  const step = nextStep(state, ALL_EVENTS, ACTS, ENDINGS, rng);
-  if (step.kind === 'ending') return showEnding(step.endingId);
-  showEvent(EVENTS_BY_ID.get(step.id)!);
-}
-
-function showEvent(event: GameEvent): void {
-  if (event.type === 'combat') {
-    beginCombat(event as CombatEvent);
-  } else {
-    screen = { kind: 'event', event: event as StoryEvent };
-    render();
+function go(next: runner.Next): void {
+  switch (next.kind) {
+    case 'ending':
+      screen = { kind: 'ending', endingId: next.endingId };
+      return render();
+    case 'levelup':
+    case 'rest':
+      screen = { kind: next.kind };
+      return render();
+    case 'event':
+      if (next.event.type === 'combat') return beginCombat(next.event);
+      screen = { kind: 'event', event: next.event };
+      return render();
   }
 }
 
@@ -327,15 +279,7 @@ function renderLevelUp(): void {
     const btn = document.createElement('button');
     btn.className = 'choice';
     btn.textContent = `${STAT_LABELS[stat]} — currently ${state!.stats[stat]}`;
-    btn.addEventListener('click', () => {
-      grantLevelUp(state!, stat);
-      if (state!.eventsSinceRest >= REST_INTERVAL) {
-        state!.eventsSinceRest = 0;
-        screen = { kind: 'rest' };
-        return render();
-      }
-      drawAndShowNext();
-    });
+    btn.addEventListener('click', () => go(runner.levelUp(state!, CONTENT, stat, rng)));
     grid.appendChild(btn);
   });
   card.appendChild(grid);
@@ -355,21 +299,17 @@ function renderRest(): void {
   const freeBtn = document.createElement('button');
   freeBtn.className = 'choice';
   freeBtn.textContent = 'Shelter for the night, free (sleep rough under the eaves)';
-  freeBtn.addEventListener('click', () => {
-    applyOutcomeEffects(state!, { text: 'You sleep poorly but wake alive and dry enough.', effects: { health: 1, resolve: 1 } });
-    drawAndShowNext();
-  });
+  freeBtn.addEventListener('click', () => go(runner.rest(state!, CONTENT, 'free', rng)));
   choicesEl.appendChild(freeBtn);
 
   const innBtn = document.createElement('button');
   innBtn.className = 'choice';
-  const canAfford = state.money >= 150;
-  innBtn.textContent = `Pay for a room at the hatago (a post-town inn) — 150 mon${canAfford ? '' : ' (not enough money)'}`;
+  const canAfford = state.money >= runner.REST.innCost;
+  innBtn.textContent = `Pay for a room at the hatago (a post-town inn) — ${runner.REST.innCost} mon${canAfford ? '' : ' (not enough money)'}`;
   if (!canAfford) innBtn.setAttribute('disabled', 'true');
   innBtn.addEventListener('click', () => {
-    if (state!.money < 150) return;
-    applyOutcomeEffects(state!, { text: 'A hot meal, a real futon, and a locked door. You sleep well.', effects: { money: -150, health: 4, resolve: 3 } });
-    drawAndShowNext();
+    if (state!.money < runner.REST.innCost) return;
+    go(runner.rest(state!, CONTENT, 'inn', rng));
   });
   choicesEl.appendChild(innBtn);
 
@@ -465,33 +405,8 @@ function renderCombat(): void {
 
 function resolveStance(stance: Stance): void {
   if (screen.kind !== 'combat' || !state) return;
-  const { event, winPct } = screen;
-
-  if (stance === 'escape') {
-    const escapeCheck = resolveCheck(rng, state.stats.me, 6, state.consecutiveFails);
-    if (escapeCheck.passed) {
-      applyOutcomeEffects(state, { text: 'You slip away before it turns to violence.' });
-      screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: 'You slip away before it turns to violence.', result: 'escaped' };
-      return render();
-    }
-    const penalizedWin = Math.max(5, winPct - 15);
-    return fight(event, penalizedWin, 'aggressive');
-  }
-  fight(event, winPct, stance);
-}
-
-function fight(event: CombatEvent, winPct: number, stance: Stance): void {
-  if (!state || screen.kind !== 'combat') return;
-  const won = resolveCombat(rng, winPct);
-  const outcome = won ? event.onWin : event.onLose;
-  const scaled = { ...outcome, effects: { ...outcome.effects } };
-  if (!won && scaled.effects.health !== undefined) {
-    const mult = stance === 'aggressive' ? 1.5 : stance === 'defensive' ? 0.6 : 1;
-    scaled.effects.health = Math.round(scaled.effects.health * mult);
-  }
-  applyOutcomeEffects(state, scaled);
-  if (won) noteCombatWin(state);
-  screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: scaled.text, result: won ? 'won' : 'lost' };
+  const f = runner.resolveFight(state, screen.event, screen.winPct, stance, rng);
+  screen = { ...screen, step: 'resolved', winPct: f.winPct, outcomeText: f.text, result: f.result };
   render();
 }
 

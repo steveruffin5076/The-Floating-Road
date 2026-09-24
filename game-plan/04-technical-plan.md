@@ -300,9 +300,11 @@ a requirement. Goods data lives in `goods.json`, and station → region is route
 > typed TS, so the type system covers shape and `src/content/validate.ts` covers
 > the authoring rules (03 §9 caps, DC range, ungated share, ending references, a
 > flag/counter/item ledger so no gate is unopenable, no soft-locked events). It
-> runs as a test, not yet in CI (the repo has no CI). The simulation harness and
-> playtest protocol are still not built; the only simulator is the standalone
-> `sim/balance-sim.mjs`. Both can wait for P1.5.
+> runs as a test, not yet in CI (the repo has no CI). The **simulation harness**
+> is built too (`npm run sim`, `src/sim/`): it plays whole runs through the same
+> engine the browser uses (`src/engine/runner.ts`) with four bot policies; first
+> results and tuning are in `12-act1-balance-report.md`. The playtest protocol
+> is not built yet.
 
 - **Schema validator** (zod/ajv) runs over every content file in CI — catches broken
   `goto`s, missing string keys, unreachable requirements.

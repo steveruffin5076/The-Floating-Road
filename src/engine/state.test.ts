@@ -9,7 +9,7 @@ const fresh = () => createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, mulbe
 describe('createInitialState', () => {
   it('starts with the documented rōnin loadout and vitals', () => {
     const s = fresh();
-    expect(s).toMatchObject({ health: 20, healthMax: 20, resolve: 10, money: 300, suspicion: 0, weaponTier: 1, armorBonus: 0 });
+    expect(s).toMatchObject({ health: 20, healthMax: 20, resolve: 7, resolveMax: 10, money: 300, suspicion: 0, weaponTier: 1, armorBonus: 0 });
     expect(s.bagAll).toHaveLength(ACT1_EVENTS.reduce((n, e) => n + e.weight, 0));
   });
 

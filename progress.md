@@ -141,6 +141,16 @@ re-reading the whole conversation history to pick back up.
     The letter follows `03`'s premise; the "Katsuragi's men killed him"
     version from `11` §5.1 is still your call.
 
+21. **Sim harness and first Act 1 tuning** (`npm run sim`, `src/sim/`,
+    `game-plan/12-act1-balance-report.md`) — the game's rules moved out of
+    `main.ts` into `src/engine/runner.ts`, which the browser and the harness
+    both use. Four bot policies × 10k runs report endings, check pass rates,
+    combat accuracy, Suspicion and Resolve sources, and repeats. It found
+    Resolve never mattered (no policy ever below 3); fixes: free rest gives
+    no Resolve, two humiliation/witness choices cost −2, and Resolve starts
+    at 7/10. Pass rates (55–60% on-build) and combat accuracy (±1.7) meet
+    `02` §15. Guard-rail tests keep it honest.
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -153,11 +163,9 @@ re-reading the whole conversation history to pick back up.
   specialist craft). Outcast groups (checklist §B) and Tale 6 are still
   unexercised by any built content.
 - Engine for P1.5 (`11` §6) is complete except trajectory hints (#13).
-- **Act 1 balance finding** (20k-run random-choice sim): 26% of runs end in
-  arrest, up from 17.5% before the chain, and death/despair are ~0%.
-  Suspicion is effectively the only failure mode in Act 1; health and
-  Resolve pressure are too weak to matter. Worth a tuning pass with a real
-  sim harness (`04` §5).
+- Acts 2–3 must be much deadlier per event than Act 1 to reach `02` §15's
+  ~40% full-run survival (Act 1 alone keeps ~93% of first-timers). See
+  `12-act1-balance-report.md` for the Resolve-per-event guidance.
 - P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
 - Tale 1 premise: a licensed vendetta avenges a *killing*, not a surrender, so
   `03` §4's premise should say Katsuragi's men cut the father down (`11` §5.1).
