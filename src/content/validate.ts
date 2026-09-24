@@ -55,6 +55,9 @@ function checkOutcome(
   if (outcome.endingId && !endings[outcome.endingId]) {
     issues.push({ where, message: `unknown endingId "${outcome.endingId}"` });
   }
+  if (outcome.endingId && outcome.evaluateEndings) {
+    issues.push({ where, message: 'set endingId or evaluateEndings, not both' });
+  }
 }
 
 // What content reads and writes, so the validator can flag a gate nothing opens.
@@ -145,6 +148,9 @@ function checkActs(events: GameEvent[], endings: Record<string, EndingSpec>, act
       else if (t.inject || (t.acts ?? [1]).length) {
         issues.push({ where, message: `transition event "${t.id}" must have acts: [] and no inject` });
       }
+    }
+    for (const w of a.watches ?? []) {
+      if (!byId.has(w.spawn)) issues.push({ where, message: `watch spawns unknown event "${w.spawn}"` });
     }
     const injected = events.filter((e) => e.inject?.act === a.act).length;
     const pool = poolFor(events, a.act).length;
@@ -248,13 +254,14 @@ export function validateContent(
       else if (target.inject || (target.acts ?? [1]).length) {
         issues.push({ where: e.id, message: `goto target "${o.goto}" must be a node: acts: [] and no inject` });
       }
-      if (o.endingId) issues.push({ where: e.id, message: 'an outcome cannot both goto and end the run' });
+      if (o.endingId || o.evaluateEndings) issues.push({ where: e.id, message: 'an outcome cannot both goto and end the run' });
     }
     if (e.type === 'story') {
       for (const c of e.choices) for (const m of c.check?.mods ?? []) readRequirement(`${e.id}.check.mods`, m.when, ledger);
     }
   }
   if (acts.length) checkActs(events, endings, acts, issues);
+  for (const a of acts) for (const w of a.watches ?? []) readRequirement(`act ${a.act}.watches`, w.when, ledger);
 
   const total = gated + ungated;
   if (total > 0 && ungated / total < RULES.minUngatedShare) {
@@ -280,6 +287,14 @@ export function validateContent(
     if (!ID_RE.test(id)) issues.push({ where: `ending ${id}`, message: 'id is not snake_case' });
     if (!ending.title.trim()) issues.push({ where: `ending ${id}`, message: 'empty title' });
     checkProse(`ending ${id}.epilogue`, ending.epilogue, RULES.epilogueMaxWords, issues);
+    for (const v of ending.epilogueVariants ?? []) {
+      readRequirement(`ending ${id}.epilogueVariants`, v.when, ledger);
+      checkProse(`ending ${id}.epilogueVariant`, v.text, RULES.epilogueMaxWords, issues);
+    }
+    const longest = words(ending.epilogue) + (ending.epilogueVariants ?? []).reduce((n, v) => n + words(v.text), 0);
+    if (longest > RULES.epilogueMaxWords) {
+      issues.push({ where: `ending ${id}`, message: `epilogue with every variant is ${longest} words, over the cap` });
+    }
     checkProse(`ending ${id}.historicalNote`, ending.historicalNote, RULES.epilogueMaxWords, issues);
   }
 

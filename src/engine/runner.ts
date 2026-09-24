@@ -5,9 +5,9 @@ import type { ActSpec, Choice, CombatEvent, EndingSpec, GameEvent, Outcome, RunS
 import type { Rng } from './rng';
 import { resolveCheck } from './checkResolver';
 import { resolveCombat, type Stance } from './combatResolver';
-import { checkModPct } from './requirements';
+import { checkModPct, meetsRequirement } from './requirements';
 import { actSpec, enterNode, nextStep, recordResolved, runCompleteEnding } from './director';
-import { forcedEnding } from './endings';
+import { evaluateEnding, forcedEnding } from './endings';
 import { applyOutcomeEffects, grantLevelUp, noteCombatWin, REST_INTERVAL, withTraitRiders } from './state';
 
 export interface Content {
@@ -97,6 +97,8 @@ export function afterOutcome(
 ): Next {
   const forced = outcome?.endingId ?? forcedEnding(state, content.endings);
   if (forced) return end(state, forced);
+  if (outcome?.evaluateEndings) return end(state, evaluateEnding(state, content.endings));
+  checkWatches(state, content);
 
   if (outcome?.goto && currentId) {
     enterNode(state, currentId, outcome.goto);
@@ -115,6 +117,18 @@ export function afterOutcome(
     return { kind: 'levelup' };
   }
   return afterLevelUp(state, content, rng);
+}
+
+// Edge-triggered act watches. A flag per watch remembers that its condition
+// held after the last outcome, so a watch fires again only after it lapses.
+function checkWatches(state: RunState, content: Content): void {
+  for (const w of actSpec(content.acts, state.act).watches ?? []) {
+    const key = `watch_held_${w.spawn}`;
+    const held = meetsRequirement(state, w.when);
+    if (held && !state.flags.has(key)) state.pendingSpawns.push(w.spawn);
+    if (held) state.flags.add(key);
+    else state.flags.delete(key);
+  }
 }
 
 export function levelUp(state: RunState, content: Content, stat: StatKey, rng: Rng): Next {

@@ -44,6 +44,7 @@ function value(s: RunState, o: Outcome | undefined, content: runner.Content): nu
     (e.reputation ?? 0) * 0.8 +
     (e.gi ?? 0) * 0.3;
   if (o.goto && content.byId.get(o.goto)?.type === 'combat') v -= 2; // a fight: real risk
+  if (o.endingId) v -= 15; // ends the run here (arrest, a chosen death)
   if (o.moneyMult !== undefined) v -= s.money * (1 - o.moneyMult) * 0.02;
   v += (o.addItems?.length ?? 0) * 2 + (o.setFlags?.length ?? 0) * 0.3; // story progress has worth
   return v;

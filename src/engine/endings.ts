@@ -22,3 +22,9 @@ export function evaluateEnding(state: RunState, endings: Record<string, EndingSp
   if (!fallback) throw new Error('no ending matched and no fallback ending is defined');
   return fallback[0];
 }
+
+// The epilogue plus any variant lines whose condition holds at the end.
+export function endingEpilogue(state: RunState, ending: EndingSpec): string {
+  const extra = (ending.epilogueVariants ?? []).filter((v) => meetsRequirement(state, v.when)).map((v) => v.text);
+  return [ending.epilogue, ...extra].join(' ');
+}

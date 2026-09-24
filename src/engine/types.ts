@@ -75,6 +75,7 @@ export interface Requirement {
   countersMin?: Record<string, number>;
   countersMax?: Record<string, number>;
   anyOf?: Requirement[];
+  acts?: number[]; // the current act is one of these
 }
 
 // Maps to 04 §3's effects vocabulary: `effects` = track deltas,
@@ -97,9 +98,10 @@ export interface Outcome {
   // (so "if Reputation ≥ 2 after this" reads the updated state).
   riders?: { when: Requirement; then: OutcomeEffects }[];
   endingId?: string;
+  evaluateEndings?: boolean; // end the run now and pick an evaluated ending (11 §3)
 }
 
-export type OutcomeEffects = Omit<Outcome, 'text' | 'endingId' | 'goto' | 'riders'>;
+export type OutcomeEffects = Omit<Outcome, 'text' | 'endingId' | 'evaluateEndings' | 'goto' | 'riders'>;
 
 // 02 §10 / 04 §3.2. A forced ending fires the moment `forcedWhen` holds
 // (checked after every outcome). The others are evaluated when an act ends
@@ -112,6 +114,7 @@ export interface EndingSpec {
   requires?: Requirement;
   priority?: number;
   fallback?: boolean;
+  epilogueVariants?: { when: Requirement; text: string }[]; // appended when met
 }
 
 // 11 §1.1 `inject` block. A chain event fires at a slot of its act instead of
@@ -126,11 +129,13 @@ export interface InjectSpec {
   afterEvent?: string;
   priority?: number;
   mandatory?: boolean;
-  onLapse?: Omit<Outcome, 'text' | 'endingId'>;
+  onLapse?: Omit<Outcome, 'text' | 'endingId' | 'evaluateEndings'>;
 }
 
 // An act ends after `length` events, then either ends the run (`endingId`) or
-// shows `transitionEventId` and moves to the next act.
+// shows `transitionEventId` and moves to the next act. A watch spawns its event
+// each time its condition becomes true during the act (e.g. Suspicion reaching
+// 5 in Edo brings the dōshin, 11 §1.4 C12), not while it merely stays true.
 export interface ActSpec {
   act: number;
   length: number;
@@ -138,6 +143,7 @@ export interface ActSpec {
   endingId?: string;
   evaluateEndings?: boolean;
   transitionEventId?: string;
+  watches?: { when: Requirement; spawn: string }[];
 }
 
 export interface Choice {

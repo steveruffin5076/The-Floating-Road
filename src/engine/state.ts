@@ -58,7 +58,7 @@ export function applyOutcomeEffects(state: RunState, outcome: Outcome): void {
 }
 
 // Everything an outcome does except logging its text (used for onLapse).
-export function applyEffects(state: RunState, outcome: Omit<Outcome, 'text' | 'endingId'>): void {
+export function applyEffects(state: RunState, outcome: Omit<Outcome, 'text' | 'endingId' | 'evaluateEndings'>): void {
   const e = outcome.effects;
   if (e) {
     if (e.health !== undefined) state.health = clamp(state.health + e.health, 0, state.healthMax);

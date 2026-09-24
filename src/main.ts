@@ -10,6 +10,7 @@ import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './con
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { TALE1_ACT1_CHAIN } from './content/chain.tale1.act1';
 import { ENDINGS } from './content/endings';
+import { endingEpilogue } from './engine/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
 
 const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
@@ -97,6 +98,7 @@ function fromSavedScreen(s: SavedScreen): Screen {
     case 'rest':
       return { kind: 'rest' };
     case 'ending':
+      if (!ENDINGS[s.endingId]) throw new Error('missing ending');
       return { kind: 'ending', endingId: s.endingId };
   }
 }
@@ -417,7 +419,7 @@ function renderEnding(endingId: string): void {
   card.className = 'card';
   card.innerHTML = `
     <h2>${ending.title}</h2>
-    <p class="body-text">${ending.epilogue}</p>
+    <p class="body-text">${state ? endingEpilogue(state, ending) : ending.epilogue}</p>
     <p class="log-line">Historical note: ${ending.historicalNote}</p>
   `;
   if (state) renderVitals(card);

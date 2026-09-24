@@ -22,6 +22,7 @@ export function meetsRequirement(state: RunState, req: Requirement | undefined):
     if ((state.counters[name] ?? 0) > ceiling) return false;
   }
   if (req.anyOf && !req.anyOf.some((r) => meetsRequirement(state, r))) return false;
+  if (req.acts && !req.acts.includes(state.act)) return false;
   return true;
 }
 
