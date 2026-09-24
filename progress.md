@@ -4,7 +4,7 @@ Running status of the project. Design docs live in `game-plan/`; this file
 tracks *what's actually been done* and what's next, so it doesn't require
 re-reading the whole conversation history to pick back up.
 
-## Current status (2026-09-20)
+## Current status (2026-09-24)
 
 **Phase:** Vertical slice — playable prototype exists, design is stable.
 
@@ -12,7 +12,7 @@ re-reading the whole conversation history to pick back up.
   Core formulas (skill checks, combat, leveling cadence) validated against a
   standalone simulator before any content was written against them.
 - **Code:** A playable TypeScript/Vite prototype exists at the repo root
-  (`src/`) — one Tale (rōnin), Act 1 only, 19 events, 4 endings. Runs with
+  (`src/`) — one Tale (rōnin), Act 1 only, 24 events, 4 endings. Runs with
   `npm install && npm run dev`.
 - **Repo:** Initialized and pushed to
   [github.com/steveruffin5076/The-Floating-Road](https://github.com/steveruffin5076/The-Floating-Road).
@@ -71,6 +71,25 @@ re-reading the whole conversation history to pick back up.
    (serviceable katana, travel clothes) documented as an intentional choice
    rather than an unexamined placeholder, since this slice has no
    shop/equip system to change it mid-run yet.
+9. **Content & technical design review** (`game-plan/07-design-review-content-and-technical.md`)
+   — reviewed `03` and `04` the way `05` reviewed `02`, and applied the
+   findings: per-choice requirements, `stat_delta`, counters, a
+   compound-check pattern and an ending schema sketch in `04` §3; `04`'s
+   roadmap resized to match what was built; Gi/Aku notation and a
+   Suspicion-threshold mismatch fixed in `03`.
+10. **Sensitivity checklist & pass** (`03` §9.1, `game-plan/08-sensitivity-review.md`)
+    — checklist drafted and run over the slice; the must-fix
+    (`kirisute_tension` misstated kirisute-gomen) and all 11 should-fixes
+    applied to `src/content/`.
+11. **Gambling den, peddling, den-network formulas** (`02` §9.2–9.4, `04` §3.3)
+    — the three systems `03` relied on but nobody had specified. Numbers
+    hand-derived in `02` and confirmed by a 1M-trial Monte Carlo.
+12. **Act 1 pool to 24** — five new story events drawn from `03` §6's bank
+    (`lodging_seized`, `five_households`, `widows_teahouse`,
+    `polishers_bench`, `porter_in_the_current`), written against the
+    checklist. Stat-check coverage went from 3/2/3/2/2/2 to 3/3/3/4/4/4
+    (chikara/waza/chi/kuchi/me/tan). `widows_teahouse` is the slice's first
+    woman character and first way to lower Suspicion (100 mon for −1).
 
 ## Not done yet (known gaps)
 
@@ -78,19 +97,21 @@ re-reading the whole conversation history to pick back up.
   requirements-engine behavior is untested with more than one Tale.
 - No automated tests yet (unit tests for checkResolver/combatResolver, a
   content schema validator) — `04-technical-plan.md` §5 calls for these.
-- `03-story-and-content.md` and `04-technical-plan.md` haven't had a design
-  review pass (only `02-game-design.md` has).
-- Sensitivity pass: checklist exists (`03` §9.1), run once on the vertical
-  slice (`game-plan/08-sensitivity-review.md`); the must-fix and all 11
-  should-fixes are applied. Still open: notes N1–N7 and four research
-  follow-ups for `01`. The slice never touches outcast groups, women as
-  characters, or Tale 6 material, so those checklist areas are unexercised.
-- Vertical slice is still short of its own ~20-25 event target from GDD §16
-  (currently 19 including the intro).
+- Sensitivity follow-ups: `08`'s notes N1–N7 and research gaps in `01`
+  (rōnin vs kirisute-gomen, *Go Rin no Sho* circulation, barrier-breaking
+  penalty, Ōi porter-system date, gonin-gumi reporting duty, polishing as a
+  specialist craft). Outcast groups (checklist §B) and Tale 6 are still
+  unexercised by any built content.
+- **Tale 3's debt is out of scale** (`02` §9.3 flag): 100 ryō = 100,000 mon,
+  +25,000 mon per tick, against honest income of ≤ 500 mon/event. Needs a
+  decision before Tale 3 is authored.
+- Tale 1 gender: `01` says a female rōnin doesn't fit the era; `02` §4.1 says
+  gender is freely chosen (`08` N4). Needs a decision before a gender picker.
+- The built engine doesn't implement `04`'s newer schema pieces (per-choice
+  requires, counters, `stat_delta`, endings.json); they're needed for P1.5.
 
 ## Suggested next steps (not started)
 
-Roughly in order of leverage: add basic tests, add a second Tale, review
-the remaining docs, do the sensitivity pass. See conversation history or
-ask for a fresh prioritized list — priorities may shift once there's more
-playtesting.
+Roughly in order of leverage: the schema validator + unit tests (`04` §5),
+then P1.5 (Tale 1's full chain, per `04` §6). Decide the Tale 3 debt scale
+and Tale 1 gender question before content for those lands.

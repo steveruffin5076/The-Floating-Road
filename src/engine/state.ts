@@ -10,10 +10,9 @@ export const LEVEL_INTERVAL = 3;
 // GDD §3: "rest nodes appear every ~4-5 events."
 export const REST_INTERVAL = 4;
 // Vertical slice run length target: GDD §3 sizes Act 1 at "≈12-15 events."
-// With 19 events now in the pool (1 intro + 18 bag), 13 is achievable without
-// heavy same-run repetition (see the no-repeat-until-exhausted bag in
-// eventDirector.ts). Still short of the full ~20-25 event vertical-slice
-// checkpoint from GDD §16 — that's the next content pass, not this one.
+// With 24 events now in the pool (1 intro + 23 bag), 13 draws never repeat
+// within a run (see the no-repeat-until-exhausted bag in eventDirector.ts).
+// That meets the ~20-25 event vertical-slice target from GDD §16.
 export const RUN_EVENT_TARGET = 13;
 
 export function createInitialState(startingStats: Stats, events: GameEvent[], rng: Rng): RunState {
