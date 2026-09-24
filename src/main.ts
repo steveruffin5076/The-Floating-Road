@@ -331,7 +331,7 @@ function renderRest(): void {
   const innBtn = document.createElement('button');
   innBtn.className = 'choice';
   const canAfford = state.money >= 150;
-  innBtn.textContent = `Pay for a room at the hatago — 150 mon${canAfford ? '' : ' (not enough money)'}`;
+  innBtn.textContent = `Pay for a room at the hatago (a post-town inn) — 150 mon${canAfford ? '' : ' (not enough money)'}`;
   if (!canAfford) innBtn.setAttribute('disabled', 'true');
   innBtn.addEventListener('click', () => {
     if (state!.money < 150) return;
@@ -402,7 +402,7 @@ function renderCombat(): void {
     const choicesEl = document.createElement('div');
     choicesEl.className = 'choices';
     const stances: { id: Stance; label: string }[] = [
-      { id: 'aggressive', label: '攻 Aggressive — clean kill if you win, worse wounds if you lose' },
+      { id: 'aggressive', label: '攻 Aggressive — press the attack, but worse wounds if you lose' },
       { id: 'defensive', label: '守 Defensive — a longer fight, but losses hurt less' },
       { id: 'escape', label: '逃 Escape Attempt — try to flee instead of fighting (Me check)' },
     ];

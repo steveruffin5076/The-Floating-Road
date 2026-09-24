@@ -50,7 +50,9 @@ export const ACT1_EVENTS: GameEvent[] = [
         check: { stat: 'kuchi', dc: 4 },
         onSuccess: { text: 'The guard waves you through, bored and unconvinced enough to not care.' },
         onFailure: {
-          text: 'The guard squints at your papers too long. You pay a "processing fee" to be let through.',
+          text:
+            'The guard squints at your papers too long. A string of mon on his tray, "for the guardhouse ' +
+            'brazier," shortens his reading.',
           effects: { money: -30, suspicion: 1 },
         },
       },
@@ -66,8 +68,8 @@ export const ACT1_EVENTS: GameEvent[] = [
       {
         text: 'Simply pay the guard to look elsewhere.',
         onResolve: {
-          text: 'Money changes hands quietly. No questions, no trouble.',
-          effects: { money: -80 },
+          text: 'Money changes hands. Even a bought guard at Hakone remembers a face.',
+          effects: { money: -80, suspicion: 1 },
         },
       },
     ],
@@ -124,17 +126,23 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'Procession Day-Labor',
     body:
-      "A daimyō's sankin-kōtai procession has stalled ahead, and its porters are short-handed. " +
+      "A daimyō's sankin-kōtai procession, marching to his alternate year in Edo, has stalled ahead, and " +
+      'its porters are short-handed. ' +
       'Honest work, if grueling — hauling baggage for men who will never learn your name.',
     weight: 2,
     choices: [
       {
         text: 'Take the heaviest loads for the best pay.',
         check: { stat: 'chikara', dc: 4 },
-        onSuccess: { text: 'You carry your share and more. The foreman pays fairly.', effects: { money: 70 } },
+        onSuccess: {
+          text:
+            'You set your swords in the foreman’s keeping and shoulder crates beside men who would have ' +
+            'bowed to your father. You carry your share and more. The foreman pays fairly.',
+          effects: { money: 70, resolve: -1 },
+        },
         onFailure: {
           text: 'Your back gives out under the third crate. You finish the day sore and underpaid.',
-          effects: { money: 20, health: -2 },
+          effects: { money: 20, health: -2, resolve: -1 },
         },
       },
       {
@@ -149,7 +157,8 @@ export const ACT1_EVENTS: GameEvent[] = [
     title: 'A Bakuchiba Off the Road',
     body:
       'Past the tree line, a bamboo-and-cloth hut hides a chō-han game — two dice, a cup, and men who ' +
-      'watch the roll a little too closely. A professional ear can sometimes tell odd from even by sound alone.',
+      'watch the roll a little too closely. They say a professional ear can tell odd from even by the ' +
+      'sound of the dice alone.',
     weight: 1,
     choices: [
       {
@@ -226,8 +235,10 @@ export const ACT1_EVENTS: GameEvent[] = [
     // to lean on — the bag can draw either combat event first (was 12).
     foe: { name: 'Night tsujigiri attacker', power: 9 },
     onWin: {
-      text: 'He misjudged you. You leave him where he falls and take back the road.',
-      effects: { money: 20 },
+      text:
+        'He misjudged you. You leave him where he falls and take back the road. By morning someone will ' +
+        'find him, and someone will remember a masterless man walked this stretch last night.',
+      effects: { money: 20, suspicion: 1 },
     },
     onLose: {
       text: 'He is faster than he looked. You crawl the last stretch to the next light you can find.',
@@ -239,8 +250,11 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'A Drunken Retainer’s Insult',
     body:
-      'A low-ranking samurai, deep in his cups outside a teahouse, decides your face offends him. A ' +
-      'sober man in his position could claim kirisute gomen for far less — and answer for it later, or not.',
+      'A low-ranking retainer, deep in his cups outside a teahouse, decides your face offends him. You ' +
+      'wear two swords, same as he does, so the law gives him no easy cut: kirisute gomen, a samurai’s ' +
+      'right to strike down a commoner for gross insolence, is not meant for men like you, and even ' +
+      'against a townsman it means an inquiry afterward. But he is drunk, you are masterless, and no ' +
+      'lord will come asking after you.',
     weight: 1,
     choices: [
       {
@@ -290,8 +304,8 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'A Shrine Sumo Bout',
     body:
-      'A shrine is raising funds with an open sumo exhibition — a real side-hustle for rōnin between ' +
-      'jobs. Win a bout, and the crowd’s coin is yours.',
+      'A shrine is raising money with an open sumo bout. Masterless men have wrestled at such ' +
+      'fund-raisers for as long as there have been masterless men. Win, and the crowd’s coin is yours.',
     weight: 1,
     choices: [
       {
@@ -336,7 +350,7 @@ export const ACT1_EVENTS: GameEvent[] = [
   {
     id: 'shrine_festival',
     type: 'story',
-    title: 'A Festival Mid-Famine',
+    title: 'A Festival in a Lean Year',
     body:
       'Despite a hard year, the village holds its shrine festival anyway — lanterns, cheap sake, a ' +
       'reason to forget the empty granaries for one night.',
@@ -357,7 +371,8 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'An Okappiki’s Questions',
     body:
-      'A man who is not quite a dōshin but works for one falls in beside you at the village well — an ' +
+      'A man who is not quite a dōshin, a magistrate’s constable, but works for one, falls in beside ' +
+      'you at the village well — an ' +
       'informant, paid to notice travelers whose papers do not quite match their story.',
     weight: 1,
     choices: [
@@ -376,19 +391,26 @@ export const ACT1_EVENTS: GameEvent[] = [
       },
     ],
   },
+  // source: 01 §B1, 1645 row
   {
     id: 'musashi_scroll',
     type: 'story',
     title: 'A Copied Page',
     body:
-      'A stall-keeper offers what he swears is a hand-copied page from Musashi’s own Go Rin no Sho — ' +
-      'freshly famous, since the old sword-saint died only a few years back. Copies are everywhere. Most are fakes.',
+      'A stall-keeper offers what he swears is a page from Go Rin no Sho, the Book of Five Rings, which ' +
+      'Musashi wrote for his students a few years before he died. The old sword-saint’s name sells ' +
+      'anything. Almost no one outside his school has seen the book; that has not stopped anyone selling it.',
     weight: 1,
     choices: [
       {
         text: 'Examine it closely before buying.',
         check: { stat: 'chi', dc: 6 },
-        onSuccess: { text: 'The brushwork checks out. A real find, cheaply bought.', effects: { money: -30, resolve: 1 } },
+        onSuccess: {
+          text:
+            'The brushwork is a student’s, not a forger’s: a school copy, sold by someone who needed rice ' +
+            'more than strategy.',
+          effects: { money: -30, resolve: 1 },
+        },
         onFailure: { text: 'You pay too much for what is almost certainly a forgery.', effects: { money: -50, resolve: -1 } },
       },
       {
@@ -402,7 +424,7 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'Fire in the Post-Town',
     body:
-      'Smoke and shouting wake the whole post-town at once — a lamp caught the thatch of a hatago, and ' +
+      'Smoke and shouting wake the whole post-town at once — a lamp caught the thatch of a hatago inn, and ' +
       'these wooden buildings burn fast. People are still inside.',
     weight: 1,
     choices: [

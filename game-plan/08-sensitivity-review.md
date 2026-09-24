@@ -336,10 +336,39 @@ Sections B, C (except C5), and D: N/A for every row (see N7).
 
 ## Follow-up
 
-- Nothing has been applied. Every fix above is to `src/content/`, pending the
-  user's call.
-- `progress.md` still lists "No historical-sensitivity review pass yet." It
-  should be updated to point here once the user accepts this pass.
+- Fixes: see "Follow-up: fixes applied" below.
 - Research follow-ups for `01` (not edited here): qualify "his book
   circulates" (S6); add the rōnin/kirisute-gomen standing (M1); verify the
   sekisho-yaburi penalty (N1) and the date of the Ōi kawagoshi system (N2).
+
+## Follow-up: fixes applied
+
+The must-fix and all should-fixes have since been applied to
+`src/content/events.act1.ts` and `src/content/endings.ts`. No ids, weights,
+types, foe names or powers, or check stats/DCs were changed.
+
+- **M1** `kirisute_tension`: suggested body used; choices and outcomes kept.
+- **S1** `sumo_exhibition`: rewrite used.
+- **S2** `checkpoint_hakone`: "processing fee" line replaced with the brazier
+  rewrite.
+- **S3** `checkpoint_hakone`: ungated-with-a-cost option chosen. The bribe keeps
+  no check and its existing `money −80`, adds `suspicion +1`, and uses the new
+  "Even a bought guard at Hakone remembers a face" text.
+- **S4** `day_labor`: `resolve −1` on both outcomes; swords line added to the
+  success text.
+- **S5** `night_tsujigiri`: option (b) chosen. The death stays; `suspicion +1`
+  and the "By morning someone will find him" sentence added to onWin.
+- **S6** `musashi_scroll`: body and success outcome rewritten; tagged
+  `// source: 01 §B1, 1645 row`.
+- **S7** `gambling_den`: rumor framing used.
+- **S8** `shrine_festival`: retitled "A Festival in a Lean Year".
+- **S9** `arrested`: place-neutral title, epilogue and note used; id unchanged.
+- **S10** `death`: note rewritten.
+- **S11**: inline glosses added for sankin-kōtai (`day_labor`), dōshin
+  (`informant_whisper`; `arrested` via the S9 text) and hatago
+  (`fire_disaster`).
+
+Left open: the notes N1–N7, and the research follow-ups for `01` listed above.
+Also fixed in `src/main.ts`: the aggressive stance label no longer promises a
+"clean kill" (the stance only scales loss damage; it never affected win
+outcomes), and the hatago rest button now glosses the term (S5, S11).

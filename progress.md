@@ -80,11 +80,11 @@ re-reading the whole conversation history to pick back up.
   content schema validator) — `04-technical-plan.md` §5 calls for these.
 - `03-story-and-content.md` and `04-technical-plan.md` haven't had a design
   review pass (only `02-game-design.md` has).
-- Sensitivity fixes not applied yet: checklist now exists (`03` §9.1) and
-  has been run once on the vertical slice (`game-plan/08-sensitivity-review.md`)
-  — 1 must-fix (`kirisute_tension` misstates kirisute-gomen), 11 should-fix,
-  none applied to `src/` yet. The slice never touches outcast groups, women
-  as characters, or Tale 6 material, so those checklist areas are unexercised.
+- Sensitivity pass: checklist exists (`03` §9.1), run once on the vertical
+  slice (`game-plan/08-sensitivity-review.md`); the must-fix and all 11
+  should-fixes are applied. Still open: notes N1–N7 and four research
+  follow-ups for `01`. The slice never touches outcast groups, women as
+  characters, or Tale 6 material, so those checklist areas are unexercised.
 - Vertical slice is still short of its own ~20-25 event target from GDD §16
   (currently 19 including the intro).
 

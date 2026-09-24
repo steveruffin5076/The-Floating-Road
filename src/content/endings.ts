@@ -15,8 +15,8 @@ export const ENDINGS: Record<string, EndingContent> = {
       'They leave you where you fall, as the road always has for men like you. No family comes; ' +
       'no domain claims the body. A woodcutter buries you off the verge by autumn, unnamed.',
     historicalNote:
-      'Unclaimed dead along the Tōkaidō were common enough that way-stations kept modest burial grounds ' +
-      'for travelers who died anonymously — rōnin especially, since no domain was obligated to claim them.',
+      'No domain was obligated to claim a rōnin’s body. A traveler who died on the road with no one to ' +
+      'claim him was buried where he fell, or by whichever temple or village would take the trouble.',
   },
   despair: {
     title: 'The Road Ends Here',
@@ -28,14 +28,16 @@ export const ENDINGS: Record<string, EndingContent> = {
       'labor, or temple work — abandoning samurai status entirely rather than starve maintaining it.',
   },
   arrested: {
-    title: 'Taken at the Barrier',
+    title: 'Taken on the Road',
     epilogue:
-      'A dōshin patrol finally has enough cause, and a name to put to your face. You are marched back ' +
-      'toward Edo in restraints, your case bound for Kodenmachō and whatever the magistrate decides.',
+      'Your face reaches the right office at last. They take you at an inn before dawn, bind you with ' +
+      'cord, and send you east under escort, your case bound for Kodenmachō, Edo’s jailhouse, and ' +
+      'whatever the magistrate decides.',
     historicalNote:
-      'The machi-bugyō and their dōshin kept watch-lists and informant networks (okappiki) specifically ' +
-      'for masterless samurai suspected of banditry or unlicensed vendettas — Suspicion, in the game, ' +
-      'stands in for exactly this kind of accumulating official attention.',
+      'Edo’s city magistrates (machi-bugyō) and their dōshin constables worked through informants ' +
+      '(okappiki), often ex-criminals themselves, and masterless samurai were among the people they ' +
+      'watched most closely. Suspicion, in the game, stands in for exactly this kind of accumulating ' +
+      'official attention.',
   },
   reached_edo: {
     title: 'The Gates of Edo',
