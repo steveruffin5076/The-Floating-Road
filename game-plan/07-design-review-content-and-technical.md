@@ -482,12 +482,14 @@ were folded into `02`:
 - **§7 Testing status:** status line added to `04` §5, naming the schema validator
   as the next infrastructure piece.
 - **§8 Unscoped systems:** "not built, not cut" note added to `04` §7.
+- **§1.3 open formulas, now specified:** gambling den in `02` §9.2, peddling in
+  `02` §9.3, den network (per-den counters, not Reputation) in `02` §9.4, schema
+  keys in `04` §3.3. `04` §7, `03` Tale 4, and `03` sample 3 point to them.
 
 **Deliberately left open:**
 
-- The three undefined formulas (gambling den, peddling prices, Tale 4 den-network
-  track). They're named in `02` §9.2 but not designed, and deferred until Tale 3/4
-  authoring.
+- ~~The three undefined formulas~~. Specified since; see the §1.3 line above. Still
+  not implemented.
 - The sensitivity checklist itself. It's marked TODO in `03` §9 and `02` §17, and
   drafting it is a separate task.
 - §3's optional cameo source-tagging (tagging named-cameo events with their

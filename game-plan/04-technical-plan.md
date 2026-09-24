@@ -172,6 +172,104 @@ fire directly via `end_run`.
   `counter_inc`. Some counters (e.g. `combat_wins` for "4+ combat wins") can be
   engine-maintained. Requirements compare with `counters_min` / `counters_max`.
 
+### 3.3 Den, peddling, and den-network keys (sketch)
+
+These are for GDD §9.2–§9.4. Wherever possible they reuse existing keys (`check`,
+`requires`, `counter_inc`, `counters_min`, `stat_delta`, `items_any`). The list
+of genuinely new pieces is short.
+
+**Station placeholder.** Flag and counter names may contain `{station}`, which
+resolves to the current station id from location state (§4). That's how per-den
+state (`den_marked.{station}`, `den_standing.{station}`) is authored once in a
+shared event and stored per town.
+
+**Signed, clamped counters.** `counter_inc` gains an optional `by` (signed
+integer, default 1). Clamps are declared once in a counter registry
+(`counters.json`), not per effect, e.g. `"den_standing.*": { "min": -2, "max": 2 }`,
+`"den_heat": { "min": 0, "decay_per_season_tick": 1 }`. Engine-maintained roll-ups
+(`dens_allied`, `dens_feuding`) are recomputed whenever a `den_standing.*` counter changes,
+the same way §3.2's `combat_wins` works.
+
+**Den node.** A `den` block on an event turns on the chō-han mini-game. The
+engine derives `B` (base stake) and the DC tier add from `tier`, and tracks
+`visit_net` (this visit's running win/loss) until the player leaves the node.
+
+```jsonc
+{
+  "id": "posttown_chohan_den", "pool": "post-town", "acts": [1, 2, 3],
+  "den": { "tier": "provincial" },     // provincial | city → B 20 | 50, dc tier add 0 | +2 (GDD §9.2)
+  "choices": [
+    { "text_key": "…honest", "wager": { "table": "shallow" } },  // up to 5 rounds at S = B, win 0.9S / lose S; sets knows_the_mat
+    { "text_key": "…deep",   "wager": { "table": "deep" } },     // S = 5B; engine offers loan when visit_net ≤ −100
+    {
+      "text_key": "…watch",
+      "requires": { "flags": ["knows_the_mat"], "flags_not": ["den_marked.{station}"] },
+      "skill_attempt": true,                                     // one per visit: closes the other skill_attempt choices
+      "check": { "stat": "me", "dc": 6, "den_dc": true,          // den_dc: + tier add + counters.den_heat
+                 "mods": [ { "if_trait": "gamblers_ear", "pct": 5 },
+                           { "if_counters_min": { "cup_mastery": 2 }, "pct": 10 } ] },
+      "on_success": { "result_key": "…read_him", "effects": [
+          { "money_stake": 7.2 },                                // money += round(7.2 × B)
+          { "set_flag": "den_marked.{station}" },
+          { "counter_inc": "den_heat" },
+          { "counter_inc": "den_standing.{station}", "by": -1 } ] },
+      "on_failure": { "goto": "posttown_chohan_den.stare_problem",
+          "effects": [ { "money_stake": -2 }, { "forfeit_visit_winnings": true } ] }
+    },
+    {
+      "text_key": "…sleeve", "skill_attempt": true,
+      "requires": { "flags": ["knows_the_mat"], "flags_not": ["den_marked.{station}"] },
+      "check": { "stat": "waza", "dc": 7, "den_dc": true },
+      "on_success": { "effects": [ { "money_stake": 12.5 }, { "gi": -1 }, { "set_flag": "cheated_den" },
+          { "set_flag": "den_marked.{station}" }, { "counter_inc": "den_heat", "by": 2 },
+          { "counter_inc": "den_standing.{station}", "by": -1 } ] },
+      "on_failure": { "goto": "posttown_chohan_den.caught",      // sub-node: fingers (health −4 + stat_delta waza −1) | buy back (money_mult 0)
+          "effects": [ { "counter_inc": "den_heat" }, { "counter_inc": "den_standing.{station}", "by": -2 } ] }
+    }
+  ]
+}
+```
+
+New keys, in full:
+- `den` (event block): `tier`. The hostile variant is the same event with
+  `den_marked.{station}` set; the engine doubles the house cut to a fifth.
+- `wager` (choice field): runs the chō-han rounds with dice from the main RNG,
+  then returns to the node. This is the only new node-type behaviour.
+- `skill_attempt` (choice flag): the one-per-visit rule.
+- `den_dc` (check flag), and mod predicates `if_trait` and `if_counters_min` beside
+  the existing `if_flag`.
+- Effects: `money_stake` (a signed multiple of B), `forfeit_visit_winnings`,
+  `loan` (`{"loan": {"stake_mult": 5}}`; the engine routes it to `den_loan`, or to
+  the Tale 3 ledger with `bunzo_den_note`, per GDD §9.2).
+- Tale 4 mastery is plain counter use: `counter_inc: "cup_mastery"` on each
+  *[The Cup Remembers]* event, and mastery-gated choices use `counters_min`.
+- Ending gate: `"counters_min": { "dens_allied": 5 }` for *The Cup Passes*.
+
+**Goods and prices.** Trade goods are items (`kind: "trade_good"`) with `units`
+and `cost_basis` (for the profit readout), so `items_any: ["tea"]` already works as
+a requirement. Goods data lives in `goods.json`, and station → region is route data:
+
+```jsonc
+{ "id": "tea", "base_price": 50, "stack": 5, "depth": 5,
+  "region_mult": { "kamigata": 1.0, "owari_mikawa": 1.0, "totomi_suruga": 0.75, "hakone": 1.1, "kanto": 1.3 },
+  "risk": { "type": "theft", "rider_pct": 25, "on": ["night", "inn_cheap"],
+            "check": { "stat": "me", "dc": 5 }, "loss": "half_round_up" } }
+// fish: risk { "type": "spoilage", "seasons": ["summer"], "pct_per_rest": 20 }
+// blades: risk { "type": "checkpoint", "check": { "stat": "kuchi", "dc": 4 },
+//                "mods": [ { "if_item": "bill_of_sale", "pct": 10 } ], "auto_pass_class": "samurai",
+//                "fail": { "lesser_pct": 75, "fee_pct_of_basis": 25, "else": "confiscate", "suspicion": 1 } }
+```
+
+- `market` (choice field): `{"market": {"depth_mult": 1}}` on post-town rest nodes,
+  and `2` on Nihonbashi/Osaka/Kyoto market events. Opens the buy/sell screen.
+- Price lookup is a pure function, `priceOf(good, station, seasonTick, runSeed, H)`,
+  implementing GDD §9.3. Its noise comes from a **separate hash-seeded sub-RNG**
+  (`mulberry32(hash32(runSeed, good, station, seasonTick))`) and never advances the
+  main `rngState`, so viewing a market can't perturb event draws, saves stay
+  stable, and daily seeds give everyone the same prices.
+- `remove_item` gains optional `units` / `pct` for theft, spoilage, and confiscation.
+  Risk riders are engine hooks driven by `goods.json`, not per-event content.
+
 ## 4. Systems implementation notes
 
 - **EventDirector:** per-pool bags with Fisher–Yates (seeded); draw = pick act-pacing
@@ -234,7 +332,8 @@ fire directly via `end_run`.
 - No multiplayer/social beyond shareable daily-seed result strings (client-side only).
 
 **Not on this list, and not built either:** the standalone chō-han gambling den
-(stakes, house cut, cheat/tell payouts) and the peddling buy/sell loop. Neither is
-cut. Both are load-bearing for 03's content (all of Tale 4, part of Tale 3), have
-no formula yet (see GDD §9.2, "Open formula work"), and need a formula plus a
-schema sketch before Tale 3/4 authoring starts.
+(stakes, house cut, cheat/tell payouts), the peddling buy/sell loop, and Tale 4's
+den-network standing. None is cut. All are load-bearing for 03's content (all of
+Tale 4, part of Tale 3). They are now specified but not implemented: formulas in
+GDD §9.2 (den), §9.3 (peddling), §9.4 (den network), schema keys in §3.3 above.
+Build them in P3 (V1.0) with Tales 3/4.

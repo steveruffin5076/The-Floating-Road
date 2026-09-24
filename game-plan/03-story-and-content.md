@@ -240,8 +240,10 @@ collecting a funeral list.
 **Mechanics hook:** this Tale *starts with* the chō-han system fully unlocked
 (other Tales discover it mid-run) and gets a den-network reputation track instead of
 the usual employer track. Gambling is income AND combat-adjacent (den brawls).
-*(Open formula work, see `02` §9.2: it's undecided whether the den-network track is
-Reputation re-skinned or a separate per-den track.)*
+*(Specified in `02` §9.2–§9.4: den stakes and payouts in §9.2, including what
+"fully unlocked" means (`cup_mastery` tiers from *[The Cup Remembers]*), and the
+den-network track in §9.4. It's a per-den standing (`den_standing.<station>`, −2…+2),
+separate from Reputation, and "5+ dens allied" means `dens_allied` ≥ 5.)*
 
 **Cast.** **Oyabun "Iron Cup" Gonbei** (your dead mentor, in flashbacks), **Koharu**
 (a tekiya peddler boss's sharp-tongued daughter — the rival network is her family;
@@ -481,20 +483,25 @@ magic).
 > Minimum bet: 20 mon. The house takes a tenth.
 
 - **Play honest. One round.** (chō-han mini-game: call chō/han; 50/50 minus house
-  cut; can stop anytime — greed is the mechanic)
+  cut; can stop anytime — greed is the mechanic) *[`02` §9.2: stop anytime, but
+  capped at 5 rounds per visit; honest EV is −5% of stake per round.]*
 - **Play deep.** (same, stakes ×5; at loss ≥ 100 mon the dealer offers a loan —
   Tale 3 special dialogue: *"Bunzō-san sends his regards."*)
 - **Watch the cup. Not the dice — the dealer's wrist.** [Me DC 6]
   - Success: He favors chō on the third shake — a wrist-lock tells. You win four
     rounds in a row. The mat goes quiet in a way that has edges. (money +160 mon,
     flag `den_marked_you` → next den visit at this town: hostile variant)
+    *[Revised in `02` §9.2: pays 7.2 × base stake, i.e. **+144 mon** at a 20-mon
+    den (four wins at double stake, less the house tenth). The flag is per-town
+    `den_marked.<station>`. Failure costs 2 × base stake plus this visit's
+    winnings. Accuse success, "10% of the night", = 5 × base stake.]*
   - Failure: Your eyes moved. His stopped. "Friend," the dealer says, warmly, "you
     have a *stare* problem." Two men stand up. → *Leave winnings and go* (−all
     round's profit) or *Accuse him of loaded dice first* [Kuchi DC 7 — brilliant
     desperate gambit: success → he cuts you in for 10% of the night (Tale 4 hook);
     failure → combat vs `den_enforcers` Power 10, in a hut, with witnesses]
 - **Cheat: sleeve the die you palmed from the mat.** [Waza DC 7]
-  - Success: +250 mon. Gi/Aku −1. Flag `cheated_den` (Tale 4: the cup remembers —
+  - Success: +250 mon *[`02` §9.2: 12.5 × base stake, unchanged at a 20-mon den]*. Gi/Aku −1. Flag `cheated_den` (Tale 4: the cup remembers —
     Koharu's people hear about it; reputation among gamblers becomes double-edged).
   - Failure: Burn scars, they say, come from holding hot dice. They don't tell you
     whose hand was holding. → *Caught* (fingers broken: −Health 4, permanent −1
