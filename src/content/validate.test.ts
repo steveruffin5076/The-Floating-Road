@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { GameEvent, StoryEvent } from '../engine/types';
 import { ACT1_EVENTS, INTRO_EVENT } from './events.act1';
+import { TALE1_ACT1_CHAIN } from './chain.tale1.act1';
+import { poolFor } from '../engine/eventDirector';
 import { ENDINGS } from './endings';
 import { validateContent } from './validate';
-import { ACTS, TRAITS } from './tale';
+import { ACTS, TALE_START_FLAGS, TRAITS } from './tale';
 import type { ActSpec } from '../engine/types';
 
-const TRAIT_FLAGS = TRAITS.flatMap((t) => (t.flag ? [t.flag] : []));
+const TRAIT_FLAGS = [...TRAITS.flatMap((t) => (t.flag ? [t.flag] : [])), ...TALE_START_FLAGS];
 
-const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS];
+const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
 
 const story = (overrides: Partial<StoryEvent> = {}): StoryEvent => ({
   id: 'test_event',
@@ -33,9 +35,10 @@ describe('built content', () => {
     expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS, ACTS)).toEqual([]);
   });
 
-  it('keeps the pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
-    expect(ALL_EVENTS.length).toBeGreaterThanOrEqual(20);
-    expect(ALL_EVENTS.length).toBeLessThanOrEqual(25);
+  it('keeps the random pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
+    const pool = poolFor(ALL_EVENTS, 1).length + 1; // + intro
+    expect(pool).toBeGreaterThanOrEqual(20);
+    expect(pool).toBeLessThanOrEqual(25);
   });
 });
 

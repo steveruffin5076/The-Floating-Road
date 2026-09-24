@@ -272,7 +272,7 @@ export const ACT1_EVENTS: GameEvent[] = [
       },
       {
         text: 'Bow low and let it pass.',
-        onResolve: { text: 'It costs you nothing but the taste of it.', effects: { resolve: -1 } },
+        onResolve: { text: 'It costs you nothing but the taste of it.', effects: { resolve: -1 }, setFlags: ['swallowed_insult'] },
       },
     ],
   },

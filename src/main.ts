@@ -9,10 +9,11 @@ import { actSpec, enterNode, nextStep, recordResolved, runCompleteEnding } from 
 import { forcedEnding } from './engine/endings';
 import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
+import { TALE1_ACT1_CHAIN } from './content/chain.tale1.act1';
 import { ENDINGS } from './content/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
 
-const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS];
+const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
 const EVENTS_BY_ID = new Map(ALL_EVENTS.map((e) => [e.id, e]));
 
 type CombatResult = 'won' | 'lost' | 'escaped';

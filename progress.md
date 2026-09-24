@@ -127,6 +127,20 @@ re-reading the whole conversation history to pick back up.
     13-event act ending at `reached_edo` (`ACTS` in `tale.ts`), so play is
     unchanged; verified by three full browser runs plus a simulated run test.
 
+19. **Engine step 3: endings, goto, combat from a choice** — endings are
+    data (`forcedWhen` for death/despair/arrest, evaluated `requires` +
+    `priority`, one fallback); outcomes can `goto` a node event without
+    using a slot, and a combat node is how a choice starts a fight; check
+    mods, `moneyMult`, `setTracks`, a combat win% mod, and the engine-kept
+    `combat_wins` counter.
+20. **Tale 1 Act 1 chain authored** (`src/content/chain.tale1.act1.ts`) —
+    the Arai watch-list barrier, Men With No Banners, the claim at Fujieda,
+    O-Ryō at Mariko, and Sahei near Sunpu (with the father's letter), plus
+    their fight and follow-up nodes. Act 1 is now 14 events (11 §4.1), and
+    carrying the letter to Edo gives a distinct ending (`reached_edo_letter`).
+    The letter follows `03`'s premise; the "Katsuragi's men killed him"
+    version from `11` §5.1 is still your call.
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -138,9 +152,12 @@ re-reading the whole conversation history to pick back up.
   penalty, Ōi porter-system date, gonin-gumi reporting duty, polishing as a
   specialist craft). Outcast groups (checklist §B) and Tale 6 are still
   unexercised by any built content.
-- Engine still missing for P1.5 (`11` §6): the `endings.json` evaluator,
-  sub-nodes and `goto`, combat launched from a choice, check mods. Run state,
-  requirements and the act director are done.
+- Engine for P1.5 (`11` §6) is complete except trajectory hints (#13).
+- **Act 1 balance finding** (20k-run random-choice sim): 26% of runs end in
+  arrest, up from 17.5% before the chain, and death/despair are ~0%.
+  Suspicion is effectively the only failure mode in Act 1; health and
+  Resolve pressure are too weak to matter. Worth a tuning pass with a real
+  sim harness (`04` §5).
 - P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
 - Tale 1 premise: a licensed vendetta avenges a *killing*, not a surrender, so
   `03` §4's premise should say Katsuragi's men cut the father down (`11` §5.1).
@@ -153,5 +170,6 @@ re-reading the whole conversation history to pick back up.
 
 ## Suggested next steps (not started)
 
-Next in the `11` §6 build order: the `endings.json` evaluator, then
-sub-nodes/`goto` and combat from a choice. Then author Tale 1's chain.
+See the latest suggestions in the conversation; the engine now supports
+the full Tale 1 chain, so remaining work is content (Act 2/3 pools and
+chain events) plus a proper sim harness for tuning.

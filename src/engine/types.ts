@@ -110,15 +110,14 @@ export interface EndingSpec {
 }
 
 // 11 §1.1 `inject` block. A chain event fires at a slot of its act instead of
-// a random draw. `slot` is 1-based; it may fire up to `window` slots late and
-// `early` slots early. With `afterEvent`, the slot counts from where that event
-// resolved in this act. Mandatory injections hold the act open until they fire;
-// others lapse when their window closes and apply `onLapse`.
+// a random draw. `slot` is 1-based; if blocked (a collision or an unmet gate)
+// it may fire up to `window` slots late. With `afterEvent`, the slot counts from
+// where that event resolved in this act. Mandatory injections hold the act open
+// until they fire; others lapse when their window closes and apply `onLapse`.
 export interface InjectSpec {
   act: number;
   slot: number;
   window?: number;
-  early?: number;
   afterEvent?: string;
   priority?: number;
   mandatory?: boolean;

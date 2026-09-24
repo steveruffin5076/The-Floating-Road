@@ -24,7 +24,7 @@ function windowOf(inj: InjectSpec, state: RunState): { start: number; end: numbe
     if (at === undefined) return null;
     base = at + inj.slot;
   }
-  return { start: base - (inj.early ?? 0), end: base + (inj.window ?? 0) };
+  return { start: base, end: base + (inj.window ?? 0) };
 }
 
 function pending(state: RunState, events: GameEvent[]): GameEvent[] {

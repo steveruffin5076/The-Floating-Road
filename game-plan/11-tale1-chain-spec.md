@@ -974,6 +974,17 @@ that still ends at `reached_edo`; switching it to `t1_gates_of_edo` is a
 one-line `ACTS` change once Act 2 has a pool. Remaining: #5–#7, #10, #11
 (`money_mult`, set-to-value), #13.
 
+*Update 2:* #5 (sub-nodes via `goto`), #6 (combat launched from a choice,
+as a combat node, with `winPctMod`), #7 (check `mods`), #10 (data-driven
+endings: `forcedWhen`, evaluated `requires` + `priority`, one `fallback`),
+the rest of #11 (`moneyMult`, `setTracks`) and the engine-kept
+`combat_wins` counter are built. The Act 1 chain (C1–C4, S1) is authored in
+`src/content/chain.tale1.act1.ts`. Implementation note: the §1.0 table's
+"±2" windows are built as slot + forward window only (§1.1's own model):
+a chain event fires at its slot and slides later only when blocked. An
+early side made every "±2" event fire at its earliest slot. Only #13
+(trajectory hints) remains.
+
 **Top three gaps**, in build order:
 1. **Run state and requires:** flags, counters and items, with event- and
    choice-level `requires` (#1–#4). Nothing in this chain can gate without them.

@@ -42,6 +42,19 @@ export const ENDINGS: Record<string, EndingSpec> = {
       'watched most closely. Suspicion, in the game, stands in for exactly this kind of accumulating ' +
       'official attention.',
   },
+  reached_edo_letter: {
+    requires: { itemsAny: ['fathers_letter'] },
+    priority: 10,
+    title: 'The Gates of Edo',
+    epilogue:
+      'Nihonbashi bridge rises ahead of you at last — the zero marker of every road in the realm. Inside ' +
+      'your jacket, against your ribs, is a letter in your father’s hand with Katsuragi Hyōgo’s name in ' +
+      'it. Somewhere in this city is the man it names. Whatever you become next, it starts here.',
+    historicalNote:
+      "Nihonbashi ('Bridge of Japan') was the official starting point of all five shogunate highways and " +
+      "Edo's commercial heart. Many rōnin came to Edo for the same reason: it was where the shogunate's " +
+      'offices were, and where a grievance could be heard, or a man could disappear.',
+  },
   reached_edo: {
     fallback: true,
     title: 'The Gates of Edo',

@@ -146,12 +146,12 @@ function checkActs(events: GameEvent[], endings: Record<string, EndingSpec>, act
     if (e.acts) issues.push({ where, message: 'chain events never enter a bag; remove `acts`' });
     if (!actNums.has(inj.act)) issues.push({ where, message: `act ${inj.act} is not defined` });
     if (inj.slot < 1 && !inj.afterEvent) issues.push({ where, message: 'slot must be 1 or more' });
-    if ((inj.window ?? 0) < 0 || (inj.early ?? 0) < 0) issues.push({ where, message: 'window and early must be 0 or more' });
+    if ((inj.window ?? 0) < 0) issues.push({ where, message: 'window must be 0 or more' });
     if (inj.afterEvent && !byId.has(inj.afterEvent)) {
       issues.push({ where, message: `unknown afterEvent "${inj.afterEvent}"` });
     }
     const length = acts.find((a) => a.act === inj.act)?.length ?? Infinity;
-    if (!inj.afterEvent && !inj.mandatory && inj.slot - (inj.early ?? 0) > length) {
+    if (!inj.afterEvent && !inj.mandatory && inj.slot > length) {
       issues.push({ where, message: `window starts after the act ends (length ${length}); it can never fire` });
     }
   }

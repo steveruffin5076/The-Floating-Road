@@ -6,6 +6,7 @@ import { createInitialState } from './state';
 import type { ActSpec, GameEvent, InjectSpec, Requirement } from './types';
 import { STARTING_STATS, ACTS } from '../content/tale';
 import { ACT1_EVENTS, INTRO_EVENT } from '../content/events.act1';
+import { TALE1_ACT1_CHAIN } from '../content/chain.tale1.act1';
 
 const story = (id: string, extra: { acts?: number[]; inject?: InjectSpec; requires?: Requirement } = {}): GameEvent => ({
   id,
@@ -149,23 +150,28 @@ describe('nextStep: act transitions', () => {
 });
 
 describe('the built slice through the director', () => {
-  it('plays the intro plus 12 draws with no repeats, then reaches Edo', () => {
-    const all = [INTRO_EVENT, ...ACT1_EVENTS];
+  it('plays the intro, all five Tale 1 chain events and 8 draws with no repeats, then ends', () => {
+    const all = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
+    const chainIds = TALE1_ACT1_CHAIN.filter((e) => e.inject).map((e) => e.id);
     for (const seed of [1, 2, 3, 4, 5]) {
       const rng = mulberry32(seed);
-      const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
+      const state = createInitialState({ ...STARTING_STATS }, all, rng);
+      state.flags.add('watch_list_active');
       recordResolved(state, INTRO_EVENT.id, all, rng);
-      const drawn: string[] = [];
+      const shown: string[] = [];
       let step = nextStep(state, all, ACTS, ENDINGS, rng);
       while (step.kind === 'event') {
-        drawn.push(step.id);
+        shown.push(step.id);
         recordResolved(state, step.id, all, rng);
         step = nextStep(state, all, ACTS, ENDINGS, rng);
       }
       expect(step).toEqual({ kind: 'ending', endingId: 'reached_edo' });
-      expect(drawn).toHaveLength(12);
-      expect(new Set(drawn).size).toBe(12);
-      expect(drawn).not.toContain(INTRO_EVENT.id);
+      expect(shown).toHaveLength(13);
+      expect(new Set(shown).size).toBe(13);
+      expect(shown.filter((id) => chainIds.includes(id))).toEqual(chainIds); // all five, in spec order
+      expect(shown.indexOf('checkpoint_watchlist') + 2).toBe(4); // its slot (intro is slot 1)
+      expect(shown.indexOf('spine1_men_with_no_banners') + 2).toBe(6);
+      expect(shown).not.toContain(INTRO_EVENT.id);
     }
   });
 });
