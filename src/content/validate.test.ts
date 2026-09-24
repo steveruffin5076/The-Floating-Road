@@ -72,10 +72,14 @@ describe('validator catches', () => {
     expect(messages([story({ body: 'The road ends.Then it rains.' })])).toContain('missing space');
   });
 
-  it('DCs above the Act 1 range', () => {
+  it('DCs above each act’s range (02 §6)', () => {
     const e = story();
-    e.choices[1].check = { stat: 'me', dc: 9 };
+    e.choices[1].check = { stat: 'me', dc: 7 };
     expect(messages([e])).toContain('outside Act 1 range');
+    expect(messages([{ ...e, acts: [2] }])).not.toContain('outside');
+    e.choices[1].check = { stat: 'me', dc: 9 };
+    expect(messages([{ ...e, acts: [2] }])).toContain('outside Act 2 range');
+    expect(messages([{ ...e, acts: [3] }])).not.toContain('outside');
   });
 
   it('a checked choice with no failure outcome', () => {

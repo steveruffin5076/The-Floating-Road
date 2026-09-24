@@ -13,7 +13,8 @@ export const RULES = {
   bodyMaxWords: 180, // 03 §9
   outcomeMaxWords: 120, // 03 §9
   epilogueMaxWords: 250, // 03 §9
-  act1MaxDc: 6, // 02 §6: "Act 1 rarely exceeds DC 6"
+  // 02 §6: "Act 1 rarely exceeds DC 6; Act 3 climax checks run DC 8–10".
+  maxDcByAct: { 1: 6, 2: 8, 3: 10 } as Record<number, number>,
   minDc: 2,
   minChoices: 2,
   maxChoices: 4,
@@ -83,6 +84,14 @@ function recordOutcome(outcome: Omit<Outcome, 'text'> | undefined, ledger: Ledge
   for (const i of outcome.addItems ?? []) ledger.itemsSet.add(i);
 }
 
+// The act an event plays in: its injection act, else its latest pool act.
+// Nodes (acts: []) return null; they inherit their parent's act.
+function eventAct(e: GameEvent): number | null {
+  if (e.inject) return e.inject.act;
+  const acts = e.acts ?? [1];
+  return acts.length ? Math.max(...acts) : null;
+}
+
 function checkStory(e: StoryEvent, endings: Record<string, EndingSpec>, issues: ContentIssue[]): void {
   const n = e.choices.length;
   if (e.choices.every((c) => c.requires)) {
@@ -100,8 +109,10 @@ function checkStory(e: StoryEvent, endings: Record<string, EndingSpec>, issues: 
     if (c.displayWhenUnmet && !c.requires) issues.push({ where, message: 'displayWhenUnmet without requires' });
     if (c.check) {
       if (c.onResolve) issues.push({ where, message: 'has both a check and onResolve' });
-      if (c.check.dc < RULES.minDc || c.check.dc > RULES.act1MaxDc) {
-        issues.push({ where, message: `DC ${c.check.dc} outside Act 1 range ${RULES.minDc}-${RULES.act1MaxDc}` });
+      const act = eventAct(e);
+      const maxDc = act === null ? Math.max(...Object.values(RULES.maxDcByAct)) : RULES.maxDcByAct[act] ?? 10;
+      if (c.check.dc < RULES.minDc || c.check.dc > maxDc) {
+        issues.push({ where, message: `DC ${c.check.dc} outside Act ${act ?? 'node'} range ${RULES.minDc}-${maxDc}` });
       }
       checkOutcome(`${where}.onSuccess`, c.onSuccess, endings, issues);
       checkOutcome(`${where}.onFailure`, c.onFailure, endings, issues);
