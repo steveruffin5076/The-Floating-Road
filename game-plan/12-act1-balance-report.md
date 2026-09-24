@@ -112,3 +112,40 @@ authoring:
   policies (e.g. an underworld-leaning bot for the Aku routes).
 - Money never binds in Act 1 (runs end with ~90–170 mon). It will matter once
   shops, the gambling den (`02` §9.2) and peddling (`02` §9.3) exist.
+
+## Follow-up: Acts 2 and 3 random pools, previewed
+
+The Act 2 (`src/content/events.act2.ts`, 10 Edo events) and Act 3
+(`src/content/events.act3.ts`, 6 events from the Keian summer) random pools
+are written. They aren't playable yet: the game still ends at Edo, because
+the Act 2–3 chains and Tale 1's 12 endings aren't authored. To measure them
+now, `npm run sim -- --preview` plays all three acts (`src/sim/preview.ts`).
+Acts 2 and 3 use their pools only, each sized to its pool (10 and 6 events)
+so nothing repeats, joined by stand-in transitions.
+
+Preview, 10,000 runs per policy:
+
+| | random | first-timer | careful-fighter | careful-talker |
+|---|---|---|---|---|
+| Survive all three acts | 7% | 63% | 99% | 93% |
+| Lost in Act 1 / 2 / 3 (of those who reached it) | 28 / 46 / 82% | 7 / 10 / 25% | 0 / 0 / 1% | 0 / 0 / 7% |
+| Resolve per event, Act 2 / Act 3 | −0.54 / −0.55 | −0.54 / −0.52 | −0.51 / −0.45 | −0.64 / −0.33 |
+| Arrested / despair / died | 60 / 22 / 11% | 25 / 10 / 3% | 0.7 / 0.4 / 0% | 6.7 / 0.4 / 0% |
+
+- **Resolve is on budget:** about −0.5 per event in Acts 2–3, as guided above.
+  Despair is now a real way to lose.
+- **Difficulty ramps by act:** first-timers lose 7%, then 10%, then 25% of
+  those still going.
+- **Fights calibrated:** Act 2's kabukimono went from foe power 12 to 14, and
+  Act 3's hunted rōnin from 14 to 16. That pulls fighters from ~79% to ~74%
+  shown win odds across the run and adds health pressure. Combat accuracy
+  stays within ±2%.
+- **One duplicate removed:** both pools had a "lantern-less bridge" fight.
+  Act 2's kabukimono toll moved to a lane behind the timber yards; Act 3 keeps
+  the bridge, where the hunted rōnin mirrors the player.
+- **First-timer survival here is 63%, above `02` §15's ~40%.** That's
+  expected: these acts are 10 and 6 events against 16 and 8 at full length
+  (`11` §4.1), and they carry none of their chain beats. The chains hold the
+  deadliest fights (the Katsuragi duel, the Sagawa sweeps, Sunpu). Death is
+  still rare (3% for first-timers), so the chain fights are where lethality
+  should come from. Re-measure when the chains are in before tuning further.

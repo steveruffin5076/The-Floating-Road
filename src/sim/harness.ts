@@ -103,6 +103,9 @@ export interface RunRecord {
   items: string[];
   minResolve: number;
   minHealth: number;
+  lastAct: number;
+  // Per act: events resolved and net track change, for the per-event budgets in 12.
+  byAct: Record<number, { events: number; resolve: number; health: number; suspicion: number }>;
   // Track changes attributed to the event (root or node) that caused them.
   deltas: Record<string, { suspicion: number; resolve: number; health: number }>;
 }
@@ -120,7 +123,7 @@ export function playRun(
   const state = createInitialState({ ...startingStats }, content.events, rng);
   for (const f of startFlags) state.flags.add(f);
   state.drawnOnce.add(intro.id);
-  const rec: RunRecord = { ending: 'stuck', events: 0, checks: [], fights: [], money: 0, suspicion: 0, repeats: 0, shown: [], items: [], deltas: {}, minResolve: state.resolve, minHealth: state.health };
+  const rec: RunRecord = { ending: 'stuck', events: 0, checks: [], fights: [], money: 0, suspicion: 0, repeats: 0, shown: [], items: [], deltas: {}, minResolve: state.resolve, minHealth: state.health, lastAct: 1, byAct: {} };
   const seenRoots = new Set<string>();
   let next: runner.Next = { kind: 'event', event: intro };
 
@@ -150,12 +153,18 @@ export function playRun(
       d.suspicion += state.suspicion - before.suspicion;
       d.resolve += state.resolve - before.resolve;
       d.health += state.health - before.health;
+      const a = (rec.byAct[state.act] ??= { events: 0, resolve: 0, health: 0, suspicion: 0 });
+      if (ev.acts?.length !== 0 || ev.inject) a.events++; // count roots, not nodes/transitions
+      a.resolve += state.resolve - before.resolve;
+      a.health += state.health - before.health;
+      a.suspicion += state.suspicion - before.suspicion;
       rec.minResolve = Math.min(rec.minResolve, state.resolve);
       rec.minHealth = Math.min(rec.minHealth, state.health);
       next = runner.afterOutcome(state, content, ev.id, outcome, rng);
     }
   }
   rec.ending = next.kind === 'ending' ? next.endingId : 'stuck';
+  rec.lastAct = state.act;
   rec.events = state.eventsResolved;
   rec.money = state.money;
   rec.suspicion = state.suspicion;
@@ -207,7 +216,33 @@ export function report(policy: Policy, runs: RunRecord[]): string {
       .slice(0, 5)
       .map(([id, t]) => `${id} ${(t[k] / n).toFixed(2)}`)
       .join(' · ');
-  lines.push(`Top Suspicion sources (per run): ${top('suspicion', 1)}`, `Top Resolve drains (per run): ${top('resolve', -1)}`, '');
+  lines.push(`Top Suspicion sources (per run): ${top('suspicion', 1)}`, `Top Resolve drains (per run): ${top('resolve', -1)}`);
+  const acts = [...new Set(runs.map((r) => r.lastAct))].sort();
+  if (acts.length > 1 || acts[0] > 1) {
+    for (const act of [1, 2, 3]) {
+      const reached = runs.filter((r) => r.lastAct >= act);
+      if (!reached.length) continue;
+      const lost = reached.filter((r) => r.lastAct === act && !r.ending.startsWith('reached_edo'));
+      const agg = reached.reduce(
+        (t, r) => {
+          const a = r.byAct[act];
+          if (a) {
+            t.events += a.events;
+            t.resolve += a.resolve;
+            t.health += a.health;
+            t.suspicion += a.suspicion;
+          }
+          return t;
+        },
+        { events: 0, resolve: 0, health: 0, suspicion: 0 }
+      );
+      const per = (x: number) => (x / (agg.events || 1)).toFixed(2);
+      lines.push(
+        `Act ${act}: reached ${pct(reached.length, n)} · lost here ${pct(lost.length, reached.length)} of those · per event: Resolve ${per(agg.resolve)}, Health ${per(agg.health)}, Suspicion ${per(agg.suspicion)}`
+      );
+    }
+  }
+  lines.push('');
   return lines.join('\n');
 }
 

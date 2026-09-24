@@ -5,13 +5,21 @@ import { ACT1_EVENTS, INTRO_EVENT } from '../content/events.act1';
 import { TALE1_ACT1_CHAIN } from '../content/chain.tale1.act1';
 import { ENDINGS } from '../content/endings';
 import { ACTS, STARTING_STATS, TALE_START_FLAGS } from '../content/tale';
+import { PREVIEW_ACTS, PREVIEW_EVENTS } from './preview';
 
 // vite-node provides Node's process; the browser tsconfig has no Node types.
 declare const process: { argv: string[] };
 
 const arg = process.argv.indexOf('--runs');
 const runs = arg > 0 ? Number(process.argv[arg + 1]) : 10_000;
-const content = runner.makeContent([INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN], ACTS, ENDINGS);
+
+// --preview plays all three acts (src/sim/preview.ts) before the game ships them.
+const preview = process.argv.includes('--preview');
+const base = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
+const content = preview
+  ? runner.makeContent(PREVIEW_EVENTS, PREVIEW_ACTS, ENDINGS)
+  : runner.makeContent(base, ACTS, ENDINGS);
+if (preview) console.log('PREVIEW: Acts 1-3, random pools only for Acts 2-3; "reached_edo*" here means survived Act 3.\n');
 
 const all = [];
 for (const policy of policies(content)) {

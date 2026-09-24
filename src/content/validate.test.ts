@@ -7,6 +7,7 @@ import { ENDINGS } from './endings';
 import { validateContent } from './validate';
 import { ACTS, TALE_START_FLAGS, TRAITS } from './tale';
 import type { ActSpec } from '../engine/types';
+import { PREVIEW_ACTS, PREVIEW_EVENTS } from '../sim/preview';
 
 const TRAIT_FLAGS = [...TRAITS.flatMap((t) => (t.flag ? [t.flag] : [])), ...TALE_START_FLAGS];
 
@@ -33,6 +34,10 @@ const story = (overrides: Partial<StoryEvent> = {}): StoryEvent => ({
 describe('built content', () => {
   it('passes every authoring rule', () => {
     expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS, ACTS)).toEqual([]);
+  });
+
+  it('Acts 2 and 3 pass every authoring rule too (in the three-act preview)', () => {
+    expect(validateContent(PREVIEW_EVENTS, ENDINGS, TRAIT_FLAGS, PREVIEW_ACTS)).toEqual([]);
   });
 
   it('keeps the random pool at the vertical-slice size (02 §16: ~20-25 events)', () => {

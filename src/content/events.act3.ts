@@ -439,7 +439,8 @@ export const ACT3_EVENTS: GameEvent[] = [
       'otherwise, and he is already drawing. A man who has run this long does not wait to hear.',
     weight: 1,
     acts: [3],
-    foe: { name: 'Hunted rōnin', power: 14 },
+    // Calibrated with `npm run sim -- --preview` (game-plan/12 follow-up).
+    foe: { name: 'Hunted rōnin', power: 16 },
     onWin: {
       text:
         'You turn his cut and drive him back against the rail. He goes over it into the black water, and ' +

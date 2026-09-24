@@ -156,6 +156,15 @@ re-reading the whole conversation history to pick back up.
     men, not the besiegers. Katsuragi still believes the trade saved 400
     households. Sahei's scenes in the Act 1 chain now say so outright.
 
+23. **Act 2 and Act 3 random pools** (`src/content/events.act2.ts`, 10 Edo
+    events; `events.act3.ts`, 6 Keian-summer events), written against the
+    sensitivity checklist and the Resolve budget. Not playable until the
+    Act 2–3 chains and endings exist, so `npm run sim -- --preview` plays all
+    three acts to measure them, and the validator checks them in the test
+    suite. Resolve lands at about −0.5 per event; the two later fights were
+    recalibrated (foe power 14, 16); a duplicate bridge fight was moved. See
+    the follow-up in `game-plan/12-act1-balance-report.md`.
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -171,7 +180,7 @@ re-reading the whole conversation history to pick back up.
 - Acts 2–3 must be much deadlier per event than Act 1 to reach `02` §15's
   ~40% full-run survival (Act 1 alone keeps ~93% of first-timers). See
   `12-act1-balance-report.md` for the Resolve-per-event guidance.
-- P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
+- Act 2/3 random pools (10 and 6 events) roughly match `11` §4.1's draws once the chains are in (~9–11 and ~4–6), with little slack; grow them if the chains land short.
 - Research still owed to `01` before authoring: a rōnin's vendetta-license
   mechanism, where the Keian executions/display took place (`03` says
   Kodenmachō, which was the prison), recorded informants, and for Tale 3 the
