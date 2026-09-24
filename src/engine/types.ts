@@ -41,6 +41,15 @@ export interface RunState {
   counters: Record<string, number>;
   items: Set<string>; // key items only for now; no stacking or inventory slots yet
 
+  // Act director (11 §1.1). actEvent counts events resolved in the current act,
+  // injected and drawn alike, so the next event occupies slot actEvent + 1.
+  act: number;
+  actEvent: number;
+  actSlotOf: Record<string, number>; // slot each event resolved at, this act
+  firedInjections: Set<string>; // fired or lapsed
+  pendingSpawns: string[]; // spawn_event queue: these fire before anything else
+  pendingActAdvance: boolean; // a transition event is on screen
+
   log: string[];
   ended: boolean;
   endingId: string | null;
@@ -79,7 +88,34 @@ export interface Outcome {
   statDelta?: Partial<Stats>;
   addItems?: string[];
   removeItems?: string[];
+  spawnEvents?: string[]; // spawn_event: fire these next, in order
   endingId?: string;
+}
+
+// 11 §1.1 `inject` block. A chain event fires at a slot of its act instead of
+// a random draw. `slot` is 1-based; it may fire up to `window` slots late and
+// `early` slots early. With `afterEvent`, the slot counts from where that event
+// resolved in this act. Mandatory injections hold the act open until they fire;
+// others lapse when their window closes and apply `onLapse`.
+export interface InjectSpec {
+  act: number;
+  slot: number;
+  window?: number;
+  early?: number;
+  afterEvent?: string;
+  priority?: number;
+  mandatory?: boolean;
+  onLapse?: Omit<Outcome, 'text' | 'endingId'>;
+}
+
+// An act ends after `length` events, then either ends the run (`endingId`) or
+// shows `transitionEventId` and moves to the next act.
+export interface ActSpec {
+  act: number;
+  length: number;
+  levelInterval: number;
+  endingId?: string;
+  transitionEventId?: string;
 }
 
 export interface Choice {
@@ -102,6 +138,8 @@ export interface StoryEvent {
   title: string;
   body: string;
   weight: number;
+  acts?: number[]; // random pools this event belongs to; default [1]
+  inject?: InjectSpec; // chain event: never drawn from a bag
   requires?: Requirement;
   choices: Choice[];
 }
@@ -112,6 +150,8 @@ export interface CombatEvent {
   title: string;
   body: string;
   weight: number;
+  acts?: number[];
+  inject?: InjectSpec;
   requires?: Requirement;
   foe: { name: string; power: number };
   onWin: Outcome;

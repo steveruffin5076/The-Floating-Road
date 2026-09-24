@@ -1,22 +1,13 @@
 import type { RunState, Stats, Outcome, StatKey, CheckSpec } from './types';
 import type { Rng } from './rng';
-import { buildWeightedBag } from './eventDirector';
+import { buildWeightedBag, poolFor } from './eventDirector';
 import type { GameEvent } from './types';
 
-// GDD §4.3: "~1 level (2 stat points) every ~4 resolved events, front-loaded
-// slightly in Act 1" (added per the design review). The vertical slice is
-// Act 1 only, so it uses the front-loaded interval throughout.
-export const LEVEL_INTERVAL = 3;
 // GDD §3: "rest nodes appear every ~4-5 events."
 export const REST_INTERVAL = 4;
-// Vertical slice run length target: GDD §3 sizes Act 1 at "≈12-15 events."
-// With 24 events now in the pool (1 intro + 23 bag), 13 draws never repeat
-// within a run (see the no-repeat-until-exhausted bag in eventDirector.ts).
-// That meets the ~20-25 event vertical-slice target from GDD §16.
-export const RUN_EVENT_TARGET = 13;
 
 export function createInitialState(startingStats: Stats, events: GameEvent[], rng: Rng): RunState {
-  const bag = buildWeightedBag(events, rng);
+  const bag = buildWeightedBag(poolFor(events, 1), rng);
   return {
     stats: { ...startingStats },
     health: 20,
@@ -45,6 +36,12 @@ export function createInitialState(startingStats: Stats, events: GameEvent[], rn
     flags: new Set(),
     counters: {},
     items: new Set(),
+    act: 1,
+    actEvent: 0,
+    actSlotOf: {},
+    firedInjections: new Set(),
+    pendingSpawns: [],
+    pendingActAdvance: false,
     log: [],
     ended: false,
     endingId: null,
@@ -52,6 +49,12 @@ export function createInitialState(startingStats: Stats, events: GameEvent[], rn
 }
 
 export function applyOutcomeEffects(state: RunState, outcome: Outcome): void {
+  applyEffects(state, outcome);
+  state.log.push(outcome.text);
+}
+
+// Everything an outcome does except logging its text (used for onLapse).
+export function applyEffects(state: RunState, outcome: Omit<Outcome, 'text' | 'endingId'>): void {
   const e = outcome.effects;
   if (e) {
     if (e.health !== undefined) state.health = clamp(state.health + e.health, 0, state.healthMax);
@@ -72,7 +75,7 @@ export function applyOutcomeEffects(state: RunState, outcome: Outcome): void {
   }
   for (const i of outcome.addItems ?? []) state.items.add(i);
   for (const i of outcome.removeItems ?? []) state.items.delete(i);
-  state.log.push(outcome.text);
+  state.pendingSpawns.push(...(outcome.spawnEvents ?? []));
 }
 
 // Trait riders on a resolved check. Silver Tongue (tale.ts): a failed Kuchi
@@ -97,14 +100,12 @@ export function grantLevelUp(state: RunState, stat: StatKey): void {
   state.levelUps += 1;
 }
 
-// GDD §5 ending thresholds; §10's Keian/city convergence is out of scope for
-// an Act-1-only slice, so "reached_edo" stands in as the slice's own
-// completion ending.
+// GDD §5 forced endings. Act completion endings come from the director
+// (runCompleteEnding) and the act's ActSpec.
 export function checkForEnding(state: RunState): string | null {
   if (state.health <= 0) return 'death';
   if (state.resolve <= 0) return 'despair';
   if (state.suspicion >= 5) return 'arrested';
-  if (state.eventsResolved >= RUN_EVENT_TARGET) return 'reached_edo';
   return null;
 }
 

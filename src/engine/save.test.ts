@@ -54,7 +54,7 @@ describe('save/resume (02 §14)', () => {
   it('migrates a v1 save (no flags, counters or items) instead of dropping it', () => {
     const rng = mulberry32(9);
     const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
-    const { flags: _f, counters: _c, items: _i, ...v1State } = state;
+    const { flags: _f, counters: _c, items: _i, act: _a, actEvent: _e, actSlotOf: _s, firedInjections: _fi, pendingSpawns: _p, pendingActAdvance: _t, ...v1State } = state;
     localStorage.setItem(
       'floating-road-save-v1',
       JSON.stringify({ version: 1, rngState: rng.getState(), screen: { kind: 'rest' }, state: { ...v1State, drawnOnce: [] } })
@@ -67,6 +67,34 @@ describe('save/resume (02 §14)', () => {
     expect(loaded.state.money).toBe(state.money);
   });
 
+  it('round-trips the act director state', () => {
+    const rng = mulberry32(10);
+    const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
+    state.act = 2;
+    state.actEvent = 5;
+    state.actSlotOf = { t1_livelihood: 1 };
+    state.firedInjections.add('t1_livelihood');
+    state.pendingSpawns.push('t1_sagawa_sweep');
+    saveGame(state, rng, { kind: 'rest' });
+    const loaded = loadGame()!.state;
+    expect(loaded).toMatchObject({ act: 2, actEvent: 5, actSlotOf: { t1_livelihood: 1 }, pendingSpawns: ['t1_sagawa_sweep'] });
+    expect(loaded.firedInjections).toEqual(new Set(['t1_livelihood']));
+  });
+
+  it('migrates a v2 save: single act, actEvent from eventsResolved', () => {
+    const rng = mulberry32(12);
+    const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
+    state.eventsResolved = 7;
+    const { act: _a, actEvent: _e, actSlotOf: _s, firedInjections: _f, pendingSpawns: _p, pendingActAdvance: _t, ...v2 } = state;
+    localStorage.setItem(
+      'floating-road-save-v1',
+      JSON.stringify({ version: 2, rngState: 1, screen: { kind: 'rest' }, state: { ...v2, drawnOnce: [], flags: [], items: [] } })
+    );
+    const loaded = loadGame()!.state;
+    expect(loaded).toMatchObject({ act: 1, actEvent: 7, actSlotOf: {}, pendingSpawns: [], pendingActAdvance: false });
+    expect(loaded.firedInjections).toEqual(new Set());
+  });
+
   it('resumes the RNG exactly where it stopped', () => {
     const rng = mulberry32(5);
     const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
@@ -77,6 +105,8 @@ describe('save/resume (02 §14)', () => {
 
   it('rejects a save from another version', () => {
     localStorage.setItem('floating-road-save-v1', JSON.stringify({ version: 999 }));
+    expect(loadGame()).toBeNull();
+    localStorage.setItem('floating-road-save-v1', JSON.stringify({ version: 0 }));
     expect(loadGame()).toBeNull();
   });
 

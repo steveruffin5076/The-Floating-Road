@@ -17,6 +17,7 @@ export const INTRO_EVENT: StoryEvent = {
     'you are a masterless blade on the Tōkaidō, same as thousands of others since Sekigahara. ' +
     'A roadside shrine offers a place to leave a coin, if you have one to spare.',
   weight: 1,
+  acts: [], // shown first by startRun, never drawn
   choices: [
     {
       text: 'Leave a coin and pray for the road ahead.',

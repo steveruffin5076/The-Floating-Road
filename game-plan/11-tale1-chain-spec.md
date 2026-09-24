@@ -966,6 +966,13 @@ items as a set), #4 (event- and choice-level `requires` with `displayWhenUnmet`)
 and the `stat_delta` part of #11 are now built (`src/engine/requirements.ts`,
 `types.ts`, `state.ts`), with save format v2 and a v1 migration (part of #12).
 #14's validator exists and checks the flag/counter/item ledger.
+#8 (milestone injection, per §1.1: slot, window, early, afterEvent,
+priority, mandatory, onLapse, plus `spawnEvents`) and #9 (acts, per-act
+bags, transition events, per-act level interval) are built in
+`src/engine/director.ts`, save format v3. The slice runs as one 13-event act
+that still ends at `reached_edo`; switching it to `t1_gates_of_edo` is a
+one-line `ACTS` change once Act 2 has a pool. Remaining: #5–#7, #10, #11
+(`money_mult`, set-to-value), #13.
 
 **Top three gaps**, in build order:
 1. **Run state and requires:** flags, counters and items, with event- and

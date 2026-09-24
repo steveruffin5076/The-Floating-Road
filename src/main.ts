@@ -3,10 +3,10 @@ import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Choice } fr
 import { STAT_LABELS } from './engine/types';
 import { previewCheck, resolveCheck } from './engine/checkResolver';
 import { setupCombat, applyChoHan, resolveCombat, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
-import { drawNext } from './engine/eventDirector';
 import { meetsRequirement } from './engine/requirements';
-import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, withTraitRiders, LEVEL_INTERVAL, REST_INTERVAL } from './engine/state';
-import { STARTING_STATS, TRAITS, TALE_NAME } from './content/tale';
+import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, withTraitRiders, REST_INTERVAL } from './engine/state';
+import { actSpec, nextStep, recordResolved, runCompleteEnding } from './engine/director';
+import { ACTS, STARTING_STATS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { ENDINGS } from './content/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
@@ -252,19 +252,14 @@ function resolveChoice(choice: Choice): void {
 
 function afterOutcome(forcedEndingId?: string): void {
   if (!state) return;
-  state.eventsResolved += 1;
+  if (screen.kind === 'event' || screen.kind === 'combat') recordResolved(state, screen.event.id, ALL_EVENTS, rng);
   state.eventsSinceLevel += 1;
   state.eventsSinceRest += 1;
 
-  const endingId = forcedEndingId ?? checkForEnding(state);
-  if (endingId) {
-    state.ended = true;
-    state.endingId = endingId;
-    screen = { kind: 'ending', endingId };
-    return render();
-  }
+  const endingId = forcedEndingId ?? checkForEnding(state) ?? runCompleteEnding(state, ALL_EVENTS, ACTS);
+  if (endingId) return showEnding(endingId);
 
-  if (state.eventsSinceLevel >= LEVEL_INTERVAL) {
+  if (state.eventsSinceLevel >= actSpec(ACTS, state.act).levelInterval) {
     state.eventsSinceLevel = 0;
     screen = { kind: 'levelup' };
     return render();
@@ -279,15 +274,19 @@ function afterOutcome(forcedEndingId?: string): void {
   drawAndShowNext();
 }
 
+function showEnding(endingId: string): void {
+  if (!state) return;
+  state.ended = true;
+  state.endingId = endingId;
+  screen = { kind: 'ending', endingId };
+  render();
+}
+
 function drawAndShowNext(): void {
   if (!state) return;
-  const s = state;
-  const { id, bagRemaining } = drawNext(s.bagRemaining, s.bagAll, s.drawnOnce, rng, (eid) =>
-    meetsRequirement(s, EVENTS_BY_ID.get(eid)?.requires)
-  );
-  state.bagRemaining = bagRemaining;
-  state.drawnOnce.add(id);
-  const event = EVENTS_BY_ID.get(id)!;
+  const step = nextStep(state, ALL_EVENTS, ACTS, rng);
+  if (step.kind === 'ending') return showEnding(step.endingId);
+  const event = EVENTS_BY_ID.get(step.id)!;
   if (event.type === 'combat') {
     beginCombat(event as CombatEvent);
   } else {

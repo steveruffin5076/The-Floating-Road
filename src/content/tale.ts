@@ -1,9 +1,15 @@
 // Tale 1: "The Masterless Blade" (rōnin) — GDD §4.1. Only Tale in the
 // vertical slice; other Tales are out of scope until the MVP pass (GDD §16).
-import type { Stats, StatKey } from '../engine/types';
+import type { ActSpec, Stats, StatKey } from '../engine/types';
 
 export const TALE_ID = 'ronin';
 export const TALE_NAME = 'The Masterless Blade';
+
+// The slice is Act 1 only. GDD §3 sizes Act 1 at "≈12-15 events"; 13 draws
+// from a 23-event bag never repeat. Level-ups every 3 events are §4.3's
+// front-loaded Act 1 cadence. `reached_edo` stays an ending until Act 2 has
+// content; then it becomes the transition event `t1_gates_of_edo` (11 §4.2).
+export const ACTS: ActSpec[] = [{ act: 1, length: 13, levelInterval: 3, endingId: 'reached_edo' }];
 
 export const STARTING_STATS: Stats = {
   chikara: 4,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mulberry32 } from './rng';
-import { applyOutcomeEffects, checkForEnding, createInitialState, grantLevelUp, RUN_EVENT_TARGET, withTraitRiders } from './state';
+import { applyOutcomeEffects, checkForEnding, createInitialState, grantLevelUp, withTraitRiders } from './state';
 import { STARTING_STATS } from '../content/tale';
 import { ACT1_EVENTS } from '../content/events.act1';
 
@@ -52,6 +52,12 @@ describe('applyOutcomeEffects', () => {
     expect(s.stats.chi).toBe(15);
   });
 
+  it('queues spawned events', () => {
+    const s = fresh();
+    applyOutcomeEffects(s, { text: 'a', spawnEvents: ['t1_sagawa_sweep'] });
+    expect(s.pendingSpawns).toEqual(['t1_sagawa_sweep']);
+  });
+
   it('logs the outcome text', () => {
     const s = fresh();
     applyOutcomeEffects(s, { text: 'You walk on.' });
@@ -71,11 +77,11 @@ describe('grantLevelUp (02 §4.3)', () => {
 });
 
 describe('checkForEnding', () => {
-  it('returns death, despair, arrest and completion in priority order', () => {
+  it('returns death, despair and arrest in priority order', () => {
     const s = fresh();
     expect(checkForEnding(s)).toBeNull();
-    s.eventsResolved = RUN_EVENT_TARGET;
-    expect(checkForEnding(s)).toBe('reached_edo');
+    s.eventsResolved = 99; // act completion is the director's job, not this one
+    expect(checkForEnding(s)).toBeNull();
     s.suspicion = 5;
     expect(checkForEnding(s)).toBe('arrested');
     s.resolve = 0;

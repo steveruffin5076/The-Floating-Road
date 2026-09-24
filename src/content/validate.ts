@@ -1,7 +1,8 @@
 // Content validator (04 §5). TypeScript already enforces shape; this checks the
 // authoring rules the type system can't: 03 §9 style caps, 02 §6 DC range,
 // 02 §17 ungated share, and cross-references between events and endings.
-import type { GameEvent, Outcome, Requirement, StoryEvent } from '../engine/types';
+import type { ActSpec, GameEvent, Outcome, Requirement, StoryEvent } from '../engine/types';
+import { poolFor } from '../engine/eventDirector';
 import type { EndingContent } from './endings';
 
 export interface ContentIssue {
@@ -74,7 +75,7 @@ function readRequirement(where: string, req: Requirement | undefined, ledger: Le
   for (const sub of req.anyOf ?? []) readRequirement(where, sub, ledger);
 }
 
-function recordOutcome(outcome: Outcome | undefined, ledger: Ledger): void {
+function recordOutcome(outcome: Omit<Outcome, 'text'> | undefined, ledger: Ledger): void {
   if (!outcome) return;
   for (const f of outcome.setFlags ?? []) ledger.flagsSet.add(f);
   for (const c of Object.keys(outcome.counters ?? {})) ledger.countersSet.add(c);
@@ -110,11 +111,55 @@ function checkStory(e: StoryEvent, endings: Record<string, EndingContent>, issue
   });
 }
 
+function checkActs(events: GameEvent[], endings: Record<string, EndingContent>, acts: ActSpec[], issues: ContentIssue[]): void {
+  const byId = new Map(events.map((e) => [e.id, e]));
+  const actNums = new Set(acts.map((a) => a.act));
+  const last = Math.max(...actNums);
+
+  for (const a of acts) {
+    const where = `act ${a.act}`;
+    if (a.endingId && !endings[a.endingId]) issues.push({ where, message: `unknown endingId "${a.endingId}"` });
+    if (a.act === last && !a.endingId) issues.push({ where, message: 'the last act has no endingId; the run could never end' });
+    if (a.transitionEventId) {
+      const t = byId.get(a.transitionEventId);
+      if (!t) issues.push({ where, message: `unknown transitionEventId "${a.transitionEventId}"` });
+      else if (t.inject || (t.acts ?? [1]).length) {
+        issues.push({ where, message: `transition event "${t.id}" must have acts: [] and no inject` });
+      }
+    }
+    const injected = events.filter((e) => e.inject?.act === a.act).length;
+    const pool = poolFor(events, a.act).length;
+    const draws = a.length - injected - 1; // one slot is the intro or transition
+    if (pool < draws) {
+      issues.push({ where, message: `random pool has ${pool} events for ~${draws} draws; events would repeat` });
+    }
+  }
+
+  for (const e of events) {
+    const inj = e.inject;
+    if (!inj) continue;
+    const where = `${e.id}.inject`;
+    if (e.acts) issues.push({ where, message: 'chain events never enter a bag; remove `acts`' });
+    if (!actNums.has(inj.act)) issues.push({ where, message: `act ${inj.act} is not defined` });
+    if (inj.slot < 1 && !inj.afterEvent) issues.push({ where, message: 'slot must be 1 or more' });
+    if ((inj.window ?? 0) < 0 || (inj.early ?? 0) < 0) issues.push({ where, message: 'window and early must be 0 or more' });
+    if (inj.afterEvent && !byId.has(inj.afterEvent)) {
+      issues.push({ where, message: `unknown afterEvent "${inj.afterEvent}"` });
+    }
+    const length = acts.find((a) => a.act === inj.act)?.length ?? Infinity;
+    if (!inj.afterEvent && !inj.mandatory && inj.slot - (inj.early ?? 0) > length) {
+      issues.push({ where, message: `window starts after the act ends (length ${length}); it can never fire` });
+    }
+  }
+}
+
 // `startingFlags` are flags set outside content, e.g. by traits at run start.
+// `acts` enables the act and injection checks.
 export function validateContent(
   events: GameEvent[],
   endings: Record<string, EndingContent>,
-  startingFlags: string[] = []
+  startingFlags: string[] = [],
+  acts: ActSpec[] = []
 ): ContentIssue[] {
   const issues: ContentIssue[] = [];
   const ledger: Ledger = {
@@ -140,6 +185,7 @@ export function validateContent(
     checkProse(`${e.id}.body`, e.body, RULES.bodyMaxWords, issues);
 
     readRequirement(e.id, e.requires, ledger);
+    recordOutcome(e.inject?.onLapse, ledger);
     if (e.type === 'story') {
       checkStory(e, endings, issues);
       for (const c of e.choices) {
@@ -156,6 +202,16 @@ export function validateContent(
       checkOutcome(`${e.id}.onLose`, e.onLose, endings, issues);
     }
   }
+
+  const ids = new Set(events.map((e) => e.id));
+  const spawns = (o: Outcome | undefined) => o?.spawnEvents ?? [];
+  for (const e of events) {
+    const outs = e.type === 'story' ? e.choices.flatMap((c) => [c.onSuccess, c.onFailure, c.onResolve]) : [e.onWin, e.onLose];
+    for (const id of outs.flatMap(spawns)) {
+      if (!ids.has(id)) issues.push({ where: e.id, message: `spawnEvents references unknown event "${id}"` });
+    }
+  }
+  if (acts.length) checkActs(events, endings, acts, issues);
 
   const unset = (read: Map<string, string>, set: Set<string>, kind: string) => {
     for (const [name, where] of read) {

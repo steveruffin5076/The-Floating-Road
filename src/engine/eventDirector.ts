@@ -4,6 +4,11 @@
 import type { Rng } from './rng';
 import type { GameEvent } from './types';
 
+// Events that can be drawn at random in an act. Chain events never are.
+export function poolFor(events: GameEvent[], act: number): GameEvent[] {
+  return events.filter((e) => !e.inject && (e.acts ?? [1]).includes(act));
+}
+
 export function buildWeightedBag(events: GameEvent[], rng: Rng): string[] {
   const expanded: string[] = [];
   for (const e of events) {

@@ -3,7 +3,8 @@ import type { GameEvent, StoryEvent } from '../engine/types';
 import { ACT1_EVENTS, INTRO_EVENT } from './events.act1';
 import { ENDINGS } from './endings';
 import { validateContent } from './validate';
-import { TRAITS } from './tale';
+import { ACTS, TRAITS } from './tale';
+import type { ActSpec } from '../engine/types';
 
 const TRAIT_FLAGS = TRAITS.flatMap((t) => (t.flag ? [t.flag] : []));
 
@@ -29,7 +30,7 @@ const story = (overrides: Partial<StoryEvent> = {}): StoryEvent => ({
 
 describe('built content', () => {
   it('passes every authoring rule', () => {
-    expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS)).toEqual([]);
+    expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS, ACTS)).toEqual([]);
   });
 
   it('keeps the pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
@@ -106,6 +107,41 @@ describe('validator catches', () => {
     e.choices[1].requires = { stats: { chi: 4 } };
     e.choices[1].displayWhenUnmet = 'locked_hint';
     expect(messages([e])).toContain('no lockedHint');
+  });
+
+  describe('act and injection rules', () => {
+    const acts: ActSpec[] = [{ act: 1, length: 3, levelInterval: 3, endingId: 'reached_edo' }];
+    const withActs = (events: GameEvent[], a: ActSpec[] = acts) =>
+      validateContent(events, ENDINGS, [], a).map((i) => i.message).join(' | ');
+    const pool = [story({ id: 'r1' }), story({ id: 'r2' }), story({ id: 'r3' })];
+
+    it('a chain event that also claims a random pool', () => {
+      expect(withActs([...pool, story({ id: 'c', acts: [1], inject: { act: 1, slot: 2 } })])).toContain('remove `acts`');
+    });
+
+    it('an injection into an undefined act, or one that can never fire', () => {
+      expect(withActs([...pool, story({ id: 'c', inject: { act: 4, slot: 1 } })])).toContain('act 4 is not defined');
+      expect(withActs([...pool, story({ id: 'c', inject: { act: 1, slot: 9 } })])).toContain('can never fire');
+    });
+
+    it('a last act with no ending, or a missing transition event', () => {
+      expect(withActs(pool, [{ act: 1, length: 3, levelInterval: 3 }])).toContain('could never end');
+      expect(withActs(pool, [{ act: 1, length: 3, levelInterval: 3, endingId: 'reached_edo', transitionEventId: 'nope' }])).toContain(
+        'unknown transitionEventId'
+      );
+    });
+
+    it('an act pool too small for its length', () => {
+      expect(withActs([story({ id: 'r1' })], [{ act: 1, length: 8, levelInterval: 3, endingId: 'reached_edo' }])).toContain(
+        'events would repeat'
+      );
+    });
+
+    it('a spawn of an event that does not exist', () => {
+      const e = story();
+      e.choices[0].onResolve!.spawnEvents = ['ghost'];
+      expect(messages([e])).toContain('unknown event "ghost"');
+    });
   });
 
   it('a pool with too few ungated choices', () => {
