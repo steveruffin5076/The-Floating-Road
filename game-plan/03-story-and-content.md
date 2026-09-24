@@ -275,7 +275,8 @@ raids), plus shared family. The finger-forfeit choice gates a secret variant of
 divorced daughter, chosen at creation) of a minor samurai household dissolved in a
 domain confiscation. The law and the road both treat a traveling woman as either
 cargo or prey: sekisho inspect women's permits against written descriptions to stop
-daimyō families smuggling hostages ("irappo donna"), inns segregate, and every
+daimyō families smuggling hostages out of Edo (*de-onna*, "women going out"; `01`
+§B3), inns segregate, and every
 labor job is closed. Your goal is Ise — then, when Ise doesn't fix anything, whatever
 you decide the road is *for*.
 
@@ -388,7 +389,7 @@ salvage divers' find; the palanquin dropped mid-river; porter strike; rainy
 swim-rescue (Reputation+ Gi/Aku+); the toll-collector's fake receipt scam.
 
 **checkpoint (10):** see sample 1 (the flagship); permit inspector who can't read
-your dialect (Kuchi); the "guns leaving Edo, women entering" search (Tale-gated
+your dialect (Kuchi); the "guns coming in, women going out" search (Tale-gated
 terror); wanted-poster board (if Suspicion ≥ 5 your face is there — instant
 crisis); bribable junior guard vs incorruptible senior (Me check to tell which);
 temple-certified paper loophole (Chi); nighttime crawl-around with a paid guide
@@ -430,7 +431,7 @@ magic).
 
 > The barrier at Hakone sits across the road like a closed hand. Pine timbers, a
 > tiled guardhouse, and the notice board where the shogunate's fears are posted in
-> ink: *women entering Edo. Guns leaving Edo.* Three guards warm their hands over a
+> ink: *guns coming into Edo. Women going out.* Three guards warm their hands over a
 > brazier. The line ahead of you is eleven people long, and the inspector is
 > reading each permit aloud, slowly, comparing face to paper.
 >
