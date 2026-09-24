@@ -93,8 +93,13 @@ export interface Outcome {
   moneyMult?: number; // money_mult, applied after deltas, rounded down
   setTracks?: Partial<Record<TrackKey, number>>; // set a track to a value (clamped)
   goto?: string; // continue the same beat at a node event (04 §3 goto)
+  // Conditional add-ons, checked in order after the outcome's own effects
+  // (so "if Reputation ≥ 2 after this" reads the updated state).
+  riders?: { when: Requirement; then: OutcomeEffects }[];
   endingId?: string;
 }
+
+export type OutcomeEffects = Omit<Outcome, 'text' | 'endingId' | 'goto' | 'riders'>;
 
 // 02 §10 / 04 §3.2. A forced ending fires the moment `forcedWhen` holds
 // (checked after every outcome). The others are evaluated when an act ends
@@ -137,6 +142,7 @@ export interface ActSpec {
 
 export interface Choice {
   text: string;
+  visibleIf?: Requirement; // hidden entirely unless met (checked before `requires`)
   requires?: Requirement;
   // 02 §12: "hide" for Tale/flag gates the player shouldn't see (default),
   // "locked_hint" to show it greyed out with `lockedHint` when it's something
@@ -158,6 +164,7 @@ export interface StoryEvent {
   acts?: number[]; // random pools this event belongs to; default [1]
   inject?: InjectSpec; // chain event: never drawn from a bag
   requires?: Requirement;
+  bodyVariants?: { when: Requirement; text: string }[]; // appended to body when met
   choices: Choice[];
 }
 

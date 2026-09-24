@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { checkModPct, meetsRequirement } from './requirements';
+import { availableChoices, checkModPct, eventBody, meetsRequirement, visibleChoices } from './requirements';
+import type { StoryEvent } from './types';
 import { mulberry32 } from './rng';
 import { createInitialState } from './state';
 import { STARTING_STATS } from '../content/tale';
@@ -79,5 +80,44 @@ describe('checkModPct', () => {
     expect(checkModPct(s, check)).toBe(10);
     s.flags.add('river_fool');
     expect(checkModPct(s, check)).toBe(5);
+  });
+});
+
+describe('visibleIf, requires and body variants', () => {
+  const event: StoryEvent = {
+    id: 'e',
+    type: 'story',
+    title: 't',
+    body: 'Yui pours the tea.',
+    weight: 1,
+    bodyVariants: [{ when: { flags: ['fujieda_intervened'] }, text: 'He has heard of the one at Fujieda.' }],
+    choices: [
+      { text: 'Refuse.', onResolve: { text: 'ok' } },
+      {
+        text: 'Go to the metsuke.',
+        visibleIf: { flags: ['knows_the_plan'] },
+        requires: { stats: { kuchi: 7 } },
+        displayWhenUnmet: 'locked_hint',
+        lockedHint: 'needs Kuchi 7',
+        onResolve: { text: 'ok' },
+      },
+    ],
+  };
+
+  it('hides a choice until visibleIf holds, then gates it on requires', () => {
+    const s = fresh(); // kuchi 2
+    expect(visibleChoices(s, event).map((c) => c.text)).toEqual(['Refuse.']);
+    s.flags.add('knows_the_plan');
+    expect(visibleChoices(s, event)).toHaveLength(2);
+    expect(availableChoices(s, event)).toHaveLength(1);
+    s.stats.kuchi = 7;
+    expect(availableChoices(s, event)).toHaveLength(2);
+  });
+
+  it('appends body variants whose condition holds', () => {
+    const s = fresh();
+    expect(eventBody(s, event)).toBe('Yui pours the tea.');
+    s.flags.add('fujieda_intervened');
+    expect(eventBody(s, event)).toBe('Yui pours the tea. He has heard of the one at Fujieda.');
   });
 });

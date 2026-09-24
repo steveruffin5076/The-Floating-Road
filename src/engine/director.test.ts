@@ -87,6 +87,25 @@ describe('nextStep: injections (11 §1.1)', () => {
     expect(state.firedInjections.has('never')).toBe(true);
   });
 
+  it('applies onLapse riders (e.g. refused_yui only if no Yui status is set)', () => {
+    const lapseOnly = (preset?: string) => {
+      const events = [
+        ...randoms(10),
+        story('yui', {
+          inject: {
+            act: 1,
+            slot: 2,
+            onLapse: { riders: [{ when: { flagsNot: ['keian_conspirator'] }, then: { setFlags: ['refused_yui'] } }] },
+          },
+          requires: { flags: ['never_true'] },
+        }),
+      ];
+      return play(events, ONE_ACT, 20, (s) => preset && s.flags.add(preset)).state.flags;
+    };
+    expect(lapseOnly().has('refused_yui')).toBe(true);
+    expect(lapseOnly('keian_conspirator').has('refused_yui')).toBe(false);
+  });
+
   it('breaks slot collisions by priority; the loser slides inside its window', () => {
     const events = [
       ...randoms(10),

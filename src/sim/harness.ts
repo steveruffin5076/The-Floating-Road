@@ -5,7 +5,7 @@ import { mulberry32, type Rng } from '../engine/rng';
 import { createInitialState } from '../engine/state';
 import { previewCheck } from '../engine/checkResolver';
 import { applyChoHan, setupCombat, type ChoHanCall, type Stance } from '../engine/combatResolver';
-import { checkModPct, meetsRequirement } from '../engine/requirements';
+import { availableChoices, checkModPct } from '../engine/requirements';
 import * as runner from '../engine/runner';
 
 export interface Policy {
@@ -138,7 +138,7 @@ export function playRun(
       const before = { suspicion: state.suspicion, resolve: state.resolve, health: state.health };
       let outcome: Outcome | undefined;
       if (ev.type === 'story') {
-        const options = ev.choices.filter((c) => meetsRequirement(state, c.requires));
+        const options = availableChoices(state, ev);
         const r = runner.resolveChoice(state, policy.choose(state, options, botRng), rng);
         outcome = r.outcome;
         if (r.check) rec.checks.push({ ...r.check, pct: r.check.successPct, onBuild: policy.build.includes(r.check.stat) });

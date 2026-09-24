@@ -1,6 +1,7 @@
 import type { RunState, Stats, Outcome, StatKey, CheckSpec } from './types';
 import type { Rng } from './rng';
 import { buildWeightedBag, poolFor } from './eventDirector';
+import { meetsRequirement } from './requirements';
 import type { GameEvent } from './types';
 
 // GDD §3: "rest nodes appear every ~4-5 events."
@@ -89,6 +90,7 @@ export function applyEffects(state: RunState, outcome: Omit<Outcome, 'text' | 'e
     if (set.gi !== undefined) state.gi = clamp(set.gi, -5, 5);
   }
   state.pendingSpawns.push(...(outcome.spawnEvents ?? []));
+  for (const r of outcome.riders ?? []) if (meetsRequirement(state, r.when)) applyEffects(state, r.then);
 }
 
 // Engine-maintained counter (11 §2.2): every combat win, lethal or not.

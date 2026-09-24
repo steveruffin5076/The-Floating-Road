@@ -77,8 +77,12 @@ function readRequirement(where: string, req: Requirement | undefined, ledger: Le
   for (const sub of req.anyOf ?? []) readRequirement(where, sub, ledger);
 }
 
-function recordOutcome(outcome: Omit<Outcome, 'text'> | undefined, ledger: Ledger): void {
+function recordOutcome(outcome: Omit<Outcome, 'text'> | undefined, ledger: Ledger, where = ''): void {
   if (!outcome) return;
+  for (const r of outcome.riders ?? []) {
+    readRequirement(`${where}.riders`, r.when, ledger);
+    recordOutcome(r.then, ledger);
+  }
   for (const f of outcome.setFlags ?? []) ledger.flagsSet.add(f);
   for (const c of Object.keys(outcome.counters ?? {})) ledger.countersSet.add(c);
   for (const i of outcome.addItems ?? []) ledger.itemsSet.add(i);
@@ -94,7 +98,7 @@ function eventAct(e: GameEvent): number | null {
 
 function checkStory(e: StoryEvent, endings: Record<string, EndingSpec>, issues: ContentIssue[]): void {
   const n = e.choices.length;
-  if (e.choices.every((c) => c.requires)) {
+  if (e.choices.every((c) => c.requires || c.visibleIf)) {
     issues.push({ where: e.id, message: 'every choice has a requirement; the player could be stuck' });
   }
   if (n < RULES.minChoices || n > RULES.maxChoices) {
@@ -198,6 +202,14 @@ export function validateContent(
     }
     if (!e.title.trim()) issues.push({ where: e.id, message: 'empty title' });
     checkProse(`${e.id}.body`, e.body, RULES.bodyMaxWords, issues);
+    if (e.type === 'story') {
+      for (const v of e.bodyVariants ?? []) {
+        readRequirement(`${e.id}.bodyVariants`, v.when, ledger);
+        const full = `${e.body} ${v.text}`;
+        checkProse(`${e.id}.bodyVariant`, v.text, RULES.bodyMaxWords, issues);
+        if (words(full) > RULES.bodyMaxWords) issues.push({ where: e.id, message: 'body plus a variant is over the word cap' });
+      }
+    }
 
     readRequirement(e.id, e.requires, ledger);
     recordOutcome(e.inject?.onLapse, ledger);
@@ -206,11 +218,12 @@ export function validateContent(
       for (const c of e.choices) {
         c.check ? gated++ : ungated++;
         readRequirement(`${e.id}.choice`, c.requires, ledger);
-        for (const o of [c.onSuccess, c.onFailure, c.onResolve]) recordOutcome(o, ledger);
+        readRequirement(`${e.id}.choice`, c.visibleIf, ledger);
+        for (const o of [c.onSuccess, c.onFailure, c.onResolve]) recordOutcome(o, ledger, e.id);
       }
     } else {
-      recordOutcome(e.onWin, ledger);
-      recordOutcome(e.onLose, ledger);
+      recordOutcome(e.onWin, ledger, e.id);
+      recordOutcome(e.onLose, ledger, e.id);
       if (!(e.foe.power > 0)) issues.push({ where: e.id, message: 'foe power must be positive' });
       if (!e.foe.name.trim()) issues.push({ where: e.id, message: 'empty foe name' });
       checkOutcome(`${e.id}.onWin`, e.onWin, endings, issues);

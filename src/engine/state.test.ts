@@ -71,6 +71,20 @@ describe('applyOutcomeEffects', () => {
     expect(s.health).toBe(4);
   });
 
+  it('applies riders whose condition holds after the main effects', () => {
+    const s = fresh(); // reputation 0
+    applyOutcomeEffects(s, {
+      text: 'held the gate',
+      effects: { reputation: 2 },
+      riders: [
+        { when: { min: { reputation: 2 } }, then: { setFlags: ['honest_patron'] } },
+        { when: { flags: ['never'] }, then: { effects: { money: 999 } } },
+      ],
+    });
+    expect(s.flags.has('honest_patron')).toBe(true);
+    expect(s.money).toBe(300);
+  });
+
   it('logs the outcome text', () => {
     const s = fresh();
     applyOutcomeEffects(s, { text: 'You walk on.' });

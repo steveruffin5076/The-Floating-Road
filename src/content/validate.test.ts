@@ -187,6 +187,19 @@ describe('validator catches', () => {
     });
   });
 
+  it('flags read by riders, visibleIf and body variants must be set somewhere', () => {
+    const e = story();
+    e.choices[0].visibleIf = { flags: ['vis_flag'] };
+    e.choices[0].onResolve!.riders = [{ when: { flags: ['rider_flag'] }, then: { setFlags: ['set_by_rider'] } }];
+    e.bodyVariants = [{ when: { flags: ['body_flag'] }, text: 'More.' }];
+    const out = messages([e]);
+    expect(out).toContain('"vis_flag"');
+    expect(out).toContain('"rider_flag"');
+    expect(out).toContain('"body_flag"');
+    e.choices[1].requires = { flags: ['set_by_rider'] };
+    expect(messages([e])).not.toContain('"set_by_rider"');
+  });
+
   it('a pool with too few ungated choices', () => {
     const gatedOnly = story({
       choices: [0, 1].map(() => ({

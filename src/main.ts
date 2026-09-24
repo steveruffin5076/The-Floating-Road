@@ -3,7 +3,7 @@ import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Outcome } f
 import { STAT_LABELS } from './engine/types';
 import { previewCheck } from './engine/checkResolver';
 import { setupCombat, applyChoHan, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
-import { checkModPct, meetsRequirement } from './engine/requirements';
+import { checkModPct, eventBody, meetsRequirement, visibleChoices } from './engine/requirements';
 import { createInitialState } from './engine/state';
 import * as runner from './engine/runner';
 import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './content/tale';
@@ -200,7 +200,7 @@ function renderEvent(event: StoryEvent): void {
   renderVitals(card);
   const body = document.createElement('p');
   body.className = 'body-text';
-  body.textContent = event.body;
+  body.textContent = eventBody(state, event);
   card.appendChild(body);
 
   const lastLog = state.log[state.log.length - 1];
@@ -213,7 +213,7 @@ function renderEvent(event: StoryEvent): void {
 
   const choicesEl = document.createElement('div');
   choicesEl.className = 'choices';
-  for (const choice of event.choices) {
+  for (const choice of visibleChoices(state, event)) {
     const unlocked = meetsRequirement(state, choice.requires);
     if (!unlocked && choice.displayWhenUnmet !== 'locked_hint') continue;
     const btn = document.createElement('button');
