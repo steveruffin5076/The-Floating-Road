@@ -57,6 +57,7 @@ survivable (LiA's pool stayed small partly because events were code-coupled).
   "season": ["spring","autumn"],   // optional season filter
   "requires": {                    // ALL must pass for the event to be drawable
     "tales": ["*"],                // or ["ronin","peasant"]
+    "pc_gender": "f",              // optional; only for Tales that choose gender at creation (GDD §4.1)
     "flags_not": ["arrested_once"],
     "min_suspicion": 0,
     "max_suspicion": 5,            // ceiling; pairs with min_suspicion (same min_/max_ pattern for other tracks)

@@ -237,7 +237,7 @@ export const ACT1_EVENTS: GameEvent[] = [
     onWin: {
       text:
         'He misjudged you. You leave him where he falls and take back the road. By morning someone will ' +
-        'find him, and someone will remember a masterless man walked this stretch last night.',
+        'find him, and someone will remember an armed stranger walked this stretch last night.',
       effects: { money: 20, suspicion: 1 },
     },
     onLose: {

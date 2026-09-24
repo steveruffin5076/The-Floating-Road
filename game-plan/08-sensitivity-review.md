@@ -255,7 +255,9 @@ against a term list.
   slice has no gender picker. However, `02` §4.1 says "Gender/name are freely
   chosen for all Tales." That is a design contradiction between `01` and `02`,
   not a text bug. Decide whether Tale 1 fixes gender (and say so in `02`
-  §4.1) before a gender picker is built.
+  §4.1) before a gender picker is built. **Closed:** Tale 1 is fixed male
+  (`02` §4.1, `10-tale1-gender-options.md` Option A). The two lines that sit in
+  shared content (`death` epilogue, `night_tsujigiri` onWin) were made neutral.
 - **N5. Weak codex test (I1): `suspicious_offer`, `pickpocket_crowd`,
   `watching_the_road`.** All three are generic road texture with no
   period-specific truth yet. That's fine for a slice without a codex, but each

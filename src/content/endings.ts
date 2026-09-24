@@ -12,7 +12,7 @@ export const ENDINGS: Record<string, EndingContent> = {
   death: {
     title: 'You Fall Beside the Road',
     epilogue:
-      'They leave you where you fall, as the road always has for men like you. No family comes; ' +
+      'They leave you where you fall, as the road always has for people with no one to send for them. No family comes; ' +
       'no domain claims the body. A woodcutter buries you off the verge by autumn, unnamed.',
     historicalNote:
       'No domain was obligated to claim a rōnin’s body. A traveler who died on the road with no one to ' +

@@ -88,6 +88,8 @@ castle with the surrender papers — and a Tokugawa stipend. You kept two things
 katana with your family's crest-ground blade, and a name on a list of "unattached
 swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking east.
 
+*PC gender: male, fixed (a two-sworded rōnin, `01` §B2; `02` §4.1).*
+
 **Cast.**
 - **Katsuragi Hyōgo** — the collaborator. Now a minor Edo official's hatamoto-adjacent
   functionary. Neither cartoon villain nor saint: he sold the clan to save 400
@@ -136,6 +138,8 @@ swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking
 ---
 
 ### TALE 2 — THE FAMINE ROAD (runaway peasant)
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring: Jihei as a travel companion, and* Fireman of Edo*'s "strong desperate men", both assume a man.*
 
 **Premise.** Kan'ei famine took your village in Mikawa: first the seed rice, then the
 bracken roots, then your little sister. The village headman's granary had rice — tax
@@ -210,25 +214,39 @@ with you, ticking every season.
   peddling goods between stations is unlocked as a mechanic-teaching chain,
   *[Brother's Sandals]* trail events.
 - Act 2 (Edo): *[The Ledger in Kanda]* — find Kikunosuke inside the ronin-plot
-  periphery; fork: pay Bunzō's Edo agent clean (needs big money), renegotiate into
-  servitude (slides Aku, safe), or turn evidence of Bunzō's illegal lending to the machi-bugyō
-  (dangerous — the bakuto and the police understand each other).
-- Act 3: interest finalizes; Keian sweeps make Bunzō nervous — a nervous oyabun calls
-  in debts violently. Climax: the confrontation at his teahouse on the night the
-  Marubashi arrests begin.
+  periphery. The debt can't be paid in money (`02` §9, Debt mechanic), so the fork
+  is about *leverage* (counter `bunzo_leverage`): gather evidence of Bunzō's
+  illegal lending, pull your brother out of Yui's circle, or win O-Sumi's father as
+  surety. Each is a point. One point makes Bunzō stop the interest; two make him
+  tear up the note for a 1-ryō face payment. Or renegotiate into servitude: each
+  favor waives a season's interest (slides Aku). Taking the evidence to the
+  machi-bugyō instead of to Bunzō is the dangerous branch — the bakuto and the
+  police understand each other.
+- Act 3: interest is frozen; Keian sweeps make Bunzō nervous — a nervous oyabun calls
+  in debts violently, and a player with fewer than two points has to find one fast.
+  Climax: the confrontation at his teahouse on the night the Marubashi arrests begin.
 
-**Endings (10).** Includes: **Ledger Closed** (pay in full — bright, requires
-accumulated wealth ≥ 130 ryō-equiv), **The New Bunzō** (take over his territory —
-dark, Gi/Aku ≤ −4), **Bugyō's Witness** (testify; enter witness protection-ish exile
-with a new town registration — neutral-bright, Chi/Kuchi gates), **Brothers in
+**Endings (10).** Includes: **Ledger Closed** (settled privately: Bunzō tears up
+the note — bright, needs `bunzo_leverage` ≥ 2, the 1-ryō face payment, and you did
+*not* testify), **The New Bunzō** (take over his territory — dark, Gi/Aku ≤ −4,
+reached through favors), **Bugyō's Witness** (testify publicly instead of settling;
+enter witness protection-ish exile with a new town registration — neutral-bright,
+needs the evidence point, flag `testified`, and Chi/Kuchi gates), **Brothers in
 Kodenmachō** (Kikunosuke arrested as conspirator, you take his debt-cell — tragic),
-**Dōtonbori Water** (default-failure death), **The Pawnshop** (marry into O-Sumi's
-family business, debt absorbed as bride-price negotiation — quiet-bright, needs her
-chain + Gi/Aku ≥ +1 + ≥ 40 ryō goodwill).
+**Dōtonbori Water** (default-failure death: fewer than two points by the climax and
+no Aku route), **The Pawnshop** (marry into O-Sumi's family business; her father's
+surety is one of your leverage points, not the payment — quiet-bright, needs her
+chain, `bunzo_leverage` ≥ 2 including `osumi_surety`, and Gi/Aku ≥ +1).
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring:
+a woman as her brother's guarantor, and The Pawnshop's marriage, both need a
+source and possibly a variant.*
 
 ---
 
 ### TALE 4 — ROLLING BONES (bakuto gambler) *(unlocked after finishing Tales 1–3)*
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring: the den circuit and* Ninkyō*'s marriage alliance assume a man.*
 
 **Premise.** You grew up holding the cup in your mother's roadside den. You can call
 chō-han honest or crooked, and you have a burn scar proving which teacher you had.
@@ -271,6 +289,8 @@ raids), plus shared family. The finger-forfeit choice gates a secret variant of
 
 ### TALE 5 — THE PILGRIM'S WAY (woman traveling alone) *(omoide unlock)*
 
+*PC gender: female, fixed (`02` §4.1).*
+
 **Premise.** Period-accurate difficulty Tale. You are **O-Tsu**, a widow (or a
 divorced daughter, chosen at creation) of a minor samurai household dissolved in a
 domain confiscation. The law and the road both treat a traveling woman as either
@@ -310,6 +330,8 @@ real dangers.
 ---
 
 ### TALE 6 — THE HIDDEN CROSS (kakure kirishitan) *(post-MVP, omoide unlock)*
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit at full design (V1.x).*
 
 **Premise.** Ten years after Shimabara, the shogunate's terror of Christianity is
 bureaucratic, patient, and total: temple-registration checks, fumi-e (image-trampling)
@@ -684,9 +706,10 @@ schema validator in `04` §5.
   of the mechanics? A threat may be stated. The act is never depicted.
 - C4. Does each woman in the scene want something of her own, beyond reacting to
   the PC?
-- C5. `02` §4.1 lets players choose gender. Does the text avoid hard-coding the
-  PC's gender ("men like you")? If not, has the Tale deliberately fixed it for
-  historical reasons and said so?
+- C5. `02` §4.1 fixes gender for Tale 1 (male) and Tale 5 (female) and lets the
+  other Tales choose. Tale-exclusive text may assume the Tale's fixed gender if
+  `03` §4 states it. Does any *shared* event or shared ending hard-code the PC's
+  gender ("men like you")? It must not.
 - C6. **Bechdel pass, Tale 5 shelter-network chain** (O-Kinu, Myōshin, the
   sheltered-woman events, *Mother of the Road*). Record per event:
   (a) two or more named women appear; (b) they talk to each other; (c) about

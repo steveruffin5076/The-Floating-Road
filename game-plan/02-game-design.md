@@ -72,14 +72,19 @@ chain + exclusive endings + event-pool tags.
 | # | Tale | Class | Unlock | Core fantasy |
 |---|---|---|---|---|
 | 1 | **The Masterless Blade** (rōnin) | Samurai | default | Honor vs survival; the Keian choice; legal revenge vs outlawry |
-| 2 | **The Famine Road** (runaway peasant) | Farmer | default | Survival from nothing; can he ever go home? |
+| 2 | **The Famine Road** (runaway peasant) | Farmer | default | Survival from nothing; can they ever go home? |
 | 3 | **The Debtor's Ledger** (townsman) | Merchant/craftsman | default | A ticking debt to a bakuto lender; buy freedom or buy power |
 | 4 | **Rolling Bones** (bakuto gambler) | Underworld | finish any run with Tale 1–3 | Dice, dens, oyabun loyalty; the underworld's own honor code |
 | 5 | **The Pilgrim's Way** (woman traveling alone) | Commoner/pilgrim | buy with omoide | Hardest travel checks (period-accurate permit scrutiny); shrine economies, entertainer work |
 | 6 | **The Hidden Cross** (kakure kirishitan) | Outcast | buy with omoide (post-MVP) | Paranoia run: fumi-e tests, informants, smuggling networks |
 
-Gender/name are freely chosen for all Tales; Tale 5 explicitly frames the period's
-travel restrictions for women as its difficulty hook (historically grounded).
+Name is freely chosen. **Gender is fixed where the Tale's premise requires it:**
+Tale 1 is male (a two-sworded rōnin, `01` §B2) and Tale 5 is female (its
+difficulty hook is the period's travel restrictions on women). Tales 2, 3, 4 and 6
+choose gender at creation; each gets a premise audit before authoring, since
+their drafts in `03` §4 still assume a man in places. Only Tale-exclusive content
+may assume a gender; shared events and the shared death-ending family must be
+neutral. (Decision recorded in `10-tale1-gender-options.md`, Option A.)
 
 ### 4.2 Traits (pick 1, more unlockable)
 
@@ -219,7 +224,13 @@ elemental Power number), sumo bout (non-lethal variant), formal hatashiai duel
 
 - **Income sources:** procession day-labor (safe, low), bodyguard contracts, bounty-hunting (capture-not-kill pays more), peddling goods between stations (buy low/sell high mini-loop with 3 goods, §9.3), gambling (§9.2), sumo exhibition bouts, temple copying work (Chi), performing (Kuchi/Waza), night soil collection (yes, a real Edo job — humbling, pays, costs Resolve the first time), escorting pilgrims.
 - **Money sinks:** inns vs sleeping rough (Resolve cost), food (hunger events if skipped), blade polish/repair, bribes (checkpoints, dōshin, prison guards), medicine, gambling, gifts that build NPC relations, forging papers (expensive, enables Tale 5/6 travel).
-- **Debt mechanic (Tale 3):** principal 100 ryō, interest accrues each season tick (historically real rates exceeded 100%/yr — game uses kinder 25%/tick and says so). Debt can also be *worked off* via underworld jobs → slides alignment Aku. Two bounds keep the spiral from cutting against the "no wasted runs" pillar (§2.3): an early lump-sum **"buy out the note"** payoff is available while the balance is still small (roughly the first 1–2 ticks, before compounding multiplies it past easy reach), giving a player who saves aggressively a real honest-path option instead of the debt always outrunning them; and **compounding freezes once Act 3 begins** (interest stops accruing, though whatever principal-plus-accrued balance remains still has to be paid off or worked off), so a debtor who avoided the underworld route isn't mathematically locked out of a clean ending in the final act.
+- **Debt mechanic (Tale 3): money is not the repayment path; leverage is.** Principal 100 ryō (100,000 mon), interest 25% per season tick (historically real rates exceeded 100%/yr; the game uses a kinder rate and says so). No honest income in §9.1/§9.3 can move a balance this size, and that is the point: the number is a leash, and the Tale is about finding a grip on the man holding it. (Decision recorded in `09-tale3-debt-options.md`, Option B.)
+  - **Leverage points** (counter `bunzo_leverage`, shown on the status screen as "a hold on Bunzō: n"): evidence of Bunzō's illegal lending (the `03` Act 2 Kanda fork); `brother_found` *and* Kikunosuke pulled out of Yui's circle; O-Sumi's father standing surety (the O-Sumi chain).
+  - **1 point:** Bunzō stops the interest. The balance freezes where it is. That gives the player a visible first win instead of watching the figure climb with nothing that moves it (pillar 2, readable risk).
+  - **2+ points at *The Ledger in Kanda*:** Bunzō tears up the note for a **face payment of 1 ryō** (1,000 mon), reachable on honest income by Act 3.
+  - **Favors (the underworld route):** an underworld job waives one tick's interest, Gi/Aku −1 each. He isn't paying you; he's pricing the crime. This is the only route on which the balance number matters, and it's the road to *The New Bunzō*.
+  - **Act 3 freeze** is kept: compounding stops once Act 3 begins, so the Keian-sweep endgame is about leverage and nerve, not arithmetic. The old early "buy out the note" valve is removed; with this principal it could never fire.
+  - `01` still needs sources for two claims this rests on: that an illegal lender's note had no standing before the machi-bugyō (what makes evidence work), and debt bondage in the period (checklist I2).
 - **Shops:** not random NPCs — fixed institutions that appear as events: the pawnshop, the swordsmith, the medicine seller, the fence (underworld-gated), the paper-forger (Suspicion-gated). Stock refreshes by season, not paid refreshes.
 
 ### 9.1 Wage & price reference
@@ -533,10 +544,10 @@ packets on consignment at tea-country buy price. You repay the cost at the next
 market and keep the margin, so no starting capital is needed. It shows the Chi
 forecast once for free, and fires one theft rider with a telegraphed Me check,
 so all three levers get taught in one loop.
-*Scale flag (not fixed here):* §9's debt is 100 ryō = 100,000 mon, and one
-25% tick is 25,000 mon, against §9.1 wages of ≤ 500 mon/event. Neither peddling
-nor any honest income in §9.1 can dent it. The debt's scale (or its unit) needs
-revisiting when Tale 3 is authored.
+*Scale (resolved):* §9's debt is 100 ryō = 100,000 mon, which no honest income
+can dent. That is now deliberate: Tale 3 repays through leverage, not money (§9,
+Debt mechanic). Peddling's job in Tale 3 is to fund the 1-ryō face payment and
+the road, not the ledger.
 
 ### 9.4 Den network (Tale 4)
 

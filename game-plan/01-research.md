@@ -180,7 +180,7 @@ Notable legal color for events:
 | Uke-sei / fumi-e persecution | Hidden Christian bonus Tale — highest difficulty, paranoia-driven run |
 | Ōi river porter guild monopoly | Pay-vs-ford-vs-wait decision node; flood = stranded = forced events |
 | Sankin-kōtai processions | Random "road is jammed" events: hired as procession labor (safe money), or rob the baggage train (infamy) |
-| Loan-sharking at 100%+ interest | Debtor origin's ticking-clock quest: interest accrues per act |
+| Loan-sharking at 100%+ interest | Debtor origin's ticking-clock quest: interest accrues per season tick (`02` §9); repaid through leverage, not money |
 | Fire-prone Edo | Set-piece disaster events with save-people-vs-save-goods choices |
 | Musashi's fresh legend | Book/scroll items and a sword-school encounter; his *Go Rin no Sho* as a rare training item |
 
