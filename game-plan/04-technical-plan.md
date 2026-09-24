@@ -295,13 +295,14 @@ a requirement. Goods data lives in `goods.json`, and station → region is route
 
 ## 5. Testing & balance
 
-> **Status (per `progress.md`):** none of the four items below is built yet. The
-> vertical slice was authored without them. The only simulator that exists is the
-> standalone `sim/balance-sim.mjs` (see `06-balance-sim-report.md`), which checks
-> the formulas in isolation and is not the harness described here. The **schema
-> validator** is the recommended next infrastructure piece: it's the cheapest of
-> the four, and it would have caught the per-choice gating, compound-check, and
-> stat-effect gaps fixed in §3. The harness and playtest protocol can wait for P1.5.
+> **Status (per `progress.md`):** the **content validator** and **unit tests** are
+> built (`npm test`, vitest). The validator is TypeScript, not zod/ajv: content is
+> typed TS, so the type system covers shape and `src/content/validate.ts` covers
+> the authoring rules (03 §9 caps, DC range, ungated share, ending references, a
+> flag/counter/item ledger so no gate is unopenable, no soft-locked events). It
+> runs as a test, not yet in CI (the repo has no CI). The simulation harness and
+> playtest protocol are still not built; the only simulator is the standalone
+> `sim/balance-sim.mjs`. Both can wait for P1.5.
 
 - **Schema validator** (zod/ajv) runs over every content file in CI — catches broken
   `goto`s, missing string keys, unreachable requirements.

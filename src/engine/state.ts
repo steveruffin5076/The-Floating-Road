@@ -1,4 +1,4 @@
-import type { RunState, Stats, Outcome, StatKey } from './types';
+import type { RunState, Stats, Outcome, StatKey, CheckSpec } from './types';
 import type { Rng } from './rng';
 import { buildWeightedBag } from './eventDirector';
 import type { GameEvent } from './types';
@@ -42,6 +42,9 @@ export function createInitialState(startingStats: Stats, events: GameEvent[], rn
     bagRemaining: bag,
     bagAll: bag,
     drawnOnce: new Set(),
+    flags: new Set(),
+    counters: {},
+    items: new Set(),
     log: [],
     ended: false,
     endingId: null,
@@ -58,7 +61,33 @@ export function applyOutcomeEffects(state: RunState, outcome: Outcome): void {
     if (e.reputation !== undefined) state.reputation = clamp(state.reputation + e.reputation, -5, 5);
     if (e.gi !== undefined) state.gi = clamp(state.gi + e.gi, -5, 5);
   }
+  for (const f of outcome.setFlags ?? []) state.flags.add(f);
+  for (const f of outcome.clearFlags ?? []) state.flags.delete(f);
+  for (const [name, by] of Object.entries(outcome.counters ?? {})) {
+    state.counters[name] = (state.counters[name] ?? 0) + by;
+  }
+  for (const [stat, delta] of Object.entries(outcome.statDelta ?? {})) {
+    const k = stat as StatKey;
+    state.stats[k] = clamp(state.stats[k] + (delta as number), 1, 15); // 02 §4.3 range
+  }
+  for (const i of outcome.addItems ?? []) state.items.add(i);
+  for (const i of outcome.removeItems ?? []) state.items.delete(i);
   state.log.push(outcome.text);
+}
+
+// Trait riders on a resolved check. Silver Tongue (tale.ts): a failed Kuchi
+// bluff that already raises Suspicion raises it one more.
+export function withTraitRiders(
+  state: RunState,
+  check: CheckSpec,
+  passed: boolean,
+  outcome: Outcome
+): Outcome {
+  const raisesSuspicion = (outcome.effects?.suspicion ?? 0) > 0;
+  if (!passed && check.stat === 'kuchi' && raisesSuspicion && state.flags.has('silver_tongue')) {
+    return { ...outcome, effects: { ...outcome.effects, suspicion: outcome.effects!.suspicion! + 1 } };
+  }
+  return outcome;
 }
 
 export function grantLevelUp(state: RunState, stat: StatKey): void {

@@ -961,6 +961,12 @@ checked against `src/engine/types.ts`, `eventDirector.ts`, `state.ts`,
 | 13 | **Trajectory hints** (`02` §10): ending candidates as rumor lines, driven by the `requires` blocks | `02` §10 | **No** | Nice-to-have for P1.5. The mirror rule's `locked_hint`s cover the decisive beats meanwhile |
 | 14 | **Schema validator**: broken `goto`s, unknown flags (checked against §2's ledger), and unreachable `requires` | §5 | **No** | Strongly recommended first. §2's ledger is its fixture |
 
+*Update:* #1 (flags), #2 (counters, minus engine-maintained ones), #3 (key
+items as a set), #4 (event- and choice-level `requires` with `displayWhenUnmet`)
+and the `stat_delta` part of #11 are now built (`src/engine/requirements.ts`,
+`types.ts`, `state.ts`), with save format v2 and a v1 migration (part of #12).
+#14's validator exists and checks the flag/counter/item ledger.
+
 **Top three gaps**, in build order:
 1. **Run state and requires:** flags, counters and items, with event- and
    choice-level `requires` (#1–#4). Nothing in this chain can gate without them.

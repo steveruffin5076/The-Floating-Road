@@ -46,6 +46,21 @@ describe('drawNext', () => {
     expect(next.bagRemaining).toEqual(['a']);
   });
 
+  it('skips ineligible events (unmet requires), preferring fresh ones', () => {
+    const next = drawNext(['a', 'b', 'c'], ['a', 'b', 'c'], new Set(), mulberry32(1), (id) => id === 'c');
+    expect(next.id).toBe('c');
+    expect(next.bagRemaining).toEqual(['a', 'b']);
+  });
+
+  it('allows an eligible repeat before an ineligible fresh event', () => {
+    const next = drawNext(['a', 'b'], ['a', 'b'], new Set(['a']), mulberry32(1), (id) => id === 'a');
+    expect(next.id).toBe('a');
+  });
+
+  it('never stalls: with nothing eligible it still returns an event', () => {
+    expect(drawNext(['a'], ['a'], new Set(), mulberry32(1), () => false).id).toBe('a');
+  });
+
   it('reshuffles the full bag once it runs out', () => {
     const next = drawNext(['a'], ['a', 'b', 'c'], new Set(), mulberry32(1));
     expect(next.id).toBe('a');

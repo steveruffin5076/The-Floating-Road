@@ -106,6 +106,19 @@ re-reading the whole conversation history to pick back up.
     `04` §3.2 schema with reachability notes, pacing for a ~38-event run, a
     sensitivity pre-check, and the engine gap list.
 
+16. **Tests and content validator** — vitest suite (`npm test`) over every
+    engine module, plus `src/content/validate.ts` enforcing the authoring
+    rules. Mutation-checked: breaking the check formula or a content weight
+    fails the suite. `npm run build` now type-checks with `--noEmit`, so tsc no
+    longer writes stray `.js` into `src/`.
+17. **Engine step 1: run state and requirements** — flags, counters and key
+    items on `RunState`; event- and choice-level `requires` (with locked-hint
+    display); effects for flags, counters, items and permanent stat changes;
+    save format v2 with a v1 migration. Trait flags now apply at run start,
+    and Silver Tongue's advertised downside (failed Kuchi bluffs cost +1
+    Suspicion) finally works. First gated choice in content:
+    `musashi_scroll`'s copyist note (needs Chi 4).
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -117,10 +130,10 @@ re-reading the whole conversation history to pick back up.
   penalty, Ōi porter-system date, gonin-gumi reporting duty, polishing as a
   specialist craft). Outcast groups (checklist §B) and Tale 6 are still
   unexercised by any built content.
-- The built engine doesn't implement `04`'s newer schema pieces or the Tale 1
-  chain's needs (`11` §6: flags/counters/items + requires, an act-based
-  director with milestone injection, an `endings.json` evaluator). Needed for
-  P1.5.
+- Engine still missing for P1.5 (`11` §6): the act-based director with
+  milestone injection and transitions, the `endings.json` evaluator, sub-nodes
+  and `goto`, combat launched from a choice, check mods. Run state and
+  requirements are done.
 - P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
 - Tale 1 premise: a licensed vendetta avenges a *killing*, not a surrender, so
   `03` §4's premise should say Katsuragi's men cut the father down (`11` §5.1).
@@ -133,6 +146,6 @@ re-reading the whole conversation history to pick back up.
 
 ## Suggested next steps (not started)
 
-Roughly in order of leverage: the schema validator + unit tests (`04` §5),
-then the engine work in `11` §6 (run state + requires, the act director,
-the endings evaluator), then author Tale 1's chain from `11`.
+Next in the `11` §6 build order: the act director (acts, per-act bags,
+milestone injection, transitions), then the `endings.json` evaluator, then
+sub-nodes/`goto` and combat from a choice. Then author Tale 1's chain.

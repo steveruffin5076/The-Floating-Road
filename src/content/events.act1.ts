@@ -414,6 +414,18 @@ export const ACT1_EVENTS: GameEvent[] = [
         onFailure: { text: 'You pay too much for what is almost certainly a forgery.', effects: { money: -50, resolve: -1 } },
       },
       {
+        text: 'Read the copyist’s note at the foot of the page.',
+        requires: { stats: { chi: 4 } },
+        displayWhenUnmet: 'locked_hint',
+        lockedHint: 'needs Chi 4',
+        onResolve: {
+          text:
+            'The note is in a student’s careful hand: copied for his teacher’s school, not for sale. The ' +
+            'stall-keeper cannot read it and lowers his price when you tell him what it says.',
+          effects: { money: -20, resolve: 1 },
+        },
+      },
+      {
         text: 'Not interested — keep walking.',
         onResolve: { text: 'Real or not, you have no coin to waste on paper.' },
       },

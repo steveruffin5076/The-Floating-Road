@@ -70,6 +70,8 @@ button.choice {
   cursor: pointer;
 }
 button.choice:hover { border-color: var(--vermillion); }
+button.choice.locked { opacity: 0.5; cursor: not-allowed; }
+button.choice.locked:hover { border-color: inherit; }
 button.choice .odds { float: right; color: var(--sumi-soft); font-size: 0.85em; }
 
 button.primary {

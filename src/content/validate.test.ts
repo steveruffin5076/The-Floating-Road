@@ -3,6 +3,9 @@ import type { GameEvent, StoryEvent } from '../engine/types';
 import { ACT1_EVENTS, INTRO_EVENT } from './events.act1';
 import { ENDINGS } from './endings';
 import { validateContent } from './validate';
+import { TRAITS } from './tale';
+
+const TRAIT_FLAGS = TRAITS.flatMap((t) => (t.flag ? [t.flag] : []));
 
 const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS];
 
@@ -26,7 +29,7 @@ const story = (overrides: Partial<StoryEvent> = {}): StoryEvent => ({
 
 describe('built content', () => {
   it('passes every authoring rule', () => {
-    expect(validateContent(ALL_EVENTS, ENDINGS)).toEqual([]);
+    expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS)).toEqual([]);
   });
 
   it('keeps the pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
@@ -75,6 +78,34 @@ describe('validator catches', () => {
     const e = story();
     delete e.choices[1].onFailure;
     expect(messages([e])).toContain('missing outcome');
+  });
+
+  it('a flag that is required but never set', () => {
+    const e = story();
+    e.choices[1].requires = { flags: ['knows_the_plan'] };
+    expect(messages([e])).toContain('flag "knows_the_plan" is required but nothing sets it');
+    e.choices[0].onResolve!.setFlags = ['knows_the_plan'];
+    expect(messages([e])).not.toContain('knows_the_plan');
+  });
+
+  it('counters and items that nothing produces', () => {
+    const e = story();
+    e.choices[1].requires = { countersMin: { employer_contracts: 2 }, itemsAny: ['fathers_letter'] };
+    expect(messages([e])).toContain('counter "employer_contracts"');
+    expect(messages([e])).toContain('item "fathers_letter"');
+  });
+
+  it('an event whose every choice is gated (soft-lock)', () => {
+    const e = story();
+    e.choices.forEach((c) => (c.requires = { stats: { chi: 3 } }));
+    expect(messages([e])).toContain('player could be stuck');
+  });
+
+  it('a locked_hint choice with no hint text', () => {
+    const e = story();
+    e.choices[1].requires = { stats: { chi: 4 } };
+    e.choices[1].displayWhenUnmet = 'locked_hint';
+    expect(messages([e])).toContain('no lockedHint');
   });
 
   it('a pool with too few ungated choices', () => {

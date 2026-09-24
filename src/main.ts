@@ -4,7 +4,8 @@ import { STAT_LABELS } from './engine/types';
 import { previewCheck, resolveCheck } from './engine/checkResolver';
 import { setupCombat, applyChoHan, resolveCombat, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
 import { drawNext } from './engine/eventDirector';
-import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, LEVEL_INTERVAL, REST_INTERVAL } from './engine/state';
+import { meetsRequirement } from './engine/requirements';
+import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, withTraitRiders, LEVEL_INTERVAL, REST_INTERVAL } from './engine/state';
 import { STARTING_STATS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { ENDINGS } from './content/endings';
@@ -162,6 +163,7 @@ function startRun(traitId: string | null): void {
     stats[trait.statBonus.stat] = Math.min(15, stats[trait.statBonus.stat] + trait.statBonus.amount);
   }
   state = createInitialState(stats, ACT1_EVENTS, rng);
+  if (trait?.flag) state.flags.add(trait.flag);
   state.drawnOnce.add(INTRO_EVENT.id);
   screen = { kind: 'event', event: INTRO_EVENT };
   render();
@@ -206,8 +208,17 @@ function renderEvent(event: StoryEvent): void {
   const choicesEl = document.createElement('div');
   choicesEl.className = 'choices';
   for (const choice of event.choices) {
+    const unlocked = meetsRequirement(state, choice.requires);
+    if (!unlocked && choice.displayWhenUnmet !== 'locked_hint') continue;
     const btn = document.createElement('button');
     btn.className = 'choice';
+    if (!unlocked) {
+      btn.disabled = true;
+      btn.classList.add('locked');
+      btn.innerHTML = `${choice.text} <span class="odds">[${choice.lockedHint ?? 'locked'}]</span>`;
+      choicesEl.appendChild(btn);
+      continue;
+    }
     let label = choice.text;
     if (choice.check) {
       const statVal = state.stats[choice.check.stat];
@@ -229,7 +240,8 @@ function resolveChoice(choice: Choice): void {
     const statVal = state.stats[choice.check.stat];
     const outcome = resolveCheck(rng, statVal, choice.check.dc, state.consecutiveFails);
     state.consecutiveFails = outcome.passed ? 0 : state.consecutiveFails + 1;
-    const result = outcome.passed ? choice.onSuccess : choice.onFailure;
+    const raw = outcome.passed ? choice.onSuccess : choice.onFailure;
+    const result = raw && withTraitRiders(state, choice.check, outcome.passed, raw);
     if (result) applyOutcomeEffects(state, result);
     afterOutcome(result?.endingId);
   } else if (choice.onResolve) {
@@ -269,7 +281,10 @@ function afterOutcome(forcedEndingId?: string): void {
 
 function drawAndShowNext(): void {
   if (!state) return;
-  const { id, bagRemaining } = drawNext(state.bagRemaining, state.bagAll, state.drawnOnce, rng);
+  const s = state;
+  const { id, bagRemaining } = drawNext(s.bagRemaining, s.bagAll, s.drawnOnce, rng, (eid) =>
+    meetsRequirement(s, EVENTS_BY_ID.get(eid)?.requires)
+  );
   state.bagRemaining = bagRemaining;
   state.drawnOnce.add(id);
   const event = EVENTS_BY_ID.get(id)!;
