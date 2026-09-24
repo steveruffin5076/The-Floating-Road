@@ -149,3 +149,40 @@ Preview, 10,000 runs per policy:
   deadliest fights (the Katsuragi duel, the Sagawa sweeps, Sunpu). Death is
   still rare (3% for first-timers), so the chain fights are where lethality
   should come from. Re-measure when the chains are in before tuning further.
+
+## Follow-up: the full Tale 1, all three acts
+
+Tale 1 is now playable end to end:
+- Act 2 chain: `src/content/chain.tale1.act2.ts`
+- Act 3 chain: `src/content/chain.tale1.act3.ts`
+- the 12 endings plus the shared death ending: `src/content/endings.ts`
+- the three acts: `ACTS` in `tale.ts`
+
+The preview mode is gone. `npm run sim` plays the real game. Before measuring, the bots and pools needed three fixes:
+- **Bots didn't see run-ending outcomes.** A choice that sets `taken_into_custody` or `chose_seppuku` scored as a small plus, so careful bots walked into arrests. Those flags now count like any run-ending outcome.
+- **Bots didn't read fight odds.** They now weigh a fight's win and loss outcomes by a rough win chance.
+- **Pools ran dry.** The validator's pool rule is now worst-case: it counts only unconditional mandatory beats as sure to fire. It asked for 13 Act 2 and 8 Act 3 events. Act 2 now has 14 (a storehouse guard job, a winter bathhouse, an unclaimed body at the pilings, an okappiki at a noodle stall). Act 3 has 8 (a harvest moon, a ward re-registration). No events repeat in 40,000 runs.
+
+One design change came out of it. Talkers who won the adauchi hearing died in the licensed duel more than half the time. That made *The Lawful Vendetta*, a talker's ending, a trap. The license now allows a hired second (sukedachi, +30% win, 100 mon) or letting the license lapse, and Katsuragi's power went from 14 to 13 (he's about 70).
+
+10,000 runs per policy:
+
+| | random | first-timer | careful-fighter | careful-talker |
+|---|---|---|---|---|
+| Survived | 6% | 73% | 98% | 98% |
+| Lost in Act 1 / 2 / 3 (of those reaching it) | 28 / 54 / 82% | 1 / 4 / 23% | 0 / 0 / 2% | 0 / 0 / 3% |
+| Resolve per event, Act 2 / 3 | −0.35 / −0.49 | −0.35 / −0.48 | −0.32 / −0.43 | −0.33 / −0.26 |
+| Fallback ending (*Road Ends Here*, evaluated) | 6% | 52% | 53% | 35% |
+| Top named endings | — | Sword for Sale 17%, New Banner 2% | New Banner 32%, Sword for Sale 13% | New Banner 61% |
+
+Combat accuracy stays within ±1 point in every bucket.
+
+**What this says, and the next tuning pass:**
+- **Too easy for a first-timer.** 73% survival against `02` §15's ~40%. Act 3 does the real killing (23% of first-timers lost there). Acts 1–2 lose almost nobody who plays sensibly. The bot is myopic, though, so check against real playtests before a big swing.
+- **The fallback is far too common.** It lands 35–53% against `11` §3.2's ~8%. Most runs reach the end without meeting any named ending. The two usual misses:
+  - *New Banner*: Suspicion ≤ 1 is hard to hold.
+  - *Sword for Sale*: needs Rep 2 and 4 wins.
+
+  `11` §3.2 says to loosen New Banner's Suspicion to ≤ 2 first. Then add the missing "walked away" variety, e.g. a named ending for survivors who kept their head down.
+- **Some endings are almost never reached by these bots**: Informant, Lawful Vendetta, Garden Gate, First Blood, Plow (all ≤ 1%). They need deliberate play, which a softmax bot won't do. Route-seeking policies, one per ending, would show whether each is reachable in practice.
+- **Resolve** is on budget in Act 3 (about −0.5) and a little light in Act 2 (−0.35).

@@ -152,11 +152,13 @@ function checkActs(events: GameEvent[], endings: Record<string, EndingSpec>, act
     for (const w of a.watches ?? []) {
       if (!byId.has(w.spawn)) issues.push({ where, message: `watch spawns unknown event "${w.spawn}"` });
     }
-    const injected = events.filter((e) => e.inject?.act === a.act).length;
+    // Worst case: only unconditional mandatory beats are sure to fire, and the
+    // first act's first slot is the intro. Every other slot may be a draw.
+    const sure = events.filter((e) => e.inject?.act === a.act && e.inject.mandatory && !e.requires).length;
     const pool = poolFor(events, a.act).length;
-    const draws = a.length - injected - 1; // one slot is the intro or transition
+    const draws = a.length - sure - (a.act === Math.min(...actNums) ? 1 : 0);
     if (pool < draws) {
-      issues.push({ where, message: `random pool has ${pool} events for ~${draws} draws; events would repeat` });
+      issues.push({ where, message: `random pool has ${pool} events for up to ${draws} draws; events could repeat` });
     }
   }
 

@@ -1,4 +1,4 @@
-// Act 2 random event pool (Edo, 1649 to spring 1651). Ten events drawn from
+// Act 2 random event pool (Edo, 1649 to spring 1651). Thirteen events drawn from
 // 03 §6's city-edo bank (one from the night bank), for the ~9-11 random slots
 // in 11 §4.1's Act 2 slot map. None duplicate an Act 2 chain beat (11 §1.3):
 // no livelihood choice, Yui's school, Katsuragi, Marubashi, Sagawa sweep,
@@ -640,5 +640,328 @@ export const ACT2_EVENTS: GameEvent[] = [
       effects: { health: -8, resolve: -1 },
       moneyMult: 0.6,
     },
+  },
+
+  // codex: sake brewed around Osaka came up to Edo by sea and was sold through
+  // wholesalers there (kudarizake; verify the shipping arrangements for 1649,
+  // 01 does not cover them). Edo expected hired servants to have a guarantor
+  // who stood surety for their conduct (verify the guarantor system's form by
+  // 1649). A townsman on a journey might carry one short sword, so a rōnin with
+  // only the short sword reads as a townsman (verify). An honest employer, the
+  // second employer_contracts source 11 §2.2 asks for (only the bodyguard
+  // livelihood fed it before). The +8 mod rewards a PC who already guards for a
+  // living. Assumes two swords (the pledge).
+  {
+    id: 'edo_sake_storehouse',
+    type: 'story',
+    title: 'Ten Nights at the Storehouse',
+    body:
+      'Along the canal below Nihonbashi, the shipping agents keep plastered storehouses for goods that come ' +
+      'up from Osaka by sea. One of them, Tahei, has a hundred casks of Osaka sake waiting on his wholesalers, ' +
+      'and in a month he has lost six to someone who knows his locks. He wants a steady sword to sit up with ' +
+      'the casks for ten nights, until the buyers take delivery. The pay is honest. The city likes a hired ' +
+      'hand to have a guarantor, someone who stands surety for their conduct, and you have none. Tahei says so ' +
+      'politely. Then he says he will take you anyway, if you can find some way to be worth the risk. Behind ' +
+      'him, his head clerk looks at your swords and says nothing at all.',
+    weight: 1,
+    acts: [2],
+    choices: [
+      {
+        text: 'Sit up with the casks, and watch the storehouse the way a soldier watches a wall.',
+        check: { stat: 'me', dc: 6, mods: [{ when: { flags: ['livelihood_bodyguard'] }, pct: 8 }] },
+        onSuccess: {
+          text:
+            'On the sixth night a lighter noses in under the storehouse’s water door with no lantern. You are ' +
+            'standing on the step when the boatmen come up it. They knew the locks. They did not know about you. ' +
+            'They push off without a word, and the next week the head clerk leaves Tahei’s service for reasons ' +
+            'nobody states. Tahei pays in full and asks you back for the spring cargo.',
+          effects: { money: 120, reputation: 1 },
+          counters: { employer_contracts: 1 },
+        },
+        onFailure: {
+          text:
+            'You watch the lane all ten nights. They come by water. On the last morning Tahei counts two casks ' +
+            'short, pays you what he promised and not a mon more, and says nothing about it, which is his whole ' +
+            'opinion.',
+          effects: { money: 60, resolve: -1 },
+        },
+      },
+      {
+        text: 'Sleep by day, and sit in the dark among the casks with your sword across your knees.',
+        check: { stat: 'waza', dc: 7 },
+        onSuccess: {
+          text:
+            'When the water door slides open you are already moving. The first boatman takes your sheathed sword ' +
+            'across the wrist and drops his hook, and the second goes into the canal and swims for it. At dawn you ' +
+            'hand the first to the ward’s men, alive. Tahei pays you half again and asks you back. The ward’s men ' +
+            'write down who caught him.',
+          effects: { money: 150, reputation: 1, suspicion: 1 },
+          counters: { employer_contracts: 1 },
+        },
+        onFailure: {
+          text:
+            'In the dark among the casks, a boat hook finds your forearm before you find the man holding it. ' +
+            'They get away with two casks, and you spend the morning with a bonesetter. Tahei pays for the nights ' +
+            'and hires someone else for spring.',
+          effects: { health: -4, money: 60 },
+        },
+      },
+      {
+        text: 'Leave your long sword in his strongbox as your surety.',
+        onResolve: {
+          text:
+            'He locks it away with his accounts and writes you into his book. For ten nights you sit up with ' +
+            'only the short sword at your side, like a townsman on a journey, and whoever has been taking the ' +
+            'casks stays away from a lit storehouse. On the last morning he hands the long sword back with both ' +
+            'hands and pays you in full. You feel the ten nights without it all the way home.',
+          effects: { money: 100, resolve: -1 },
+          counters: { employer_contracts: 1 },
+        },
+      },
+      {
+        text: 'Tell him to find someone with a guarantor.',
+        onResolve: {
+          text: 'He bows, a little relieved, and does. You hear later that his losses stopped when his head clerk left.',
+        },
+      },
+    ],
+  },
+
+  // codex: Edo had public bathhouses from its first decades (the first is
+  // traditionally dated 1591; verify), and the early ones were steam baths
+  // rather than deep tubs (verify). Massage was a trade of the blind, who had
+  // their own guild (verify for 1649 Edo). Go was played by samurai and
+  // townsmen alike. 01 does not cover bathhouses; all of this is to add there.
+  // Adapts 03 §6 city-edo "bathhouse politics" as a recovery beat (12: Acts 2-3
+  // need counterweights to the Resolve bleed). Nobody is described by body
+  // (03 §9.1 C1). Assumes two swords (left at the counter).
+  {
+    id: 'edo_lane_bathhouse',
+    type: 'story',
+    title: 'The Bathhouse at the End of the Lane',
+    body:
+      'Winter. You have been cold since the first frost: cold in the street, cold in your room, cold in your ' +
+      'sleep. At the end of your lane a bathhouse breathes steam out under its curtain from dawn to dark, and ' +
+      'a bath costs a few mon. You hand your swords to the keeper at the counter, which you have never done in ' +
+      'a public place, and go through into the heat with nothing on at all. The steam room is dim and full: a ' +
+      'carpenter, a clerk with ink on his fingers, two fish-sellers arguing about the price of bonito, and an ' +
+      'old man balancing a board for go, the game of black and white stones, on his knees. A blind masseur ' +
+      'works his way along the bench, kneading shoulders for a few coppers more and talking the whole time. In ' +
+      'here, nobody can see a crest.',
+    weight: 1,
+    acts: [2],
+    choices: [
+      {
+        text: 'Pay for the masseur’s hands, and sit until the cold is gone.',
+        onResolve: {
+          text:
+            'He finds every knot the winter has tied in your back and names it, like a man reading a map. He ' +
+            'talks about his daughter’s marriage, the price of lamp oil, a dog he once owned. You do not have to ' +
+            'say a word. You walk home warm for the first time in a month.',
+          effects: { money: -40, health: 2, resolve: 2 },
+        },
+      },
+      {
+        text: 'Take the old man’s challenge at go.',
+        check: { stat: 'chi', dc: 6 },
+        onSuccess: {
+          text:
+            'You play for an hour with the board across both your knees. He wins by two stones and is delighted, ' +
+            'and tells you about his late wife’s pickles and his son’s shop, and not once does he ask about your ' +
+            'lord. You go home warm to the bone.',
+          effects: { money: -10, resolve: 2 },
+        },
+        onFailure: {
+          text:
+            'He takes you apart in forty moves, wins the string of mon you bet on the side, and explains how, ' +
+            'twice, with pleasure. It is the best company you have had since the road.',
+          effects: { money: -40, resolve: 1 },
+        },
+      },
+      {
+        text: 'Wade into the fish-sellers’ argument.',
+        check: { stat: 'kuchi', dc: 5 },
+        onSuccess: {
+          text:
+            'You take the side of the bonito, then of the price, then of whoever is losing, and by the end the ' +
+            'whole steam room is laughing, the carpenter hardest. On your way out the fish-sellers tell you which ' +
+            'stall to buy from and which to avoid, and they call you by name.',
+          effects: { money: -10, resolve: 1, reputation: 1 },
+        },
+        onFailure: {
+          text:
+            'You speak the way your father spoke to tradesmen, without meaning to. The steam goes quiet. The ' +
+            'fish-sellers find they have somewhere else to be.',
+          effects: { money: -10, resolve: -1 },
+        },
+      },
+      {
+        text: 'Wash quickly, pay the few mon, and go.',
+        onResolve: {
+          text: 'Hot water, a scrub, and back out into the street before the cold can find you again. It is enough to sleep on.',
+          effects: { money: -10, health: 1, resolve: 1 },
+        },
+      },
+    ],
+  },
+
+  // codex: hinin, a status outside the four classes, did work the city needed
+  // and shunned, including taking up the unclaimed dead (01 §B2 "below the
+  // system"; their exact duties and organization in 1649 Edo are to verify).
+  // The word is the headman's, not the narration's (03 §9.1 B2), and needs a
+  // codex card on its history. Rōnin often let their shaven pates grow out
+  // (verify). Touching the dead was polluting in period belief (verify), so the
+  // lane's distance is the world's prejudice and helping costs Reputation, not
+  // Gi (B3, B4); walking on is not rewarded. Chōsuke has a trade, a son and his
+  // own standards. The drowning is left unexplained. City-edo rōnin-surplus
+  // texture (01 §B1 scale note; 03 §6 dole line), no single 03 §6 entry.
+  // Assumes two swords (why he looks at you).
+  {
+    id: 'edo_unclaimed_dead',
+    type: 'story',
+    title: 'The Man at the Pilings',
+    body:
+      'Overnight a body has come up against the pilings below the fish market, face down, and the lane has ' +
+      'gathered on the bank to look, from a distance. A masterless samurai, by the grown-out pate and the two ' +
+      'scabbards in his sash, both empty; someone got to him before the water did, or after. Nobody goes near. ' +
+      'The ward’s headman says he has sent for the hinin, and says the word as if it named a job rather than a ' +
+      'man; the outcast households are the only people in the city who will do this work. The man who comes is ' +
+      'Chōsuke. He brings a pole, a straw mat and his son, and handles the dead the way a carpenter handles good ' +
+      'timber. The crowd steps back farther from him than it did from the body. When the dead man is laid on ' +
+      'the bank, Chōsuke looks around for anyone who might know his name. Unclaimed, he goes to the common pit. ' +
+      'His eyes stop on your swords.',
+    weight: 1,
+    acts: [2],
+    choices: [
+      {
+        text: 'Kneel and search him for a name.',
+        check: { stat: 'me', dc: 6 },
+        onSuccess: {
+          text:
+            'Sewn inside his collar, where a careful man keeps it, is a scrap of paper: a name, and a domain that ' +
+            'no longer exists. You read it aloud. Chōsuke repeats it once, to have it right, and the headman writes ' +
+            'it in the ward’s book, with yours beside it as the one who read it. A man with a name can have a ' +
+            'temple. You leave thirty mon for the sutras.',
+          effects: { money: -30, gi: 1, suspicion: 1 },
+        },
+        onFailure: {
+          text:
+            'There is nothing on him but canal water. You stand up with wet knees in front of the whole lane, ' +
+            'having handled the dead for nothing, and the headman asks your name in a tone that means he will ' +
+            'remember it.',
+          effects: { suspicion: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Take the other end of Chōsuke’s pole.',
+        check: { stat: 'chikara', dc: 5 },
+        onSuccess: {
+          text:
+            'You carry him up the bank between you, the son walking ahead to clear the way. Nobody in the crowd ' +
+            'says anything, which is how you know what they are saying. At the cart Chōsuke bows to you exactly as ' +
+            'deep as you bow to him, and not a hair deeper.',
+          effects: { reputation: -1, gi: 1, resolve: 1 },
+        },
+        onFailure: {
+          text:
+            'The bank is wet clay. You go down with the dead man’s weight across you, and the lane laughs, the way ' +
+            'people laugh when they are frightened. Chōsuke’s son helps you up. His father takes the pole back ' +
+            'without a word and carries the load with his son.',
+          effects: { health: -1, reputation: -1, gi: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Pay Chōsuke to take him to a temple instead of the pit.',
+        requires: { min: { money: 100 } },
+        displayWhenUnmet: 'locked_hint',
+        lockedHint: 'needs 100 mon',
+        onResolve: {
+          text:
+            'Chōsuke knows a temple outside the city that will say the sutras over a man without a name, if ' +
+            'someone pays. He counts the hundred mon once and tells you the temple’s name, so you will know where ' +
+            'to find him. Then he and his son lift the pole and go, and the crowd opens wide to let them through.',
+          effects: { money: -100, gi: 1 },
+        },
+      },
+      {
+        text: 'Walk on. You did not know him.',
+        onResolve: {
+          text:
+            'You did not. Neither did anyone else on the bank, and that is the whole of it. You think about the ' +
+            'empty scabbards for the rest of the day.',
+          effects: { resolve: -1 },
+        },
+      },
+    ],
+  },
+  // codex: okappiki, the constables' hired informers, were often ex-criminals
+  // and were notorious for squeezing the people they watched (01 §B6).
+  // O-Sen is a widow keeping a noodle stall, a person with a trade, not a prop
+  // (03 §9.1 C). Gender-neutral PC; assumes two swords.
+  {
+    id: 'edo_okappiki_squeeze',
+    type: 'story',
+    title: 'The Noodle Stall',
+    body:
+      'O-Sen’s noodle stall at the corner of your lane is the best supper in the ward for twelve mon. ' +
+      'Tonight an okappiki, one of the constables’ informers, is leaning on her counter, eating without ' +
+      'paying, and explaining how many things a widow with a charcoal brazier could be fined for in a ' +
+      'city that fears fire. She keeps cooking. Her hands are steady. Her eyes go to you once, and then ' +
+      'away, because she does not want to ask.',
+    weight: 1,
+    acts: [2],
+    choices: [
+      {
+        text: 'Ask him, politely, which constable he works for.',
+        check: { stat: 'kuchi', dc: 7 },
+        onSuccess: {
+          text:
+            'He names a dōshin. You repeat the name slowly, as if committing it to memory for a letter. He ' +
+            'finds that he has somewhere else to be, and leaves twelve mon on the counter.',
+          effects: { gi: 1, reputation: 1 },
+        },
+        onFailure: {
+          text:
+            'He names a dōshin, and then asks your name, and writes it down. O-Sen gives you your noodles for ' +
+            'nothing afterward. It does not feel like a win.',
+          effects: { suspicion: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Sit down at the counter beside him and say nothing at all.',
+        check: { stat: 'tan', dc: 6 },
+        onSuccess: {
+          text:
+            'You eat. You look at him between mouthfuls. After the third, he pays and goes. O-Sen puts an ' +
+            'extra egg in your bowl and does not mention it.',
+          effects: { gi: 1 },
+        },
+        onFailure: {
+          text:
+            'He stares back, longer than you do. When he goes, he goes to someone. Your name will be in ' +
+            'somebody’s report by morning.',
+          effects: { suspicion: 2 },
+        },
+      },
+      {
+        text: 'Pay his “fine” yourself, so she does not have to.',
+        requires: { min: { money: 60 } },
+        displayWhenUnmet: 'locked_hint',
+        lockedHint: 'needs 60 mon',
+        onResolve: {
+          text:
+            'He takes it with a smile, and you know he will be back next month. So does she. She thanks you ' +
+            'anyway, and means it.',
+          effects: { money: -60, gi: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Keep walking. It is not your stall.',
+        onResolve: {
+          text: 'You eat somewhere worse that night, and pay more for it.',
+          effects: { resolve: -1 },
+        },
+      },
+    ],
   },
 ];

@@ -1,17 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { GameEvent, StoryEvent } from '../engine/types';
-import { ACT1_EVENTS, INTRO_EVENT } from './events.act1';
-import { TALE1_ACT1_CHAIN } from './chain.tale1.act1';
+import { ALL_EVENTS } from './index';
 import { poolFor } from '../engine/eventDirector';
 import { ENDINGS } from './endings';
 import { validateContent } from './validate';
 import { ACTS, TALE_START_FLAGS, TRAITS } from './tale';
 import type { ActSpec } from '../engine/types';
-import { PREVIEW_ACTS, PREVIEW_EVENTS } from '../sim/preview';
 
 const TRAIT_FLAGS = [...TRAITS.flatMap((t) => (t.flag ? [t.flag] : [])), ...TALE_START_FLAGS];
-
-const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
 
 const story = (overrides: Partial<StoryEvent> = {}): StoryEvent => ({
   id: 'test_event',
@@ -36,11 +32,7 @@ describe('built content', () => {
     expect(validateContent(ALL_EVENTS, ENDINGS, TRAIT_FLAGS, ACTS)).toEqual([]);
   });
 
-  it('Acts 2 and 3 pass every authoring rule too (in the three-act preview)', () => {
-    expect(validateContent(PREVIEW_EVENTS, ENDINGS, TRAIT_FLAGS, PREVIEW_ACTS)).toEqual([]);
-  });
-
-  it('keeps the random pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
+  it('keeps the Act 1 random pool at the vertical-slice size (02 §16: ~20-25 events)', () => {
     const pool = poolFor(ALL_EVENTS, 1).length + 1; // + intro
     expect(pool).toBeGreaterThanOrEqual(20);
     expect(pool).toBeLessThanOrEqual(25);
@@ -122,7 +114,7 @@ describe('validator catches', () => {
   });
 
   describe('act and injection rules', () => {
-    const acts: ActSpec[] = [{ act: 1, length: 3, levelInterval: 3, endingId: 'reached_edo' }];
+    const acts: ActSpec[] = [{ act: 1, length: 3, levelInterval: 3, endingId: 'ronin_road_ends_here' }];
     const withActs = (events: GameEvent[], a: ActSpec[] = acts) =>
       validateContent(events, ENDINGS, [], a).map((i) => i.message).join(' | ');
     const pool = [story({ id: 'r1' }), story({ id: 'r2' }), story({ id: 'r3' })];
@@ -138,14 +130,14 @@ describe('validator catches', () => {
 
     it('a last act with no ending, or a missing transition event', () => {
       expect(withActs(pool, [{ act: 1, length: 3, levelInterval: 3 }])).toContain('could never end');
-      expect(withActs(pool, [{ act: 1, length: 3, levelInterval: 3, endingId: 'reached_edo', transitionEventId: 'nope' }])).toContain(
+      expect(withActs(pool, [{ act: 1, length: 3, levelInterval: 3, endingId: 'ronin_road_ends_here', transitionEventId: 'nope' }])).toContain(
         'unknown transitionEventId'
       );
     });
 
     it('an act pool too small for its length', () => {
-      expect(withActs([story({ id: 'r1' })], [{ act: 1, length: 8, levelInterval: 3, endingId: 'reached_edo' }])).toContain(
-        'events would repeat'
+      expect(withActs([story({ id: 'r1' })], [{ act: 1, length: 8, levelInterval: 3, endingId: 'ronin_road_ends_here' }])).toContain(
+        'events could repeat'
       );
     });
 

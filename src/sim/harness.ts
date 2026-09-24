@@ -1,6 +1,6 @@
 // Balance harness (02 §15, 04 §5): plays whole runs headlessly through the same
 // runner the browser uses, with bot policies standing in for players.
-import type { Choice, GameEvent, Outcome, RunState, StatKey, TrackKey } from '../engine/types';
+import type { Choice, EndingSpec, GameEvent, Outcome, Requirement, RunState, StatKey, TrackKey } from '../engine/types';
 import { mulberry32, type Rng } from '../engine/rng';
 import { createInitialState } from '../engine/state';
 import { previewCheck } from '../engine/checkResolver';
@@ -31,6 +31,22 @@ export const randomPolicy: Policy = {
   stance: (_s, _w, rng) => pickOne<Stance>(['aggressive', 'defensive', 'escape'], rng),
 };
 
+// Flags that fire a forced ending (taken_into_custody, chose_seppuku, ...).
+const endingFlagCache = new WeakMap<runner.Content, Set<string>>();
+function endingFlags(content: runner.Content): Set<string> {
+  let set = endingFlagCache.get(content);
+  if (!set) {
+    set = new Set();
+    const walk = (r?: Requirement) => {
+      for (const f of r?.flags ?? []) set!.add(f);
+      for (const sub of r?.anyOf ?? []) walk(sub);
+    };
+    for (const e of Object.values(content.endings)) walk(e.forcedWhen);
+    endingFlagCache.set(content, set);
+  }
+  return set;
+}
+
 // Scores an outcome the way a careful player would: Suspicion is dangerous,
 // low health and Resolve matter more as they run out.
 function value(s: RunState, o: Outcome | undefined, content: runner.Content): number {
@@ -43,8 +59,14 @@ function value(s: RunState, o: Outcome | undefined, content: runner.Content): nu
     (e.suspicion ?? 0) * (s.suspicion >= 3 ? -8 : -3) +
     (e.reputation ?? 0) * 0.8 +
     (e.gi ?? 0) * 0.3;
-  if (o.goto && content.byId.get(o.goto)?.type === 'combat') v -= 2; // a fight: real risk
-  if (o.endingId) v -= 15; // ends the run here (arrest, a chosen death)
+  // A fight: weigh both results by a rough win chance (average condition −5).
+  const fight = o.goto ? content.byId.get(o.goto) : undefined;
+  if (fight?.type === 'combat') {
+    const you = s.weaponTier * 4 + s.stats.chikara + s.stats.waza + s.armorBonus - 5;
+    const p = Math.min(95, Math.max(5, 50 + (you - fight.foe.power) * 6 + (fight.winPctMod ?? 0))) / 100;
+    v += p * value(s, fight.onWin, content) + (1 - p) * value(s, fight.onLose, content) - 1;
+  }
+  if (o.endingId || o.setFlags?.some((f) => endingFlags(content).has(f))) v -= 15; // ends the run here (arrest, a chosen death)
   if (o.moneyMult !== undefined) v -= s.money * (1 - o.moneyMult) * 0.02;
   v += (o.addItems?.length ?? 0) * 2 + (o.setFlags?.length ?? 0) * 0.3; // story progress has worth
   return v;
@@ -175,13 +197,18 @@ export function playRun(
 
 const pct = (n: number, d: number) => (d ? `${((100 * n) / d).toFixed(1)}%` : '—');
 
-export function report(policy: Policy, runs: RunRecord[]): string {
+// A run survives if it reached an evaluated ending; forced endings (death,
+// despair, arrest, the conspirators' deaths) are losses.
+export const survived = (r: RunRecord, endings: Record<string, EndingSpec>) => !endings[r.ending]?.forcedWhen;
+
+export function report(policy: Policy, runs: RunRecord[], specs: Record<string, EndingSpec>): string {
   const n = runs.length;
   const lines: string[] = [`### ${policy.name} (${n} runs)`, ''];
   const endings: Record<string, number> = {};
   for (const r of runs) endings[r.ending] = (endings[r.ending] ?? 0) + 1;
   lines.push('| Ending | Share |', '|---|---|');
   for (const [k, v] of Object.entries(endings).sort((a, b) => b[1] - a[1])) lines.push(`| ${k} | ${pct(v, n)} |`);
+  lines.push('', `Survived: ${pct(runs.filter((r) => survived(r, specs)).length, n)}`);
 
   const checks = runs.flatMap((r) => r.checks);
   const on = checks.filter((c) => c.onBuild);
@@ -223,7 +250,7 @@ export function report(policy: Policy, runs: RunRecord[]): string {
     for (const act of [1, 2, 3]) {
       const reached = runs.filter((r) => r.lastAct >= act);
       if (!reached.length) continue;
-      const lost = reached.filter((r) => r.lastAct === act && !r.ending.startsWith('reached_edo'));
+      const lost = reached.filter((r) => r.lastAct === act && !survived(r, specs));
       const agg = reached.reduce(
         (t, r) => {
           const a = r.byAct[act];

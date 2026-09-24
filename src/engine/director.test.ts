@@ -39,19 +39,19 @@ function play(events: GameEvent[], acts: ActSpec[], n: number, setup?: (s: Retur
   return { seen, state };
 }
 
-const ONE_ACT: ActSpec[] = [{ act: 1, length: 6, levelInterval: 3, endingId: 'reached_edo' }];
+const ONE_ACT: ActSpec[] = [{ act: 1, length: 6, levelInterval: 3, endingId: 'ronin_road_ends_here' }];
 
 describe('nextStep: random draws and act length', () => {
   it('draws from the act bag until the act length, then ends', () => {
     const { seen } = play(randoms(10), ONE_ACT, 20);
     expect(seen).toHaveLength(7);
-    expect(seen.at(-1)).toBe('ending:reached_edo');
+    expect(seen.at(-1)).toBe('ending:ronin_road_ends_here');
     expect(new Set(seen.slice(0, 6)).size).toBe(6); // no repeats
   });
 
   it('reports run completion once the act is over', () => {
     const { state } = play(randoms(10), ONE_ACT, 6);
-    expect(runCompleteEnding(state, randoms(10), ONE_ACT, ENDINGS)).toBe('reached_edo');
+    expect(runCompleteEnding(state, randoms(10), ONE_ACT, ENDINGS)).toBe('ronin_road_ends_here');
   });
 });
 
@@ -128,7 +128,7 @@ describe('nextStep: injections (11 §1.1)', () => {
       const step = nextStep(state, events, ONE_ACT, ENDINGS, rng) as { id: string };
       recordResolved(state, step.id, events, rng);
     }
-    expect(runCompleteEnding(state, events, ONE_ACT, ENDINGS)).toBe('reached_edo'); // gate still shut: it will lapse
+    expect(runCompleteEnding(state, events, ONE_ACT, ENDINGS)).toBe('ronin_road_ends_here'); // gate still shut: it will lapse
     state.flags.add('open');
     expect(runCompleteEnding(state, events, ONE_ACT, ENDINGS)).toBeNull();
     expect(nextStep(state, events, ONE_ACT, ENDINGS, rng)).toEqual({ kind: 'event', id: 'late' });
@@ -154,7 +154,7 @@ describe('nextStep: injections (11 §1.1)', () => {
 describe('nextStep: act transitions', () => {
   const TWO_ACTS: ActSpec[] = [
     { act: 1, length: 3, levelInterval: 3, transitionEventId: 'gates' },
-    { act: 2, length: 3, levelInterval: 4, endingId: 'reached_edo' },
+    { act: 2, length: 3, levelInterval: 4, endingId: 'ronin_road_ends_here' },
   ];
 
   it('shows the transition event, then draws from the next act', () => {
@@ -163,14 +163,15 @@ describe('nextStep: act transitions', () => {
     expect(seen[3]).toBe('gates');
     expect(seen.slice(0, 3).every((id) => id.startsWith('r1_'))).toBe(true);
     expect(seen.slice(4, 7).every((id) => id.startsWith('r2_'))).toBe(true);
-    expect(seen.at(-1)).toBe('ending:reached_edo');
+    expect(seen.at(-1)).toBe('ending:ronin_road_ends_here');
     expect(state.act).toBe(2);
   });
 });
 
-describe('the built slice through the director', () => {
+describe('the built Act 1 through the director', () => {
   it('plays the intro, all five Tale 1 chain events and 8 draws with no repeats, then ends', () => {
     const all = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
+    const act1Alone: ActSpec[] = [{ ...ACTS[0], transitionEventId: undefined, evaluateEndings: true }];
     const chainIds = TALE1_ACT1_CHAIN.filter((e) => e.inject).map((e) => e.id);
     for (const seed of [1, 2, 3, 4, 5]) {
       const rng = mulberry32(seed);
@@ -178,13 +179,13 @@ describe('the built slice through the director', () => {
       state.flags.add('watch_list_active');
       recordResolved(state, INTRO_EVENT.id, all, rng);
       const shown: string[] = [];
-      let step = nextStep(state, all, ACTS, ENDINGS, rng);
+      let step = nextStep(state, all, act1Alone, ENDINGS, rng);
       while (step.kind === 'event') {
         shown.push(step.id);
         recordResolved(state, step.id, all, rng);
-        step = nextStep(state, all, ACTS, ENDINGS, rng);
+        step = nextStep(state, all, act1Alone, ENDINGS, rng);
       }
-      expect(step).toEqual({ kind: 'ending', endingId: 'reached_edo' });
+      expect(step).toEqual({ kind: 'ending', endingId: 'ronin_road_ends_here' });
       expect(shown).toHaveLength(13);
       expect(new Set(shown).size).toBe(13);
       expect(shown.filter((id) => chainIds.includes(id))).toEqual(chainIds); // all five, in spec order

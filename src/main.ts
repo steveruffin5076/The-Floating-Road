@@ -1,5 +1,5 @@
 import { mulberry32, makeSeed, type Rng } from './engine/rng';
-import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Outcome } from './engine/types';
+import type { RunState, StatKey, StoryEvent, CombatEvent, Outcome } from './engine/types';
 import { STAT_LABELS } from './engine/types';
 import { previewCheck } from './engine/checkResolver';
 import { setupCombat, applyChoHan, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
@@ -7,13 +7,11 @@ import { checkModPct, eventBody, meetsRequirement, visibleChoices } from './engi
 import { createInitialState } from './engine/state';
 import * as runner from './engine/runner';
 import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './content/tale';
-import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
-import { TALE1_ACT1_CHAIN } from './content/chain.tale1.act1';
+import { ALL_EVENTS, INTRO_EVENT } from './content';
 import { ENDINGS } from './content/endings';
 import { endingEpilogue } from './engine/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
 
-const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS, ...TALE1_ACT1_CHAIN];
 const CONTENT = runner.makeContent(ALL_EVENTS, ACTS, ENDINGS);
 const EVENTS_BY_ID = CONTENT.byId;
 
@@ -109,7 +107,7 @@ function renderTitle(): void {
   div.className = 'title-screen';
   div.innerHTML = `
     <h1>浮 THE FLOATING ROAD</h1>
-    <p>A vertical slice — Act 1, "${TALE_NAME}"</p>
+    <p>Tale 1, "${TALE_NAME}": three acts, twelve endings</p>
   `;
   if (hasSavedGame()) {
     const continueBtn = mkPrimaryButton('Continue Your Journey', () => {
@@ -169,7 +167,7 @@ function startRun(traitId: string | null): void {
   if (trait?.statBonus) {
     stats[trait.statBonus.stat] = Math.min(15, stats[trait.statBonus.stat] + trait.statBonus.amount);
   }
-  state = createInitialState(stats, ACT1_EVENTS, rng);
+  state = createInitialState(stats, ALL_EVENTS, rng);
   if (trait?.flag) state.flags.add(trait.flag);
   for (const f of TALE_START_FLAGS) state.flags.add(f);
   state.drawnOnce.add(INTRO_EVENT.id);

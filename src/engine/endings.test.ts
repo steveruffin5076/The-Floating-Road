@@ -14,11 +14,20 @@ describe('forcedEnding (built endings)', () => {
     const s = fresh();
     expect(forcedEnding(s, ENDINGS)).toBeNull();
     s.suspicion = 5;
-    expect(forcedEnding(s, ENDINGS)).toBe('arrested');
+    expect(forcedEnding(s, ENDINGS)).toBe('ronin_kodenmacho');
     s.resolve = 0;
     expect(forcedEnding(s, ENDINGS)).toBe('despair');
     s.health = 0;
     expect(forcedEnding(s, ENDINGS)).toBe('death');
+  });
+
+  it('arrests at Suspicion 5 only on the road; in Edo it takes the constable (C12)', () => {
+    const s = fresh();
+    s.suspicion = 5;
+    s.act = 2;
+    expect(forcedEnding(s, ENDINGS)).toBeNull();
+    s.flags.add('taken_into_custody');
+    expect(forcedEnding(s, ENDINGS)).toBe('ronin_kodenmacho');
   });
 
   it('never fires the evaluated endings', () => {

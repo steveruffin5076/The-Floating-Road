@@ -12,7 +12,7 @@ re-reading the whole conversation history to pick back up.
   Core formulas (skill checks, combat, leveling cadence) validated against a
   standalone simulator before any content was written against them.
 - **Code:** A playable TypeScript/Vite prototype exists at the repo root
-  (`src/`) — one Tale (rōnin), Act 1 only, 24 events, 4 endings. Runs with
+  (`src/`) — one Tale (rōnin), all three acts, 12 endings plus death. Runs with
   `npm install && npm run dev`.
 - **Repo:** Initialized and pushed to
   [github.com/steveruffin5076/The-Floating-Road](https://github.com/steveruffin5076/The-Floating-Road).
@@ -165,22 +165,33 @@ re-reading the whole conversation history to pick back up.
     recalibrated (foe power 14, 16); a duplicate bridge fight was moved. See
     the follow-up in `game-plan/12-act1-balance-report.md`.
 
+24. **Tale 1 playable end to end.** Act 2 chain (C5–C11, the Gates of Edo
+    and Shōgun-is-dead transitions), Act 3 chain (the Sagawa sweep, the three
+    versions of the collapse, the Katsuragi hearing or blackmail, O-Ryō in
+    autumn) and all 12 endings, wired as three acts (14 / 16 / 8). Engine: act
+    watches (Suspicion 5 in Edo brings the constable, not a direct arrest),
+    act-scoped requirements, run-ending "evaluate now" outcomes, epilogue
+    variant lines ("where you stood" in September 1651). Act 2 and Act 3
+    pools grown to 14 and 8. First full-game numbers and the next tuning
+    pass are in `12`'s last follow-up: 73% first-timer survival (target ~40%)
+    and a fallback ending far too common.
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
   requirements-engine behavior is untested with more than one Tale.
-- No automated tests yet (unit tests for checkResolver/combatResolver, a
-  content schema validator) — `04-technical-plan.md` §5 calls for these.
 - Sensitivity follow-ups: `08`'s notes N1–N7 and research gaps in `01`
   (rōnin vs kirisute-gomen, *Go Rin no Sho* circulation, barrier-breaking
   penalty, Ōi porter-system date, gonin-gumi reporting duty, polishing as a
   specialist craft). Outcast groups (checklist §B) and Tale 6 are still
   unexercised by any built content.
 - Engine for P1.5 (`11` §6) is complete except trajectory hints (#13).
-- Acts 2–3 must be much deadlier per event than Act 1 to reach `02` §15's
-  ~40% full-run survival (Act 1 alone keeps ~93% of first-timers). See
-  `12-act1-balance-report.md` for the Resolve-per-event guidance.
-- Act 2/3 random pools (10 and 6 events) roughly match `11` §4.1's draws once the chains are in (~9–11 and ~4–6), with little slack; grow them if the chains land short.
+- Tuning pass owed (`12`, last follow-up): full-run survival is 73% for a
+  first-timer against ~40%, and the fallback ending takes 35–53% of runs
+  against ~8%. Several endings need route-seeking bots to measure.
+- Research owed for Act 3 text: sukedachi in licensed vendettas, the Asakusa
+  granaries' merchants, bathhouse details, tsukimi customs (all flagged
+  "verify" in codex comments).
 - Research still owed to `01` before authoring: a rōnin's vendetta-license
   mechanism, where the Keian executions/display took place (`03` says
   Kodenmachō, which was the prison), recorded informants, and for Tale 3 the

@@ -5,12 +5,18 @@ import type { ActSpec, Stats, StatKey } from '../engine/types';
 export const TALE_ID = 'ronin';
 export const TALE_NAME = 'The Masterless Blade';
 
-// The slice is Act 1 only: 14 events (11 §4.1 slot map), the intro plus five
-// Tale 1 chain events (chain.tale1.act1.ts) plus 8 random draws from a 23-event
-// bag. Level-ups every 3 events are §4.3's front-loaded Act 1 cadence. The act
-// evaluates endings until Act 2 has content; then the reached_edo family
-// becomes the transition event `t1_gates_of_edo` (11 §4.2).
-export const ACTS: ActSpec[] = [{ act: 1, length: 14, levelInterval: 3, evaluateEndings: true }];
+// Tale 1's three acts (11 §4.1): the road (14 events), Edo (16) and the Keian
+// summer (8; conspirators' runs usually end at slot 6). Level-ups every 3
+// events in Act 1 are §4.3's front-loaded cadence, then every 4. In Edo,
+// Suspicion reaching 5 brings the constable (C12) instead of a direct arrest;
+// once you have fought your way past him you are hunted, and he stops knocking.
+const SAGAWA_WATCH = { when: { min: { suspicion: 5 }, flagsNot: ['sagawa_hunted'] }, spawn: 't1_sagawa_raid' };
+
+export const ACTS: ActSpec[] = [
+  { act: 1, length: 14, levelInterval: 3, transitionEventId: 't1_gates_of_edo' },
+  { act: 2, length: 16, levelInterval: 4, transitionEventId: 't1_shogun_is_dead', watches: [SAGAWA_WATCH] },
+  { act: 3, length: 8, levelInterval: 4, evaluateEndings: true, watches: [SAGAWA_WATCH] },
+];
 
 // Premise: "a name on a list of 'unattached swordsmen' the sekisho are told to
 // watch for" (03 §4 Tale 1).

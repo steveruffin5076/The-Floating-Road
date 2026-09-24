@@ -458,4 +458,126 @@ export const ACT3_EVENTS: GameEvent[] = [
       moneyMult: 0.5,
     },
   },
+  // codex: moon-viewing (tsukimi) on the fifteenth night of the eighth month
+  // was kept in town and village alike, with offerings of dumplings and
+  // pampas grass (01 §B8 festivals, verify). A recovery beat that reads true
+  // before or after the plot's collapse: the lane goes on living.
+  {
+    id: 'keian_harvest_moon',
+    type: 'story',
+    title: 'The Harvest Moon',
+    body:
+      'On the fifteenth night of the eighth month, the whole lane is out on its doorsteps for the moon. ' +
+      'Someone has set pampas grass in a jar, and there are rice dumplings on a tray, piled the way ' +
+      'grandmothers insist on. A neighbor’s grandmother waves you over to the bench. The old roofer next door is ' +
+      'still up his ladder in the last light, trying to finish a patch before the autumn rains, and ' +
+      'losing.',
+    weight: 1,
+    acts: [3],
+    choices: [
+      {
+        text: 'Sit on the bench and watch the moon with them.',
+        onResolve: {
+          text:
+            'Nobody asks you anything. Someone passes you a dumpling, then another. The moon comes up over ' +
+            'the rooftops as it did before any of you, and you sit until it is high.',
+          effects: { resolve: 2 },
+        },
+      },
+      {
+        text: 'Go up the ladder and help the old man finish.',
+        check: { stat: 'chikara', dc: 6 },
+        onSuccess: {
+          text:
+            'You carry the bundles and he does the work, cursing you both. The patch holds. The lane cheers ' +
+            'when you come down, which embarrasses everyone, and then they feed you.',
+          effects: { resolve: 1, gi: 1, reputation: 1 },
+        },
+        onFailure: {
+          text:
+            'A rung gives. You catch yourself on the gutter and bark a shin on the way down. The old man ' +
+            'finishes alone. The lane laughs, kindly, and feeds you anyway.',
+          effects: { health: -2, resolve: 1 },
+        },
+      },
+      {
+        text: 'Stay inside with the shutters closed.',
+        onResolve: {
+          text: 'You hear them laughing through the wall until late. It is a long night.',
+          effects: { resolve: -1 },
+        },
+      },
+    ],
+  },
+
+  // codex: rōnin in Edo had to be registered through a guarantor (ukenin),
+  // commonly a landlord, and these controls tightened sharply after the 1651
+  // plot (01 §B6, partly verified; the lane's practice, not a national rule).
+  // Gender-neutral; the ward headman is a clerk doing his job, not a villain.
+  {
+    id: 'keian_ward_register',
+    type: 'story',
+    title: 'The Ward Register',
+    body:
+      'The ward headman has a new register and a table set up in the street. Every masterless samurai ' +
+      'in the ward is to be written down again: name, former house, how long in Edo, and the name of a ' +
+      'guarantor who will answer for them. Your landlord is standing at the back of the crowd, very ' +
+      'interested in his own sandals. The headman is polite and tired and has three more lanes to do ' +
+      'before dark.',
+    weight: 1,
+    acts: [3],
+    choices: [
+      {
+        text: 'Ask your landlord, in front of everyone, to stand for you.',
+        check: { stat: 'kuchi', dc: 7 },
+        onSuccess: {
+          text:
+            'He can hardly refuse with the lane watching, and to his credit he does not look as if he wants ' +
+            'to. The headman writes his name beside yours. It is worth more than it looks.',
+          effects: { suspicion: -1 },
+        },
+        onFailure: {
+          text:
+            'He finds a reason he cannot, and says it loudly. The headman writes “no guarantor” in a neat ' +
+            'hand, and underlines it.',
+          effects: { suspicion: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Answer every question in the proper form, and give nothing extra.',
+        check: { stat: 'chi', dc: 7 },
+        onSuccess: {
+          text: 'Your entry is the dullest on the page. The headman thanks you for it, sincerely.',
+          effects: { resolve: -1 },
+        },
+        onFailure: {
+          text:
+            'You give your former house’s name out of habit, with the crest-name attached. The headman ' +
+            'pauses, and writes it, and then writes something beside it.',
+          effects: { suspicion: 1, resolve: -1 },
+        },
+      },
+      {
+        text: 'Pay the headman’s clerk to write “long resident, no trouble.”',
+        requires: { min: { money: 200 } },
+        displayWhenUnmet: 'locked_hint',
+        lockedHint: 'needs 200 mon',
+        onResolve: {
+          text:
+            'The clerk takes it without changing expression, which is how you know he has done it before. ' +
+            'Your line in the register is the shortest in the ward.',
+          effects: { money: -200, suspicion: -1, gi: -1 },
+        },
+      },
+      {
+        text: 'Be out when they come to your door.',
+        onResolve: {
+          text:
+            'You spend the day across the river. When you come back, your name is on the register anyway, ' +
+            'with “absent” beside it.',
+          effects: { suspicion: 2 },
+        },
+      },
+    ],
+  },
 ];
