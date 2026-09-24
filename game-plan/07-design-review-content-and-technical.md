@@ -448,3 +448,49 @@ parts of `03`'s content plan (all of Tale 4; a chunk of Tale 3) that are
 simply absent from `04` — not cut, not built, not mentioned. They should
 either get an explicit "not built yet, needed before Tale 3/4" note in `04`
 §7, or a schema sketch, before those Tales get authored.
+
+---
+
+## Follow-up: findings applied
+
+These findings were folded directly into the source docs, the same way `05`'s
+were folded into `02`:
+
+- **§1.1 Gi/Aku:** `03` §4 now opens with a notation note (single slider, + = Gi).
+  Every ending requirement and effect in `03` is rewritten as `Gi/Aku ≥ +n` /
+  `Gi/Aku ≤ −n` / `Gi/Aku ±n`. Tale 1's vague "Aku path" (Informant) became
+  `Gi/Aku ≤ −1`.
+- **§1.2 Wanted poster:** `03` §6 now says Suspicion ≥ 5, matching `02` §5.
+- **§1.3 Open formulas:** named in the new `02` §9.2, cross-referenced from `03`
+  Tale 4's mechanics hook and `04` §7.
+- **§1.4 DC anchors:** clarifying sentence added to `02` §6.
+- **§2 Content bank scope:** scope note added at the top of `03` §6. The heading's
+  "(MVP list)" label, which contradicted the 92-event count, is now "(full-content list)".
+- **§3 Sensitivity checklist:** `03` §9 and `02` §17 now mark it as a TODO
+  pointing at `progress.md`.
+- **§4.1 Per-choice gating:** `04` §3 adds choice-level `requires` +
+  `display_when_unmet`, shown on the bribe choice in the JSONC example.
+- **§4.2 Compound checks:** `04` §3.1 documents the two-step `goto` chain as the
+  standard pattern. No `checks[]` array.
+- **§4.3 Permanent stat effects:** `stat_delta` added to `04` §3's effects vocabulary.
+- **§5 Ending schema:** `04` §3.2 sketches `endings.json` (AND/`any_of`,
+  `min_`/`max_` track thresholds, `counters_min`/`counters_max` +
+  `counter_inc`). `max_suspicion` was added at the event `requires` level.
+- **§6 Roadmap:** `04` §6 P1 is resized to `02` §16's slice. The old P1 scope moved
+  to a new P1.5. P0/P1 are marked done. `04`'s title no longer says "development
+  not started."
+- **§7 Testing status:** status line added to `04` §5, naming the schema validator
+  as the next infrastructure piece.
+- **§8 Unscoped systems:** "not built, not cut" note added to `04` §7.
+
+**Deliberately left open:**
+
+- The three undefined formulas (gambling den, peddling prices, Tale 4 den-network
+  track). They're named in `02` §9.2 but not designed, and deferred until Tale 3/4
+  authoring.
+- The sensitivity checklist itself. It's marked TODO in `03` §9 and `02` §17, and
+  drafting it is a separate task.
+- §3's optional cameo source-tagging (tagging named-cameo events with their
+  `01-research.md` source line). Not applied.
+- §3's suggestion to lint `03` §9's word caps in the schema validator. It waits on
+  the validator being built.

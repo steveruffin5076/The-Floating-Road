@@ -71,6 +71,12 @@ this is the connective tissue LiA lacked:
 
 > Each Tale: premise → opening scene → cast → act beats → endings (with requirements).
 > Requirements shown as the game will gate them. ~10–14 chain events per Tale at full content.
+>
+> **Gi/Aku notation.** Gi/Aku is the single slider from `02` §5 (−5…+5; positive =
+> Gi, negative = Aku), not two meters. Requirements are written as slider comparisons:
+> `Gi/Aku ≥ +2` = Gi-leaning, `Gi/Aku ≤ −3` = Aku-leaning. Effects are written as
+> slider deltas: `Gi/Aku +1` moves one step toward Gi, `Gi/Aku −1` one step toward Aku.
+> Prose like "slides Aku" only describes direction, meaning a negative Gi/Aku effect.
 
 ---
 
@@ -117,13 +123,13 @@ swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking
 | **A New Banner** (bright) | Legal revenge path abandoned; earn adoption/employment under an honest lord via bodyguard arc | Reputation ≥ +3, Suspicion ≤ 1, completed 2+ employer contracts, refused Yui |
 | **The Lawful Vendetta** (solemn) | Adauchi authorized, Katsuragi killed in sanctioned duel, you submit to review | Chi ≥ 8 or Kuchi ≥ 8, item: father's letter, Suspicion ≤ 2, Reputation ≥ +1 |
 | **First Blood at Dawn** (dark-neutral) | Illegal hatashiai; you win, then live as hunted | Waza ≥ 9, won duel, escaped Sagawa chain |
-| **The Garden Gate** (dark) | Blackmail → Katsuragi's hired thugs → mutual destruction | Aku ≥ +3 |
+| **The Garden Gate** (dark) | Blackmail → Katsuragi's hired thugs → mutual destruction | Gi/Aku ≤ −3 |
 | **Sunpu, September 10th** (tragic-heroic) | Joined Yui; at Sunpu, seppuku as the walls close — historically accurate | Joined plot, reached Sunpu in Act 3, Resolve ≥ 6 |
 | **The Fever Betrayal** (tragic) | Joined; tried to warn Marubashi; died in the Edo arrest sweep | Joined, befriended Marubashi, in Edo Act 3 |
-| **Informant** (grim-survival) | Sold Yui's plan to the metsuke; rewarded, then despised; your name survives in no song | Kuchi ≥ 7, Chi ≥ 6, Aku path |
+| **Informant** (grim-survival) | Sold Yui's plan to the metsuke; rewarded, then despised; your name survives in no song | Kuchi ≥ 7, Chi ≥ 6, Gi/Aku ≤ −1 |
 | **Sword for Sale** (neutral) | Ignore everything; become a famous mercenary instructor — rich, hollow | 4+ combat wins, Reputation ≥ +2, refused all causes |
-| **The Plow** (quiet-bright) | Bury the sword; marry into O-Ryō's teahouse or a farm | Resolve ≥ 8, Gi ≥ +2, completed O-Ryō chain |
-| **Kabukimono** (dark) | Join the gangs; die in a street war or rule a slum | Aku ≥ +4, gang chain events |
+| **The Plow** (quiet-bright) | Bury the sword; marry into O-Ryō's teahouse or a farm | Resolve ≥ 8, Gi/Aku ≥ +2, completed O-Ryō chain |
+| **Kabukimono** (dark) | Join the gangs; die in a street war or rule a slum | Gi/Aku ≤ −4, gang chain events |
 | **Kodenmachō** (death) | Captured in sweeps | arrest chain failure |
 | **The Road Ends Here** (despair) | Resolve 0 | — |
 
@@ -161,7 +167,7 @@ coat and your mother's wooden prayer tablet.
   strong desperate men), *[Tōzō's Guild]* vs *[Kichizo's Hill]* fork deepens,
   *[A Letter From Mikawa]* — your village is being punished for the granary crime;
   go home and confess (bright-sad), or earn enough to buy the village's fine from
-  afar (hard-economic), or let it burn (Aku).
+  afar (hard-economic), or let it burn (slides Aku).
 - Act 3: famine relief riots flare in the cities as Keian paranoia tightens policing;
   the rōnin plot's collapse means mass arrests of "suspicious drifters" — you are
   structurally one. Final movement: home, or a new name.
@@ -173,7 +179,7 @@ through the porter guild to legitimacy), **Kichizo's Heir** (bandit lord — dar
 **A Name Bought** (pay the village fine anonymously, live in Edo as a laborer —
 quiet-bright), **The Tablet** (die on the road home — tragic), plus shared death/
 despair family. Requirement examples: *Fireman* needs Chikara ≥ 7 + Tan ≥ 6 +
-the fire set-piece + Gi ≥ 0; *Confession* needs the Mikawa letter chain resolved
+the fire set-piece + Gi/Aku ≥ 0; *Confession* needs the Mikawa letter chain resolved
 toward home + Resolve ≥ 5.
 
 ---
@@ -205,7 +211,7 @@ with you, ticking every season.
   *[Brother's Sandals]* trail events.
 - Act 2 (Edo): *[The Ledger in Kanda]* — find Kikunosuke inside the ronin-plot
   periphery; fork: pay Bunzō's Edo agent clean (needs big money), renegotiate into
-  servitude (Aku, safe), or turn evidence of Bunzō's illegal lending to the machi-bugyō
+  servitude (slides Aku, safe), or turn evidence of Bunzō's illegal lending to the machi-bugyō
   (dangerous — the bakuto and the police understand each other).
 - Act 3: interest finalizes; Keian sweeps make Bunzō nervous — a nervous oyabun calls
   in debts violently. Climax: the confrontation at his teahouse on the night the
@@ -213,12 +219,12 @@ with you, ticking every season.
 
 **Endings (10).** Includes: **Ledger Closed** (pay in full — bright, requires
 accumulated wealth ≥ 130 ryō-equiv), **The New Bunzō** (take over his territory —
-dark, Aku ≥ +4), **Bugyō's Witness** (testify; enter witness protection-ish exile
+dark, Gi/Aku ≤ −4), **Bugyō's Witness** (testify; enter witness protection-ish exile
 with a new town registration — neutral-bright, Chi/Kuchi gates), **Brothers in
 Kodenmachō** (Kikunosuke arrested as conspirator, you take his debt-cell — tragic),
 **Dōtonbori Water** (default-failure death), **The Pawnshop** (marry into O-Sumi's
 family business, debt absorbed as bride-price negotiation — quiet-bright, needs her
-chain + Gi ≥ +1 + ≥ 40 ryō goodwill).
+chain + Gi/Aku ≥ +1 + ≥ 40 ryō goodwill).
 
 ---
 
@@ -234,6 +240,8 @@ collecting a funeral list.
 **Mechanics hook:** this Tale *starts with* the chō-han system fully unlocked
 (other Tales discover it mid-run) and gets a den-network reputation track instead of
 the usual employer track. Gambling is income AND combat-adjacent (den brawls).
+*(Open formula work, see `02` §9.2: it's undecided whether the den-network track is
+Reputation re-skinned or a separate per-den track.)*
 
 **Cast.** **Oyabun "Iron Cup" Gonbei** (your dead mentor, in flashbacks), **Koharu**
 (a tekiya peddler boss's sharp-tongued daughter — the rival network is her family;
@@ -313,7 +321,7 @@ never gamified as "fun evil" — the codex treats it as history.
 
 **Endings (6, sketched):** community preserved in hiding (bright-somber), martyrdom
 choice at the fumi-e (tragic — handled with total restraint), the name-list burned
-(neutral), betrayal-for-survival (darkest choice in the game, Aku −5), plus shared
+(neutral), betrayal-for-survival (darkest choice in the game, Gi/Aku = −5), plus shared
 family. Full design deferred to V1.x pass.
 
 ---
@@ -327,7 +335,14 @@ documented), Sagawa the dōshin is fictional. Miyamoto Musashi (died 1645) appea
 honest. O-Tsu (Tale 5 name) is deliberately a common period name, not the *Musashi
 novel* character; we will rename if it reads as reference.
 
-## 6. Event content bank (MVP list, by pool)
+## 6. Event content bank (full-content list, by pool)
+
+> **Scope note.** This bank (92 generic events) is the full-content (V1.x) target,
+> not the MVP list. `02` §16 defines which slice of it gets authored in which phase
+> (vertical slice → MVP → V1.0 → V1.x). `progress.md` tracks what's actually built,
+> and the built vertical slice does not currently draw from this bank. For example,
+> its `checkpoint_hakone` is a simpler stand-in, not sample 1's
+> `checkpoint_hakone_papers`.
 
 **road (18):** procession-jammed highway (hired as labor / robbed by watching
 kabukimono / wait); ichirizuka night camp (thief / stranger's fire / quiet XP);
@@ -368,11 +383,11 @@ dangerous social event in the game, see sample 5); pawnshop; the letter-writer
 Chikara+Tan, drowning risk); flood-stranded station (3-day micro-arc: money burns,
 forced social events); ferry that isn't allowed here (smuggler boat, Suspicion);
 salvage divers' find; the palanquin dropped mid-river; porter strike; rainy
-swim-rescue (Reputation+ Gi+); the toll-collector's fake receipt scam.
+swim-rescue (Reputation+ Gi/Aku+); the toll-collector's fake receipt scam.
 
 **checkpoint (10):** see sample 1 (the flagship); permit inspector who can't read
 your dialect (Kuchi); the "guns leaving Edo, women entering" search (Tale-gated
-terror); wanted-poster board (if Suspicion ≥ 3 your face is there — instant
+terror); wanted-poster board (if Suspicion ≥ 5 your face is there — instant
 crisis); bribable junior guard vs incorruptible senior (Me check to tell which);
 temple-certified paper loophole (Chi); nighttime crawl-around with a paid guide
 (Me/Tan, historical at Sekigawa-style barriers); the daimyō procession that
@@ -447,7 +462,7 @@ magic).
   - Failure: Your hand keeps drifting to your weapon/belongings. He reads it as
     prey-scent. → *Ambushed* (combat, +10% to enemy — surprise; foe: `tsujigiri_swordsman` Power 9)
 - **Turn and face him now, on your ground.** [Me DC 3 to see his stance; then combat at your choice of stance]
-  - He is young. His sleeves are tied back with a woman's cord. Combat (foe Power 8, no surprise). Win → loot: *unmarked blade, condition 100%* + **the decision**: it is evidence and a good sword both. (Keep: Suspicion-risk flag `cursed_blade_carried` if any witness events fire; Leave it for the magistrates: Reputation +1, Gi +1.)
+  - He is young. His sleeves are tied back with a woman's cord. Combat (foe Power 8, no surprise). Win → loot: *unmarked blade, condition 100%* + **the decision**: it is evidence and a good sword both. (Keep: Suspicion-risk flag `cursed_blade_carried` if any witness events fire; Leave it for the magistrates: Reputation +1, Gi/Aku +1.)
 - **Into the bamboo. You know these bends; he doesn't.** [Me DC 5]
   - Success: You are a rumor by the time he reaches the bend. (Advance.)
   - Failure: Bamboo rhizomes take your ankle. → *Cornered* (combat at enemy +15%)
@@ -479,7 +494,7 @@ magic).
     desperate gambit: success → he cuts you in for 10% of the night (Tale 4 hook);
     failure → combat vs `den_enforcers` Power 10, in a hut, with witnesses]
 - **Cheat: sleeve the die you palmed from the mat.** [Waza DC 7]
-  - Success: +250 mon. −Gi 1. Flag `cheated_den` (Tale 4: the cup remembers —
+  - Success: +250 mon. Gi/Aku −1. Flag `cheated_den` (Tale 4: the cup remembers —
     Koharu's people hear about it; reputation among gamblers becomes double-edged).
   - Failure: Burn scars, they say, come from holding hot dice. They don't tell you
     whose hand was holding. → *Caught* (fingers broken: −Health 4, permanent −1
@@ -534,7 +549,7 @@ magic).
     remembers your back. 30% chance he's the duel-challenger in a later Act 2
     event — the game reuses grudges.)
   - Failure: His fan cracks across your shoulders. → *Take it* (−Health 1,
-    −Resolve 3, Gi 0 — the street remembers your patience, Reputation ±0, but
+    −Resolve 3, Gi/Aku ±0 — the street remembers your patience, Reputation ±0, but
     flag `patient_one` unlocks a later ally) or *Shove back* — **this is the
     worst choice in the game and it is offered honestly**: a commoner's hand on a
     samurai. His sword is half out before you finish the motion. Combat vs
@@ -606,7 +621,9 @@ magic).
   trades and dignity; the game's lens indicts the *system* through mechanics
   (they are the only people who'll do certain work, and the work is necessary).
 - **Women:** period restrictions are *depicted as the difficulty they were*, never
-  played for titillation; Tale 5's writers' checklist includes the Bechdel pass on
-  its shelter-network chain.
+  played for titillation. **TODO:** a writers' sensitivity checklist doesn't exist
+  yet. When it's drafted, it should include a Bechdel pass on Tale 5's
+  shelter-network chain. Tracked as the historical-sensitivity gap in
+  `progress.md` ("Not done yet") and `02` §17.
 - **Every event must pass the codex test:** "what true thing does this teach?" If
   the answer is nothing, the event gets a codex card or gets cut.

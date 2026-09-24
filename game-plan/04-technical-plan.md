@@ -1,4 +1,4 @@
-# 04 — Technical Plan (planning only — development not started)
+# 04 — Technical Plan (planning doc — build status lives in `progress.md`)
 
 ## 1. Recommended stack
 
@@ -59,6 +59,7 @@ survivable (LiA's pool stayed small partly because events were code-coupled).
     "tales": ["*"],                // or ["ronin","peasant"]
     "flags_not": ["arrested_once"],
     "min_suspicion": 0,
+    "max_suspicion": 5,            // ceiling; pairs with min_suspicion (same min_/max_ pattern for other tracks)
     "items_any": ["permit_weak","permit_good"],
     "stats": {}
   },
@@ -78,15 +79,98 @@ survivable (LiA's pool stayed small partly because events were code-coupled).
       "check": { "stat": "kuchi", "dc": 5, "mods": [ {"if_flag":"river_fool","pct":-5} ] },
       "on_success": { "result_key": "…pass_bluff", "effects": [ {"set_flag":"guard_face_remembered","pct":20} ] },
       "on_failure": { "goto": "arrest_chain.intro", "effects": [ {"suspicion":2}, {"money_mult":0.5} ] }
+    },
+    {
+      "text_key": "…bribe",
+      "requires": { "min_money": 100 },           // per-choice gate; same keys as event-level requires (see below)
+      "display_when_unmet": "locked_hint",        // "hide" | "locked_hint" (greyed + hint, GDD §12)
+      "check": { "stat": "me", "dc": 4 },
+      "on_success": { "result_key": "…bribe_pass", "effects": [ {"money":-100} ] },
+      "on_failure": { "goto": "checkpoint_hakone_papers.bribe_caught", "effects": [ {"suspicion":1} ] }
     }
   ],
   "codex_on_resolve": ["sekisho", "tegata"]
 }
 ```
 
+**Choice-level `requires`.** Any choice can carry its own `requires` block,
+mirroring the event-level one: `tales`, `flags`, `flags_not`, `items_any`,
+`stats`, `min_money` (plus the `min_`/`max_` track keys and `counters_min`/
+`counters_max` from §3.2). All listed conditions must pass. Wrap conditions in
+`any_of` for OR gates, e.g. 03 sample 1's "guide's tally OR Me ≥ 7". This is what
+03's `[requires ≥ 100 mon]`, `(Tale 1 only)`, and `[fires if flag …]` choices
+compile to. `display_when_unmet` controls what an unmet choice looks like:
+`"hide"` (default; right for Tale/flag gates the player shouldn't see) or
+`"locked_hint"` (greyed out with a hint, per GDD §12's UI mock; right for
+item/money/stat gates the player can work toward).
+
 Effects vocabulary (v1): `health/resolve/money/suspicion/reputation/gi`,
 `set_flag/clear_flag`, `add_item/remove_item/condition_delta`, `xp/level`,
+`stat_delta` (permanent stat change for the run, e.g.
+`{"stat_delta": {"stat": "waza", "delta": -1}}` for 03 sample 3's broken fingers),
+`counter_inc` (e.g. `{"counter_inc": "employer_contracts"}`, see §3.2),
 `goto` (sub-node or other event), `end_run(ending_id)`, `spawn_event(id, act)`.
+
+### 3.1 Compound checks ("Check A AND Check B")
+
+There's no multi-check field. The standard pattern is a two-step `goto` chain:
+the first check routes to one of two follow-up sub-nodes, and each sub-node runs
+the second check. Outcomes that can be reached by either path ("one fails") share
+a result key. Example, 03 sample 4's wade choice (Chikara DC 5 AND Tan DC 4):
+
+```jsonc
+{ "text_key": "…wade", "check": { "stat": "chikara", "dc": 5 },
+  "on_success": { "goto": "road_oi_river_ford.wade_a_pass" },
+  "on_failure": { "goto": "road_oi_river_ford.wade_a_fail" } }
+// sub-node wade_a_pass: one choice [Tan DC 4] → success: …both_pass / failure: …one_fails
+// sub-node wade_a_fail: one choice [Tan DC 4] → success: …one_fails  / failure: …both_fail
+```
+
+Trade-off: the second check's odds show on the follow-up node, not up front. If
+03's "both shown" presentation matters for a given event, the choice text names
+the second check. Use this pattern rather than inventing per-event variants.
+
+### 3.2 Ending schema (sketch)
+
+`endings.json` holds one entry per ending. Requirements use the same keys as
+event/choice `requires`, plus track ceilings and counters. A top-level
+`requires` object means all conditions must pass (AND). Use `any_of` / `all_of`
+for OR and nesting. At run end, all matching endings are collected and the one
+with the highest `priority` wins. Forced endings (death, despair, arrest) still
+fire directly via `end_run`.
+
+```jsonc
+[
+  {
+    "id": "ronin_new_banner", "tale": "ronin", "tone": "bright", "priority": 50,
+    "title_key": "ending.ronin_new_banner.title",
+    "epilogue_key": "ending.ronin_new_banner.epilogue",
+    "requires": {
+      "min_reputation": 3,
+      "max_suspicion": 1,                              // ceiling ("Suspicion ≤ 1")
+      "counters_min": { "employer_contracts": 2 },     // count condition ("2+ contracts")
+      "flags": ["refused_yui"]
+    }
+  },
+  {
+    "id": "ronin_lawful_vendetta", "tale": "ronin", "tone": "solemn", "priority": 60,
+    "requires": {
+      "any_of": [ { "stats": { "chi": 8 } }, { "stats": { "kuchi": 8 } } ],   // OR
+      "items_any": ["fathers_letter"],
+      "max_suspicion": 2,
+      "min_reputation": 1
+    }
+  },
+  { "id": "ronin_garden_gate", "tale": "ronin", "tone": "dark", "priority": 30,
+    "requires": { "max_gi": -3 } }                     // slider ceiling = "Gi/Aku ≤ −3"
+]
+```
+
+- **Tracks:** `min_`/`max_` for `suspicion`, `reputation`, `gi`, `resolve`, `money`
+  (all inclusive). `stats` values are floors.
+- **Counters:** named integers on `RunState`, starting at 0. Content bumps them with
+  `counter_inc`. Some counters (e.g. `combat_wins` for "4+ combat wins") can be
+  engine-maintained. Requirements compare with `counters_min` / `counters_max`.
 
 ## 4. Systems implementation notes
 
@@ -112,6 +196,14 @@ Effects vocabulary (v1): `health/resolve/money/suspicion/reputation/gi`,
 
 ## 5. Testing & balance
 
+> **Status (per `progress.md`):** none of the four items below is built yet. The
+> vertical slice was authored without them. The only simulator that exists is the
+> standalone `sim/balance-sim.mjs` (see `06-balance-sim-report.md`), which checks
+> the formulas in isolation and is not the harness described here. The **schema
+> validator** is the recommended next infrastructure piece: it's the cheapest of
+> the four, and it would have caught the per-choice gating, compound-check, and
+> stat-effect gaps fixed in §3. The harness and playtest protocol can wait for P1.5.
+
 - **Schema validator** (zod/ajv) runs over every content file in CI — catches broken
   `goto`s, missing string keys, unreachable requirements.
 - **Simulation harness:** headless engine + scripted/bot policies (greedy-money,
@@ -125,13 +217,14 @@ Effects vocabulary (v1): `health/resolve/money/suspicion/reputation/gi`,
 
 ## 6. Roadmap (estimates, dev-hours, not calendar promises)
 
-| Phase | Scope | Size |
-|---|---|---|
-| P0 Prototype | Engine core: state, reducer, 10 events, check+combat math, plain UI | ~1–2 weeks |
-| P1 Vertical slice | Tale 1 full chain, Act 1 pool (30 events), director, save, epilogue+ending flow | ~3–4 weeks |
-| P2 MVP | Tales 1–2, 60+24 events, meta/omoide/traits, codex v1, ink-vignette art set, mobile polish, sim harness | ~6–8 weeks |
-| P3 V1.0 | Tales 3–4, prison chain, debt & gambling systems, 120+ events, gallery, daily seed | ~8–10 weeks |
-| P4 V1.x | Tales 5–6, Osaka/Kyoto pools, disaster set pieces, audio, illustrations, JA i18n | ongoing |
+| Phase | Scope | Size | Status |
+|---|---|---|---|
+| P0 Prototype | Engine core: state, reducer, 10 events, check+combat math, plain UI | ~1–2 weeks | **Done** |
+| P1 Vertical slice (pre-MVP checkpoint, GDD §16) | One Tale, Act 1 only (~20–25 events), no chain-climax requirement, no commissioned art, 3–4 endings | — | **Done**: rōnin, 19 events, 4 endings, save/resume included (per `progress.md`; still a few events short of 20–25) |
+| P1.5 Tale 1 full | Tale 1 full chain (all acts), Act 1 pool (30 events), director (act pacing + chain injection), epilogue+ending flow (§3.2). Needs choice-level `requires` (§3) and ideally the schema validator (§5) first | ~3–4 weeks | Not started |
+| P2 MVP | Tales 1–2, 60+24 events, meta/omoide/traits, codex v1, ink-vignette art set, mobile polish, sim harness | ~6–8 weeks | Not started |
+| P3 V1.0 | Tales 3–4, prison chain, debt & gambling systems, 120+ events, gallery, daily seed | ~8–10 weeks | Not started |
+| P4 V1.x | Tales 5–6, Osaka/Kyoto pools, disaster set pieces, audio, illustrations, JA i18n | ongoing | Not started |
 
 ## 7. Things deliberately NOT built
 
@@ -139,3 +232,9 @@ Effects vocabulary (v1): `health/resolve/money/suspicion/reputation/gi`,
 - No monetization in MVP. (If ever wanted: cosmetic themes only; earnable everything.)
 - No pixel-art dependency — typography carries the MVP; art is additive later.
 - No multiplayer/social beyond shareable daily-seed result strings (client-side only).
+
+**Not on this list, and not built either:** the standalone chō-han gambling den
+(stakes, house cut, cheat/tell payouts) and the peddling buy/sell loop. Neither is
+cut. Both are load-bearing for 03's content (all of Tale 4, part of Tale 3), have
+no formula yet (see GDD §9.2, "Open formula work"), and need a formula plus a
+schema sketch before Tale 3/4 authoring starts.

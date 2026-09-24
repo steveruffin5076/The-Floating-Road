@@ -156,7 +156,7 @@ modifiers (typical): item +5..+15, condition (drunk, wounded) −5..−20,
 trait ±5, alignment/NPC attitude ±10, act-appropriate DC tuning
 ```
 
-- **DC scale:** trivial 2, easy 4, moderate 6, hard 8, brutal 10+. Act 1 rarely exceeds DC 6; Act 3 climax checks run DC 8–10.
+- **DC scale:** trivial 2, easy 4, moderate 6, hard 8, brutal 10+. Act 1 rarely exceeds DC 6; Act 3 climax checks run DC 8–10. These named tiers are anchors, not the full set of legal DCs. Intermediate values (3, 5, 7, …) are expected for finer tuning.
 - **Auto-success on trivial/easy checks:** DC ≤ 4 checks skip the roll entirely (no odds line shown) once the stat margin reaches **≥ +6** — a well-invested character shouldn't carry a permanent 5% fail chance on the easiest tasks in the game for the whole run (that's LiA's "30 STR fails to crush an apple" complaint at 1-in-20 instead of 1-in-4). Below that margin, trivial/easy checks still roll normally under the clamped formula. Moderate+ DCs always roll and keep the 95% ceiling — tension is wanted there.
 - **Partial success:** failed checks on *non-combat* events may still yield a "lesser outcome" instead of pure punishment (weighted by margin), e.g. you don't talk past the checkpoint but the guard lets you turn back instead of arresting you. Fixes LiA's binary cruelty. Below a bad-margin threshold (net margin ≤ −6, i.e. near the 5% floor), the weighting locks to two outcomes only — "lesser outcome" or full failure — excluding any harsher third tier an event may define, so being badly outmatched costs you the win but never spikes to the game's worst punishment on a near-floor roll.
 - **Bad-luck protection (scaling):** starting at the 2nd consecutive failed check, each further consecutive failure adds +5% (hidden) to the next check's odds, capping at +25%; resets to 0 on any success. Scales with streak length instead of firing once, so it behaves like a real pity system across a genuine bad-luck run.
@@ -248,6 +248,24 @@ meibutsu masterwork blade 10+ ryō. So a day of honest low-tier labor covers a
 meal and maybe a room; a serviceable sword is a multi-event savings goal; a
 masterwork blade is an endgame-scale purchase.
 
+### 9.2 Open formula work
+
+`03-story-and-content.md` describes three systems in prose that have no formula
+here yet. Don't assume they're specified just because the content references them:
+
+- **Chō-han gambling den (standalone).** Stake sizing, the house cut (03 sample 3
+  says a tenth), and what the cheat/tell checks ("watch the wrist," "sleeve the
+  die") pay relative to stake. This is a different system from the pre-combat
+  bet in §7.1. Tale 4 is built on it.
+- **Peddling buy/sell loop.** Price model for the "3 goods" loop above: base
+  prices, station-to-station variance, and how the 20–80 mon/loop target in §9.1
+  is actually produced.
+- **Tale 4 den-network track.** Undecided whether it's Reputation re-skinned or
+  a separate per-den track (dens are per post-town).
+
+All three are deferred until Tale 3/4 authoring starts. None is needed for the
+Act-1 vertical slice (§16).
+
 ## 10. Endings
 
 LiA-style epilogue endings, but with **visible trajectory**: the status screen always
@@ -328,7 +346,7 @@ Single-column, thumb-friendly layout (LiA-style):
 | Endings discovered after 10 runs (avg player) | 30–40% of gallery |
 | Events per run never repeated | guaranteed (bag system) |
 
-Balance is validated by an **auto-play simulation harness** (see tech doc §6): 10k
+Balance is validated by an **auto-play simulation harness** (see tech doc §5): 10k
 headless runs per content drop, reporting death causes, check pass rates, money curves,
 ending distribution.
 
@@ -349,7 +367,7 @@ checkpoint before the expensive part.
 
 | Risk | Mitigation |
 |---|---|
-| Historical sensitivity (execution, class oppression, eta/hinin outcast groups, persecution) | Treat with documentary restraint: never graphic, never comedic; codex notes give real historical context; outcast characters written as full humans; review pass with sensitivity checklist before release |
+| Historical sensitivity (execution, class oppression, eta/hinin outcast groups, persecution) | Treat with documentary restraint: never graphic, never comedic; codex notes give real historical context; outcast characters written as full humans; review pass with a sensitivity checklist before release (**TODO:** the checklist doesn't exist yet; tracked as the historical-sensitivity gap in `progress.md`) |
 | Text volume is the whole game (content treadmill) | Data-driven event format + tag reuse; each event authored once, appears in many runs; expansion model ("Tales") matches LiA's proven content strategy |
 | Check-fatigue (every choice a dice roll) | ~40% of choices are ungated consequence choices; gating concentrated at climaxes |
 | Repetition within a run (LiA's #1 complaint) | Bag system + large pool + per-Tale event subsets + season variation text |
