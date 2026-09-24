@@ -91,6 +91,21 @@ re-reading the whole conversation history to pick back up.
     (chikara/waza/chi/kuchi/me/tan). `widows_teahouse` is the slice's first
     woman character and first way to lower Suspicion (100 mon for −1).
 
+13. **Decisions: Tale 1 gender and Tale 3 debt.** Proposals in
+    `game-plan/10-tale1-gender-options.md` and `09-tale3-debt-options.md`.
+    Chosen: Tale 1 fixed male and Tale 5 fixed female, other Tales choose
+    (Option A); Tale 3 keeps 100 ryō and repays through leverage, not money
+    (Option B: 1 point freezes interest, 2 tear up the note for a 1-ryō face
+    payment). Applied to `02` §4.1/§9, `03` §4/§9.1, `04` §3; two shared lines
+    in `src/content/` neutralized.
+14. **Research gaps filled** in `01` (rōnin vs kirisute-gomen, *Go Rin no Sho*,
+    barrier-breaking, Ōi porters, gonin-gumi, polishing), all verify-flagged;
+    also fixed `01`/`03`'s reversed *iri-deppō ni de-onna* rule.
+15. **Tale 1 chain spec** (`game-plan/11-tale1-chain-spec.md`): 14 chain events
+    across three acts, a flag/counter ledger, all 12 endings wired to the
+    `04` §3.2 schema with reachability notes, pacing for a ~38-event run, a
+    sensitivity pre-check, and the engine gap list.
+
 ## Not done yet (known gaps)
 
 - Only one Tale (rōnin) exists — the Event Director's Tale-tagging/
@@ -102,16 +117,22 @@ re-reading the whole conversation history to pick back up.
   penalty, Ōi porter-system date, gonin-gumi reporting duty, polishing as a
   specialist craft). Outcast groups (checklist §B) and Tale 6 are still
   unexercised by any built content.
-- **Tale 3's debt is out of scale** (`02` §9.3 flag): 100 ryō = 100,000 mon,
-  +25,000 mon per tick, against honest income of ≤ 500 mon/event. Needs a
-  decision before Tale 3 is authored.
-- Tale 1 gender: `01` says a female rōnin doesn't fit the era; `02` §4.1 says
-  gender is freely chosen (`08` N4). Needs a decision before a gender picker.
-- The built engine doesn't implement `04`'s newer schema pieces (per-choice
-  requires, counters, `stat_delta`, endings.json); they're needed for P1.5.
+- The built engine doesn't implement `04`'s newer schema pieces or the Tale 1
+  chain's needs (`11` §6: flags/counters/items + requires, an act-based
+  director with milestone injection, an `endings.json` evaluator). Needed for
+  P1.5.
+- P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
+- Tale 1 premise: a licensed vendetta avenges a *killing*, not a surrender, so
+  `03` §4's premise should say Katsuragi's men cut the father down (`11` §5.1).
+  Not yet edited — it reshapes Katsuragi's character, so it's your call.
+- Research still owed to `01` before authoring: a rōnin's vendetta-license
+  mechanism, where the Keian executions/display took place (`03` says
+  Kodenmachō, which was the prison), recorded informants, and for Tale 3 the
+  enforceability of illegal debts and debt bondage.
+- Tales 2–4 need a gender premise audit before authoring (`03` §4 notes).
 
 ## Suggested next steps (not started)
 
 Roughly in order of leverage: the schema validator + unit tests (`04` §5),
-then P1.5 (Tale 1's full chain, per `04` §6). Decide the Tale 3 debt scale
-and Tale 1 gender question before content for those lands.
+then the engine work in `11` §6 (run state + requires, the act director,
+the endings evaluator), then author Tale 1's chain from `11`.
