@@ -280,7 +280,7 @@ export const ACT1_EVENTS: GameEvent[] = [
     type: 'story',
     title: 'The Ōi River',
     body:
-      'No bridge, no ferry — shogunate policy, a deliberate chokepoint. The porter guild will carry you ' +
+      'No bridge, no ferry — shogunate policy, a deliberate chokepoint. The porters at the bank will carry you ' +
       'across for a price; the current will carry you across for free, if you can manage it.',
     weight: 1,
     choices: [
@@ -663,8 +663,8 @@ export const ACT1_EVENTS: GameEvent[] = [
         text: 'Pay his price.',
         onResolve: {
           text:
-            'He works through the afternoon without a word to you. The edge comes back clean, and the ' +
-            'nick is gone as if it had never been there.',
+            'A true polish would take him days you do not have, so he takes the nick out and leaves the ' +
+            'rest for another season. You wait two days at the station. The edge comes back clean.',
           effects: { money: -50, resolve: 1 },
         },
       },
