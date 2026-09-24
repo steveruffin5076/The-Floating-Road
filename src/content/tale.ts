@@ -9,7 +9,11 @@ export const TALE_NAME = 'The Masterless Blade';
 // from a 23-event bag never repeat. Level-ups every 3 events are §4.3's
 // front-loaded Act 1 cadence. `reached_edo` stays an ending until Act 2 has
 // content; then it becomes the transition event `t1_gates_of_edo` (11 §4.2).
-export const ACTS: ActSpec[] = [{ act: 1, length: 13, levelInterval: 3, endingId: 'reached_edo' }];
+export const ACTS: ActSpec[] = [{ act: 1, length: 13, levelInterval: 3, evaluateEndings: true }];
+
+// Premise: "a name on a list of 'unattached swordsmen' the sekisho are told to
+// watch for" (03 §4 Tale 1).
+export const TALE_START_FLAGS = ['watch_list_active'];
 
 export const STARTING_STATS: Stats = {
   chikara: 4,

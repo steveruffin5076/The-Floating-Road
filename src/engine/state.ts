@@ -75,7 +75,22 @@ export function applyEffects(state: RunState, outcome: Omit<Outcome, 'text' | 'e
   }
   for (const i of outcome.addItems ?? []) state.items.add(i);
   for (const i of outcome.removeItems ?? []) state.items.delete(i);
+  if (outcome.moneyMult !== undefined) state.money = Math.floor(state.money * outcome.moneyMult);
+  const set = outcome.setTracks;
+  if (set) {
+    if (set.health !== undefined) state.health = clamp(set.health, 0, state.healthMax);
+    if (set.resolve !== undefined) state.resolve = clamp(set.resolve, 0, state.resolveMax);
+    if (set.money !== undefined) state.money = Math.max(0, set.money);
+    if (set.suspicion !== undefined) state.suspicion = clamp(set.suspicion, 0, 5);
+    if (set.reputation !== undefined) state.reputation = clamp(set.reputation, -5, 5);
+    if (set.gi !== undefined) state.gi = clamp(set.gi, -5, 5);
+  }
   state.pendingSpawns.push(...(outcome.spawnEvents ?? []));
+}
+
+// Engine-maintained counter (11 §2.2): every combat win, lethal or not.
+export function noteCombatWin(state: RunState): void {
+  state.counters.combat_wins = (state.counters.combat_wins ?? 0) + 1;
 }
 
 // Trait riders on a resolved check. Silver Tongue (tale.ts): a failed Kuchi
@@ -98,15 +113,6 @@ export function grantLevelUp(state: RunState, stat: StatKey): void {
   state.healthMax += 1;
   state.health = Math.min(state.healthMax, state.health + 1);
   state.levelUps += 1;
-}
-
-// GDD §5 forced endings. Act completion endings come from the director
-// (runCompleteEnding) and the act's ActSpec.
-export function checkForEnding(state: RunState): string | null {
-  if (state.health <= 0) return 'death';
-  if (state.resolve <= 0) return 'despair';
-  if (state.suspicion >= 5) return 'arrested';
-  return null;
 }
 
 function clamp(v: number, min: number, max: number): number {

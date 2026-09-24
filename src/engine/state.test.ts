@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mulberry32 } from './rng';
-import { applyOutcomeEffects, checkForEnding, createInitialState, grantLevelUp, withTraitRiders } from './state';
+import { applyOutcomeEffects, createInitialState, grantLevelUp, noteCombatWin, withTraitRiders } from './state';
 import { STARTING_STATS } from '../content/tale';
 import { ACT1_EVENTS } from '../content/events.act1';
 
@@ -58,6 +58,19 @@ describe('applyOutcomeEffects', () => {
     expect(s.pendingSpawns).toEqual(['t1_sagawa_sweep']);
   });
 
+  it('applies money_mult after deltas, rounding down', () => {
+    const s = fresh(); // 300 mon
+    applyOutcomeEffects(s, { text: 'robbed', effects: { money: 5 }, moneyMult: 0.5 });
+    expect(s.money).toBe(152);
+  });
+
+  it('sets tracks to a value, clamped', () => {
+    const s = fresh();
+    applyOutcomeEffects(s, { text: 'wanted', setTracks: { suspicion: 9, health: 4 } });
+    expect(s.suspicion).toBe(5);
+    expect(s.health).toBe(4);
+  });
+
   it('logs the outcome text', () => {
     const s = fresh();
     applyOutcomeEffects(s, { text: 'You walk on.' });
@@ -73,21 +86,6 @@ describe('grantLevelUp (02 §4.3)', () => {
     expect(s.stats.waza).toBe(15);
     expect(s.healthMax).toBe(21);
     expect(s.levelUps).toBe(1);
-  });
-});
-
-describe('checkForEnding', () => {
-  it('returns death, despair and arrest in priority order', () => {
-    const s = fresh();
-    expect(checkForEnding(s)).toBeNull();
-    s.eventsResolved = 99; // act completion is the director's job, not this one
-    expect(checkForEnding(s)).toBeNull();
-    s.suspicion = 5;
-    expect(checkForEnding(s)).toBe('arrested');
-    s.resolve = 0;
-    expect(checkForEnding(s)).toBe('despair');
-    s.health = 0;
-    expect(checkForEnding(s)).toBe('death');
   });
 });
 
@@ -116,5 +114,14 @@ describe('withTraitRiders', () => {
     s.flags.add('silver_tongue');
     withTraitRiders(s, bluff, false, caught);
     expect(caught.effects.suspicion).toBe(1);
+  });
+});
+
+describe('noteCombatWin', () => {
+  it('counts combat wins in the engine-maintained counter', () => {
+    const s = fresh();
+    noteCombatWin(s);
+    noteCombatWin(s);
+    expect(s.counters.combat_wins).toBe(2);
   });
 });

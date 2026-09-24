@@ -8,11 +8,11 @@ export interface CombatSetup {
   baseWinPct: number; // before chō-han bet / stance
 }
 
-export function setupCombat(state: RunState, foePower: number, rng: Rng): CombatSetup {
+export function setupCombat(state: RunState, foePower: number, rng: Rng, winPctMod = 0): CombatSetup {
   const condition = -Math.floor(rng() * 11); // 0..-10 wear/fatigue drag (placeholder, see game-plan/06)
   const youPower =
     state.weaponTier * 4 + state.stats.chikara + state.stats.waza + state.armorBonus + condition;
-  const baseWinPct = clampPct(50 + (youPower - foePower) * 6);
+  const baseWinPct = clampPct(50 + (youPower - foePower) * 6 + winPctMod);
   return { youPower, foePower, baseWinPct };
 }
 

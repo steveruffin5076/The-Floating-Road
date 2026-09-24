@@ -58,6 +58,7 @@ export interface RunState {
 export interface CheckSpec {
   stat: StatKey;
   dc: number;
+  mods?: { when: Requirement; pct: number }[]; // 04 §3 check mods, added to the odds
 }
 
 export type TrackKey = 'health' | 'resolve' | 'money' | 'suspicion' | 'reputation' | 'gi';
@@ -89,7 +90,23 @@ export interface Outcome {
   addItems?: string[];
   removeItems?: string[];
   spawnEvents?: string[]; // spawn_event: fire these next, in order
+  moneyMult?: number; // money_mult, applied after deltas, rounded down
+  setTracks?: Partial<Record<TrackKey, number>>; // set a track to a value (clamped)
+  goto?: string; // continue the same beat at a node event (04 §3 goto)
   endingId?: string;
+}
+
+// 02 §10 / 04 §3.2. A forced ending fires the moment `forcedWhen` holds
+// (checked after every outcome). The others are evaluated when an act ends
+// with `evaluateEndings`: the highest-priority match wins, else the fallback.
+export interface EndingSpec {
+  title: string;
+  epilogue: string;
+  historicalNote: string;
+  forcedWhen?: Requirement;
+  requires?: Requirement;
+  priority?: number;
+  fallback?: boolean;
 }
 
 // 11 §1.1 `inject` block. A chain event fires at a slot of its act instead of
@@ -115,6 +132,7 @@ export interface ActSpec {
   length: number;
   levelInterval: number;
   endingId?: string;
+  evaluateEndings?: boolean;
   transitionEventId?: string;
 }
 
@@ -154,6 +172,7 @@ export interface CombatEvent {
   inject?: InjectSpec;
   requires?: Requirement;
   foe: { name: string; power: number };
+  winPctMod?: number; // added to the base win% before the chō-han bet
   onWin: Outcome;
   onLose: Outcome;
 }

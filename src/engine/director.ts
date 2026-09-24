@@ -2,11 +2,12 @@
 // spawned events, then chain injections due at this slot, then a random draw
 // from the act's bag. At the end of an act, mandatory injections still waiting
 // fire first; then the act either ends the run or transitions.
-import type { ActSpec, GameEvent, InjectSpec, RunState } from './types';
+import type { ActSpec, EndingSpec, GameEvent, InjectSpec, RunState } from './types';
 import type { Rng } from './rng';
 import { meetsRequirement } from './requirements';
 import { buildWeightedBag, drawNext, poolFor } from './eventDirector';
 import { applyEffects } from './state';
+import { evaluateEnding } from './endings';
 
 export type NextStep = { kind: 'event'; id: string; transition?: boolean } | { kind: 'ending'; endingId: string };
 
@@ -65,6 +66,14 @@ export function advanceAct(state: RunState, events: GameEvent[], rng: Rng): void
   state.bagRemaining = bag;
 }
 
+// A `goto` continues the current beat at a node event: no new slot, no
+// level-up or rest tick. The parent is recorded at the slot the node will
+// resolve in, so `afterEvent` references to it still work.
+export function enterNode(state: RunState, parentId: string, nodeId: string): void {
+  state.actSlotOf[parentId] = state.actEvent + 1;
+  state.drawnOnce.add(nodeId);
+}
+
 // Call once per resolved event, before asking for the next step.
 export function recordResolved(state: RunState, eventId: string, events: GameEvent[], rng: Rng): void {
   state.eventsResolved += 1;
@@ -75,14 +84,30 @@ export function recordResolved(state: RunState, eventId: string, events: GameEve
 
 // The ending the run reaches now that the act is over, or null. Pure: safe to
 // call before level-up and rest screens.
-export function runCompleteEnding(state: RunState, events: GameEvent[], acts: ActSpec[]): string | null {
+export function runCompleteEnding(
+  state: RunState,
+  events: GameEvent[],
+  acts: ActSpec[],
+  endings: Record<string, EndingSpec>
+): string | null {
   const spec = actSpec(acts, state.act);
   if (state.actEvent < spec.length || state.pendingSpawns.length) return null;
   if (mandatoryReady(state, events).length) return null;
+  return actEnding(state, spec, endings);
+}
+
+function actEnding(state: RunState, spec: ActSpec, endings: Record<string, EndingSpec>): string | null {
+  if (spec.evaluateEndings) return evaluateEnding(state, endings);
   return spec.endingId ?? null;
 }
 
-export function nextStep(state: RunState, events: GameEvent[], acts: ActSpec[], rng: Rng): NextStep {
+export function nextStep(
+  state: RunState,
+  events: GameEvent[],
+  acts: ActSpec[],
+  endings: Record<string, EndingSpec>,
+  rng: Rng
+): NextStep {
   if (state.pendingSpawns.length) {
     const id = state.pendingSpawns.shift()!;
     state.drawnOnce.add(id);
@@ -94,14 +119,15 @@ export function nextStep(state: RunState, events: GameEvent[], acts: ActSpec[], 
     const ready = mandatoryReady(state, events);
     if (ready.length) return fire(state, best(state, ready));
     for (const e of pending(state, events)) lapse(state, e);
-    if (spec.endingId) return { kind: 'ending', endingId: spec.endingId };
+    const endingId = actEnding(state, spec, endings);
+    if (endingId) return { kind: 'ending', endingId };
     if (spec.transitionEventId) {
       state.pendingActAdvance = true;
       state.drawnOnce.add(spec.transitionEventId);
       return { kind: 'event', id: spec.transitionEventId, transition: true };
     }
     advanceAct(state, events, rng);
-    return nextStep(state, events, acts, rng);
+    return nextStep(state, events, acts, endings, rng);
   }
 
   const slot = state.actEvent + 1;

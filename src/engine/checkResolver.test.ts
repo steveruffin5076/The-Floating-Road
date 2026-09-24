@@ -28,6 +28,12 @@ describe('previewCheck (02 §6)', () => {
     expect(previewCheck(5, 6, 20).successPct).toBe(67);
   });
 
+  it('adds situational modifiers but never auto-succeeds from them', () => {
+    expect(previewCheck(5, 6, 0, 10).successPct).toBe(52);
+    expect(previewCheck(5, 6, 0, -10).successPct).toBe(32);
+    expect(previewCheck(9, 4, 0, 50).autoSuccess).toBe(false);
+  });
+
   it('keeps the 95% ceiling even with pity', () => {
     expect(previewCheck(11, 6, 10).successPct).toBe(95);
   });

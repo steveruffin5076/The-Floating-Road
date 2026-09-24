@@ -1,12 +1,13 @@
 import { mulberry32, makeSeed, type Rng } from './engine/rng';
-import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Choice } from './engine/types';
+import type { RunState, StatKey, GameEvent, StoryEvent, CombatEvent, Choice, Outcome } from './engine/types';
 import { STAT_LABELS } from './engine/types';
 import { previewCheck, resolveCheck } from './engine/checkResolver';
 import { setupCombat, applyChoHan, resolveCombat, type ChoHanCall, type Stance, type CombatSetup } from './engine/combatResolver';
-import { meetsRequirement } from './engine/requirements';
-import { createInitialState, applyOutcomeEffects, grantLevelUp, checkForEnding, withTraitRiders, REST_INTERVAL } from './engine/state';
-import { actSpec, nextStep, recordResolved, runCompleteEnding } from './engine/director';
-import { ACTS, STARTING_STATS, TRAITS, TALE_NAME } from './content/tale';
+import { checkModPct, meetsRequirement } from './engine/requirements';
+import { createInitialState, applyOutcomeEffects, grantLevelUp, noteCombatWin, withTraitRiders, REST_INTERVAL } from './engine/state';
+import { actSpec, enterNode, nextStep, recordResolved, runCompleteEnding } from './engine/director';
+import { forcedEnding } from './engine/endings';
+import { ACTS, STARTING_STATS, TALE_START_FLAGS, TRAITS, TALE_NAME } from './content/tale';
 import { INTRO_EVENT, ACT1_EVENTS } from './content/events.act1';
 import { ENDINGS } from './content/endings';
 import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } from './engine/save';
@@ -14,11 +15,13 @@ import { saveGame, loadGame, hasSavedGame, clearSavedGame, type SavedScreen } fr
 const ALL_EVENTS: GameEvent[] = [INTRO_EVENT, ...ACT1_EVENTS];
 const EVENTS_BY_ID = new Map(ALL_EVENTS.map((e) => [e.id, e]));
 
+type CombatResult = 'won' | 'lost' | 'escaped';
+
 type Screen =
   | { kind: 'title' }
   | { kind: 'creation'; selectedTrait: string | null }
   | { kind: 'event'; event: StoryEvent }
-  | { kind: 'combat'; event: CombatEvent; step: 'chohan' | 'stance' | 'resolved'; setup: CombatSetup; winPct: number; betResult: { correct: boolean | null; d1: number | null; d2: number | null } | null; outcomeText?: string }
+  | { kind: 'combat'; event: CombatEvent; step: 'chohan' | 'stance' | 'resolved'; setup: CombatSetup; winPct: number; betResult: { correct: boolean | null; d1: number | null; d2: number | null } | null; outcomeText?: string; result?: CombatResult }
   | { kind: 'levelup' }
   | { kind: 'rest' }
   | { kind: 'ending'; endingId: string };
@@ -60,6 +63,7 @@ function toSavedScreen(s: Screen): SavedScreen | null {
         winPct: s.winPct,
         betResult: s.betResult,
         outcomeText: s.outcomeText,
+        result: s.result,
       };
     case 'levelup':
       return { kind: 'levelup' };
@@ -85,7 +89,7 @@ function fromSavedScreen(s: SavedScreen): Screen {
     case 'combat': {
       const event = EVENTS_BY_ID.get(s.eventId);
       if (!event || event.type !== 'combat') throw new Error('missing event');
-      return { kind: 'combat', event, step: s.step, setup: s.setup, winPct: s.winPct, betResult: s.betResult, outcomeText: s.outcomeText };
+      return { kind: 'combat', event, step: s.step, setup: s.setup, winPct: s.winPct, betResult: s.betResult, outcomeText: s.outcomeText, result: s.result };
     }
     case 'levelup':
       return { kind: 'levelup' };
@@ -164,6 +168,7 @@ function startRun(traitId: string | null): void {
   }
   state = createInitialState(stats, ACT1_EVENTS, rng);
   if (trait?.flag) state.flags.add(trait.flag);
+  for (const f of TALE_START_FLAGS) state.flags.add(f);
   state.drawnOnce.add(INTRO_EVENT.id);
   screen = { kind: 'event', event: INTRO_EVENT };
   render();
@@ -222,7 +227,7 @@ function renderEvent(event: StoryEvent): void {
     let label = choice.text;
     if (choice.check) {
       const statVal = state.stats[choice.check.stat];
-      const preview = previewCheck(statVal, choice.check.dc, state.consecutiveFails);
+      const preview = previewCheck(statVal, choice.check.dc, state.consecutiveFails, checkModPct(state, choice.check));
       const oddsLabel = preview.autoSuccess ? 'certain' : `${Math.round(preview.successPct)}%`;
       label = `${choice.text} <span class="odds">[${STAT_LABELS[choice.check.stat].split(' ')[0]}] ${oddsLabel}</span>`;
     }
@@ -238,25 +243,35 @@ function resolveChoice(choice: Choice): void {
   if (!state) return;
   if (choice.check) {
     const statVal = state.stats[choice.check.stat];
-    const outcome = resolveCheck(rng, statVal, choice.check.dc, state.consecutiveFails);
+    const outcome = resolveCheck(rng, statVal, choice.check.dc, state.consecutiveFails, checkModPct(state, choice.check));
     state.consecutiveFails = outcome.passed ? 0 : state.consecutiveFails + 1;
     const raw = outcome.passed ? choice.onSuccess : choice.onFailure;
     const result = raw && withTraitRiders(state, choice.check, outcome.passed, raw);
     if (result) applyOutcomeEffects(state, result);
-    afterOutcome(result?.endingId);
+    afterOutcome(result);
   } else if (choice.onResolve) {
     applyOutcomeEffects(state, choice.onResolve);
-    afterOutcome(choice.onResolve.endingId);
+    afterOutcome(choice.onResolve);
   }
 }
 
-function afterOutcome(forcedEndingId?: string): void {
+// Effects have already been applied; this decides what the player sees next.
+function afterOutcome(outcome?: Outcome): void {
   if (!state) return;
-  if (screen.kind === 'event' || screen.kind === 'combat') recordResolved(state, screen.event.id, ALL_EVENTS, rng);
+  const current = screen.kind === 'event' || screen.kind === 'combat' ? screen.event.id : null;
+  const forced = outcome?.endingId ?? forcedEnding(state, ENDINGS);
+  if (forced) return showEnding(forced);
+
+  if (outcome?.goto && current) {
+    enterNode(state, current, outcome.goto);
+    return showEvent(EVENTS_BY_ID.get(outcome.goto)!);
+  }
+
+  if (current) recordResolved(state, current, ALL_EVENTS, rng);
   state.eventsSinceLevel += 1;
   state.eventsSinceRest += 1;
 
-  const endingId = forcedEndingId ?? checkForEnding(state) ?? runCompleteEnding(state, ALL_EVENTS, ACTS);
+  const endingId = runCompleteEnding(state, ALL_EVENTS, ACTS, ENDINGS);
   if (endingId) return showEnding(endingId);
 
   if (state.eventsSinceLevel >= actSpec(ACTS, state.act).levelInterval) {
@@ -284,9 +299,12 @@ function showEnding(endingId: string): void {
 
 function drawAndShowNext(): void {
   if (!state) return;
-  const step = nextStep(state, ALL_EVENTS, ACTS, rng);
+  const step = nextStep(state, ALL_EVENTS, ACTS, ENDINGS, rng);
   if (step.kind === 'ending') return showEnding(step.endingId);
-  const event = EVENTS_BY_ID.get(step.id)!;
+  showEvent(EVENTS_BY_ID.get(step.id)!);
+}
+
+function showEvent(event: GameEvent): void {
   if (event.type === 'combat') {
     beginCombat(event as CombatEvent);
   } else {
@@ -361,7 +379,7 @@ function renderRest(): void {
 // ---------- combat ----------
 function beginCombat(event: CombatEvent): void {
   if (!state) return;
-  const setup = setupCombat(state, event.foe.power, rng);
+  const setup = setupCombat(state, event.foe.power, rng, event.winPctMod ?? 0);
   screen = { kind: 'combat', event, step: 'chohan', setup, winPct: setup.baseWinPct, betResult: null };
   render();
 }
@@ -433,7 +451,11 @@ function renderCombat(): void {
     out.className = 'body-text';
     out.textContent = outcomeText ?? '';
     card.appendChild(out);
-    const btn = mkPrimaryButton('Continue', () => afterOutcome());
+    const btn = mkPrimaryButton('Continue', () => {
+      if (screen.kind !== 'combat') return;
+      const r = screen.result;
+      afterOutcome(r === 'won' ? screen.event.onWin : r === 'lost' ? screen.event.onLose : undefined);
+    });
     card.appendChild(btn);
   }
 
@@ -448,7 +470,7 @@ function resolveStance(stance: Stance): void {
     const escapeCheck = resolveCheck(rng, state.stats.me, 6, state.consecutiveFails);
     if (escapeCheck.passed) {
       applyOutcomeEffects(state, { text: 'You slip away before it turns to violence.' });
-      screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: 'You slip away before it turns to violence.' };
+      screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: 'You slip away before it turns to violence.', result: 'escaped' };
       return render();
     }
     const penalizedWin = Math.max(5, winPct - 15);
@@ -467,7 +489,8 @@ function fight(event: CombatEvent, winPct: number, stance: Stance): void {
     scaled.effects.health = Math.round(scaled.effects.health * mult);
   }
   applyOutcomeEffects(state, scaled);
-  screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: scaled.text };
+  if (won) noteCombatWin(state);
+  screen = { kind: 'combat', event, step: 'resolved', setup: screen.setup, winPct, betResult: screen.betResult, outcomeText: scaled.text, result: won ? 'won' : 'lost' };
   render();
 }
 

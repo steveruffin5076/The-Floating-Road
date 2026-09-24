@@ -1,5 +1,5 @@
 // Evaluates 04 §3 `requires` blocks against the run state.
-import type { Requirement, RunState, StatKey, TrackKey } from './types';
+import type { CheckSpec, Requirement, RunState, StatKey, TrackKey } from './types';
 
 export function meetsRequirement(state: RunState, req: Requirement | undefined): boolean {
   if (!req) return true;
@@ -23,4 +23,9 @@ export function meetsRequirement(state: RunState, req: Requirement | undefined):
   }
   if (req.anyOf && !req.anyOf.some((r) => meetsRequirement(state, r))) return false;
   return true;
+}
+
+// Sum of a check's `mods` whose `when` holds (04 §3 check mods).
+export function checkModPct(state: RunState, check: CheckSpec): number {
+  return (check.mods ?? []).reduce((sum, m) => sum + (meetsRequirement(state, m.when) ? m.pct : 0), 0);
 }

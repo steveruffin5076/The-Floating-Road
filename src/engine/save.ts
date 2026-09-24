@@ -20,6 +20,7 @@ export type SavedScreen =
       winPct: number;
       betResult: { correct: boolean | null; d1: number | null; d2: number | null } | null;
       outcomeText?: string;
+      result?: 'won' | 'lost' | 'escaped';
     }
   | { kind: 'levelup' }
   | { kind: 'rest' }

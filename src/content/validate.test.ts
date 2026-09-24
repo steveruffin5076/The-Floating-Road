@@ -144,6 +144,37 @@ describe('validator catches', () => {
     });
   });
 
+  describe('goto and ending rules', () => {
+    it('a goto to a missing event, or to one that is in a random pool', () => {
+      const e = story();
+      e.choices[0].onResolve!.goto = 'nowhere';
+      expect(messages([e])).toContain('goto references unknown event "nowhere"');
+      e.choices[0].onResolve!.goto = 'pooled';
+      expect(messages([e, story({ id: 'pooled' })])).toContain('must be a node');
+      expect(messages([e, story({ id: 'pooled', acts: [] })])).not.toContain('must be a node');
+    });
+
+    it('an evaluated ending that reads a flag nothing sets', () => {
+      const endings = { ...ENDINGS, odd: { title: 'x', epilogue: 'x', historicalNote: 'x', requires: { flags: ['never_set'] } } };
+      expect(validateContent([story()], endings).map((i) => i.message).join()).toContain('flag "never_set"');
+    });
+
+    it('lets endings read the engine-maintained combat_wins counter', () => {
+      const endings = { ...ENDINGS, war: { title: 'x', epilogue: 'x', historicalNote: 'x', requires: { countersMin: { combat_wins: 4 } } } };
+      expect(validateContent([story()], endings).map((i) => i.message).join()).not.toContain('combat_wins');
+    });
+
+    it('a forced ending that also has requires, and a missing fallback', () => {
+      const acts: ActSpec[] = [{ act: 1, length: 1, levelInterval: 3, evaluateEndings: true }];
+      const endings = {
+        doom: { title: 'x', epilogue: 'x', historicalNote: 'x', forcedWhen: { max: { health: 0 } }, requires: { flags: ['a'] } },
+      };
+      const out = validateContent([story()], endings, ['a'], acts).map((i) => i.message).join(' | ');
+      expect(out).toContain('cannot also have requires');
+      expect(out).toContain('0 fallback endings');
+    });
+  });
+
   it('a pool with too few ungated choices', () => {
     const gatedOnly = story({
       choices: [0, 1].map(() => ({

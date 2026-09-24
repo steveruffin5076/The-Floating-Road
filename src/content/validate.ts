@@ -1,9 +1,8 @@
 // Content validator (04 §5). TypeScript already enforces shape; this checks the
 // authoring rules the type system can't: 03 §9 style caps, 02 §6 DC range,
 // 02 §17 ungated share, and cross-references between events and endings.
-import type { ActSpec, GameEvent, Outcome, Requirement, StoryEvent } from '../engine/types';
+import type { ActSpec, EndingSpec, GameEvent, Outcome, Requirement, StoryEvent } from '../engine/types';
 import { poolFor } from '../engine/eventDirector';
-import type { EndingContent } from './endings';
 
 export interface ContentIssue {
   where: string;
@@ -22,6 +21,8 @@ export const RULES = {
 };
 
 const ID_RE = /^[a-z][a-z0-9_]*$/;
+// Counters the engine maintains itself (11 §2.2), so content may read them.
+const ENGINE_COUNTERS = ['combat_wins'];
 // A letter, sentence punctuation, then a letter: the usual trace of a missing
 // space where two concatenated string literals meet.
 const JOIN_RE = /[a-z][.,;:?][A-Za-z]/;
@@ -42,7 +43,7 @@ function checkProse(where: string, text: string, maxWords: number, issues: Conte
 function checkOutcome(
   where: string,
   outcome: Outcome | undefined,
-  endings: Record<string, EndingContent>,
+  endings: Record<string, EndingSpec>,
   issues: ContentIssue[]
 ): void {
   if (!outcome) {
@@ -82,7 +83,7 @@ function recordOutcome(outcome: Omit<Outcome, 'text'> | undefined, ledger: Ledge
   for (const i of outcome.addItems ?? []) ledger.itemsSet.add(i);
 }
 
-function checkStory(e: StoryEvent, endings: Record<string, EndingContent>, issues: ContentIssue[]): void {
+function checkStory(e: StoryEvent, endings: Record<string, EndingSpec>, issues: ContentIssue[]): void {
   const n = e.choices.length;
   if (e.choices.every((c) => c.requires)) {
     issues.push({ where: e.id, message: 'every choice has a requirement; the player could be stuck' });
@@ -111,7 +112,7 @@ function checkStory(e: StoryEvent, endings: Record<string, EndingContent>, issue
   });
 }
 
-function checkActs(events: GameEvent[], endings: Record<string, EndingContent>, acts: ActSpec[], issues: ContentIssue[]): void {
+function checkActs(events: GameEvent[], endings: Record<string, EndingSpec>, acts: ActSpec[], issues: ContentIssue[]): void {
   const byId = new Map(events.map((e) => [e.id, e]));
   const actNums = new Set(acts.map((a) => a.act));
   const last = Math.max(...actNums);
@@ -119,7 +120,10 @@ function checkActs(events: GameEvent[], endings: Record<string, EndingContent>, 
   for (const a of acts) {
     const where = `act ${a.act}`;
     if (a.endingId && !endings[a.endingId]) issues.push({ where, message: `unknown endingId "${a.endingId}"` });
-    if (a.act === last && !a.endingId) issues.push({ where, message: 'the last act has no endingId; the run could never end' });
+    if (a.act === last && !a.endingId && !a.evaluateEndings) {
+      issues.push({ where, message: 'the last act has no endingId or evaluateEndings; the run could never end' });
+    }
+    if (a.endingId && a.evaluateEndings) issues.push({ where, message: 'set endingId or evaluateEndings, not both' });
     if (a.transitionEventId) {
       const t = byId.get(a.transitionEventId);
       if (!t) issues.push({ where, message: `unknown transitionEventId "${a.transitionEventId}"` });
@@ -157,7 +161,7 @@ function checkActs(events: GameEvent[], endings: Record<string, EndingContent>, 
 // `acts` enables the act and injection checks.
 export function validateContent(
   events: GameEvent[],
-  endings: Record<string, EndingContent>,
+  endings: Record<string, EndingSpec>,
   startingFlags: string[] = [],
   acts: ActSpec[] = []
 ): ContentIssue[] {
@@ -166,7 +170,7 @@ export function validateContent(
     flagsRead: new Map(),
     flagsSet: new Set(startingFlags),
     countersRead: new Map(),
-    countersSet: new Set(),
+    countersSet: new Set(ENGINE_COUNTERS),
     itemsRead: new Map(),
     itemsSet: new Set(),
   };
@@ -211,16 +215,22 @@ export function validateContent(
       if (!ids.has(id)) issues.push({ where: e.id, message: `spawnEvents references unknown event "${id}"` });
     }
   }
-  if (acts.length) checkActs(events, endings, acts, issues);
-
-  const unset = (read: Map<string, string>, set: Set<string>, kind: string) => {
-    for (const [name, where] of read) {
-      if (!set.has(name)) issues.push({ where, message: `${kind} "${name}" is required but nothing sets it` });
+  for (const e of events) {
+    const outs = e.type === 'story' ? e.choices.flatMap((c) => [c.onSuccess, c.onFailure, c.onResolve]) : [e.onWin, e.onLose];
+    for (const o of outs) {
+      if (!o?.goto) continue;
+      const target = events.find((t) => t.id === o.goto);
+      if (!target) issues.push({ where: e.id, message: `goto references unknown event "${o.goto}"` });
+      else if (target.inject || (target.acts ?? [1]).length) {
+        issues.push({ where: e.id, message: `goto target "${o.goto}" must be a node: acts: [] and no inject` });
+      }
+      if (o.endingId) issues.push({ where: e.id, message: 'an outcome cannot both goto and end the run' });
     }
-  };
-  unset(ledger.flagsRead, ledger.flagsSet, 'flag');
-  unset(ledger.countersRead, ledger.countersSet, 'counter');
-  unset(ledger.itemsRead, ledger.itemsSet, 'item');
+    if (e.type === 'story') {
+      for (const c of e.choices) for (const m of c.check?.mods ?? []) readRequirement(`${e.id}.check.mods`, m.when, ledger);
+    }
+  }
+  if (acts.length) checkActs(events, endings, acts, issues);
 
   const total = gated + ungated;
   if (total > 0 && ungated / total < RULES.minUngatedShare) {
@@ -230,12 +240,33 @@ export function validateContent(
     });
   }
 
+  const evaluated = Object.entries(endings).filter(([, e]) => !e.forcedWhen);
+  const fallbacks = evaluated.filter(([, e]) => e.fallback).length;
+  if (acts.some((a) => a.evaluateEndings) && fallbacks !== 1) {
+    issues.push({ where: 'endings', message: `${fallbacks} fallback endings; exactly one is required` });
+  }
+  for (const [id, ending] of Object.entries(endings)) {
+    if (ending.forcedWhen && (ending.requires || ending.fallback)) {
+      issues.push({ where: `ending ${id}`, message: 'a forced ending cannot also have requires or fallback' });
+    }
+    readRequirement(`ending ${id}`, ending.requires, ledger);
+    readRequirement(`ending ${id}`, ending.forcedWhen, ledger);
+  }
   for (const [id, ending] of Object.entries(endings)) {
     if (!ID_RE.test(id)) issues.push({ where: `ending ${id}`, message: 'id is not snake_case' });
     if (!ending.title.trim()) issues.push({ where: `ending ${id}`, message: 'empty title' });
     checkProse(`ending ${id}.epilogue`, ending.epilogue, RULES.epilogueMaxWords, issues);
     checkProse(`ending ${id}.historicalNote`, ending.historicalNote, RULES.epilogueMaxWords, issues);
   }
+
+  const unset = (read: Map<string, string>, set: Set<string>, kind: string) => {
+    for (const [name, where] of read) {
+      if (!set.has(name)) issues.push({ where, message: `${kind} "${name}" is required but nothing sets it` });
+    }
+  };
+  unset(ledger.flagsRead, ledger.flagsSet, 'flag');
+  unset(ledger.countersRead, ledger.countersSet, 'counter');
+  unset(ledger.itemsRead, ledger.itemsSet, 'item');
 
   return issues;
 }

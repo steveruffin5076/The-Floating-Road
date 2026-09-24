@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { meetsRequirement } from './requirements';
+import { checkModPct, meetsRequirement } from './requirements';
 import { mulberry32 } from './rng';
 import { createInitialState } from './state';
 import { STARTING_STATS } from '../content/tale';
@@ -60,5 +60,24 @@ describe('meetsRequirement (04 §3 requires)', () => {
     expect(meetsRequirement(s, req)).toBe(true);
     s.suspicion = 3;
     expect(meetsRequirement(s, req)).toBe(false);
+  });
+});
+
+describe('checkModPct', () => {
+  it('sums the mods whose condition holds', () => {
+    const s = fresh();
+    const check = {
+      stat: 'kuchi' as const,
+      dc: 5,
+      mods: [
+        { when: { flags: ['river_fool'] }, pct: -5 },
+        { when: { flags: ['crest_honored'] }, pct: 10 },
+      ],
+    };
+    expect(checkModPct(s, check)).toBe(0);
+    s.flags.add('crest_honored');
+    expect(checkModPct(s, check)).toBe(10);
+    s.flags.add('river_fool');
+    expect(checkModPct(s, check)).toBe(5);
   });
 });

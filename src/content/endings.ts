@@ -1,15 +1,14 @@
-// GDD §10: epilogue text + historical note per ending. Four endings for the
-// vertical slice (death/despair/arrested/completion) — the full Tale will
-// have 4-6 major endings x variants; this covers the slice's death-family
-// plus one "made it" ending standing in for the Act 2 transition.
-export interface EndingContent {
-  title: string;
-  epilogue: string;
-  historicalNote: string;
-}
+// GDD §10 endings as data (engine/endings.ts). The forced family fires the
+// moment its condition holds, in priority order (death > despair > arrest).
+// At the end of Act 1 the evaluated endings are checked: highest-priority
+// match wins, `reached_edo` is the fallback. When Act 2 exists, the
+// reached_edo family becomes the transition `t1_gates_of_edo` (11 §4.2).
+import type { EndingSpec } from '../engine/types';
 
-export const ENDINGS: Record<string, EndingContent> = {
+export const ENDINGS: Record<string, EndingSpec> = {
   death: {
+    forcedWhen: { max: { health: 0 } },
+    priority: 30,
     title: 'You Fall Beside the Road',
     epilogue:
       'They leave you where you fall, as the road always has for people with no one to send for them. No family comes; ' +
@@ -19,6 +18,8 @@ export const ENDINGS: Record<string, EndingContent> = {
       'claim him was buried where he fell, or by whichever temple or village would take the trouble.',
   },
   despair: {
+    forcedWhen: { max: { resolve: 0 } },
+    priority: 20,
     title: 'The Road Ends Here',
     epilogue:
       "You stop walking, not from any wound, but because there's nothing left pulling you forward. " +
@@ -28,6 +29,8 @@ export const ENDINGS: Record<string, EndingContent> = {
       'labor, or temple work — abandoning samurai status entirely rather than starve maintaining it.',
   },
   arrested: {
+    forcedWhen: { min: { suspicion: 5 } },
+    priority: 10,
     title: 'Taken on the Road',
     epilogue:
       'Your face reaches the right office at last. They take you at an inn before dawn, bind you with ' +
@@ -40,6 +43,7 @@ export const ENDINGS: Record<string, EndingContent> = {
       'official attention.',
   },
   reached_edo: {
+    fallback: true,
     title: 'The Gates of Edo',
     epilogue:
       'Nihonbashi bridge rises ahead of you at last — the zero marker of every road in the realm, and the ' +

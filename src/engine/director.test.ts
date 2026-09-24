@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { nextStep, recordResolved, runCompleteEnding } from './director';
+import { enterNode, nextStep, recordResolved, runCompleteEnding } from './director';
+import { ENDINGS } from '../content/endings';
 import { mulberry32 } from './rng';
 import { createInitialState } from './state';
 import type { ActSpec, GameEvent, InjectSpec, Requirement } from './types';
@@ -26,7 +27,7 @@ function play(events: GameEvent[], acts: ActSpec[], n: number, setup?: (s: Retur
   setup?.(state);
   const seen: string[] = [];
   for (let i = 0; i < n; i++) {
-    const step = nextStep(state, events, acts, rng);
+    const step = nextStep(state, events, acts, ENDINGS, rng);
     if (step.kind === 'ending') {
       seen.push(`ending:${step.endingId}`);
       break;
@@ -49,7 +50,7 @@ describe('nextStep: random draws and act length', () => {
 
   it('reports run completion once the act is over', () => {
     const { state } = play(randoms(10), ONE_ACT, 6);
-    expect(runCompleteEnding(state, randoms(10), ONE_ACT)).toBe('reached_edo');
+    expect(runCompleteEnding(state, randoms(10), ONE_ACT, ENDINGS)).toBe('reached_edo');
   });
 });
 
@@ -65,13 +66,13 @@ describe('nextStep: injections (11 §1.1)', () => {
     const events = [...randoms(10), story('gated', { inject: { act: 1, slot: 2, window: 2 }, requires: { flags: ['open'] } })];
     const rng = mulberry32(1);
     const state = createInitialState({ ...STARTING_STATS }, events, rng);
-    const first = nextStep(state, events, ONE_ACT, rng); // slot 1
+    const first = nextStep(state, events, ONE_ACT, ENDINGS, rng); // slot 1
     recordResolved(state, (first as { id: string }).id, events, rng);
-    const second = nextStep(state, events, ONE_ACT, rng); // slot 2, gate shut
+    const second = nextStep(state, events, ONE_ACT, ENDINGS, rng); // slot 2, gate shut
     expect((second as { id: string }).id).not.toBe('gated');
     recordResolved(state, (second as { id: string }).id, events, rng);
     state.flags.add('open');
-    expect(nextStep(state, events, ONE_ACT, rng)).toEqual({ kind: 'event', id: 'gated' }); // slot 3, inside window
+    expect(nextStep(state, events, ONE_ACT, ENDINGS, rng)).toEqual({ kind: 'event', id: 'gated' }); // slot 3, inside window
   });
 
   it('lapses when its window closes unfired, applying onLapse', () => {
@@ -104,13 +105,13 @@ describe('nextStep: injections (11 §1.1)', () => {
     const rng = mulberry32(3);
     const state = createInitialState({ ...STARTING_STATS }, events, rng);
     for (let i = 0; i < 6; i++) {
-      const step = nextStep(state, events, ONE_ACT, rng) as { id: string };
+      const step = nextStep(state, events, ONE_ACT, ENDINGS, rng) as { id: string };
       recordResolved(state, step.id, events, rng);
     }
-    expect(runCompleteEnding(state, events, ONE_ACT)).toBe('reached_edo'); // gate still shut: it will lapse
+    expect(runCompleteEnding(state, events, ONE_ACT, ENDINGS)).toBe('reached_edo'); // gate still shut: it will lapse
     state.flags.add('open');
-    expect(runCompleteEnding(state, events, ONE_ACT)).toBeNull();
-    expect(nextStep(state, events, ONE_ACT, rng)).toEqual({ kind: 'event', id: 'late' });
+    expect(runCompleteEnding(state, events, ONE_ACT, ENDINGS)).toBeNull();
+    expect(nextStep(state, events, ONE_ACT, ENDINGS, rng)).toEqual({ kind: 'event', id: 'late' });
   });
 
   it('counts afterEvent slots from where that event resolved', () => {
@@ -155,16 +156,50 @@ describe('the built slice through the director', () => {
       const state = createInitialState({ ...STARTING_STATS }, ACT1_EVENTS, rng);
       recordResolved(state, INTRO_EVENT.id, all, rng);
       const drawn: string[] = [];
-      let step = nextStep(state, all, ACTS, rng);
+      let step = nextStep(state, all, ACTS, ENDINGS, rng);
       while (step.kind === 'event') {
         drawn.push(step.id);
         recordResolved(state, step.id, all, rng);
-        step = nextStep(state, all, ACTS, rng);
+        step = nextStep(state, all, ACTS, ENDINGS, rng);
       }
       expect(step).toEqual({ kind: 'ending', endingId: 'reached_edo' });
       expect(drawn).toHaveLength(12);
       expect(new Set(drawn).size).toBe(12);
       expect(drawn).not.toContain(INTRO_EVENT.id);
     }
+  });
+});
+
+describe('enterNode (goto)', () => {
+  it('continues the beat without using a slot, recording the parent at the node slot', () => {
+    const events = [...randoms(10), story('parent', { acts: [] }), story('node', { acts: [] })];
+    const rng = mulberry32(4);
+    const state = createInitialState({ ...STARTING_STATS }, events, rng);
+    state.actEvent = 3;
+    enterNode(state, 'parent', 'node');
+    expect(state.actEvent).toBe(3);
+    recordResolved(state, 'node', events, rng);
+    expect(state.actEvent).toBe(4);
+    expect(state.actSlotOf).toMatchObject({ parent: 4, node: 4 });
+  });
+});
+
+describe('evaluated act endings', () => {
+  it('picks the highest-priority matching ending when the act ends, else the fallback', () => {
+    const acts: ActSpec[] = [{ act: 1, length: 2, levelInterval: 3, evaluateEndings: true }];
+    const endings = {
+      plain: { title: 'a', epilogue: 'a', historicalNote: 'a', fallback: true },
+      letter: { title: 'b', epilogue: 'b', historicalNote: 'b', requires: { itemsAny: ['fathers_letter'] }, priority: 10 },
+    };
+    const events = randoms(5);
+    const run = (withLetter: boolean) => {
+      const rng = mulberry32(6);
+      const state = createInitialState({ ...STARTING_STATS }, events, rng);
+      if (withLetter) state.items.add('fathers_letter');
+      for (let i = 0; i < 2; i++) recordResolved(state, (nextStep(state, events, acts, endings, rng) as { id: string }).id, events, rng);
+      return [runCompleteEnding(state, events, acts, endings), nextStep(state, events, acts, endings, rng)];
+    };
+    expect(run(false)).toEqual(['plain', { kind: 'ending', endingId: 'plain' }]);
+    expect(run(true)).toEqual(['letter', { kind: 'ending', endingId: 'letter' }]);
   });
 });
