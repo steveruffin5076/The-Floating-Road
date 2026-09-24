@@ -367,7 +367,7 @@ checkpoint before the expensive part.
 
 | Risk | Mitigation |
 |---|---|
-| Historical sensitivity (execution, class oppression, eta/hinin outcast groups, persecution) | Treat with documentary restraint: never graphic, never comedic; codex notes give real historical context; outcast characters written as full humans; review pass with a sensitivity checklist before release (**TODO:** the checklist doesn't exist yet; tracked as the historical-sensitivity gap in `progress.md`) |
+| Historical sensitivity (execution, class oppression, eta/hinin outcast groups, persecution) | Treat with documentary restraint: never graphic, never comedic; codex notes give real historical context; outcast characters written as full humans; review pass with a sensitivity checklist before release (checklist: `03` §9.1; run once on the vertical slice, see `08-sensitivity-review.md`) |
 | Text volume is the whole game (content treadmill) | Data-driven event format + tag reuse; each event authored once, appears in many runs; expansion model ("Tales") matches LiA's proven content strategy |
 | Check-fatigue (every choice a dice roll) | ~40% of choices are ungated consequence choices; gating concentrated at climaxes |
 | Repetition within a run (LiA's #1 complaint) | Bag system + large pool + per-Tale event subsets + season variation text |

@@ -621,9 +621,134 @@ magic).
   trades and dignity; the game's lens indicts the *system* through mechanics
   (they are the only people who'll do certain work, and the work is necessary).
 - **Women:** period restrictions are *depicted as the difficulty they were*, never
-  played for titillation. **TODO:** a writers' sensitivity checklist doesn't exist
-  yet. When it's drafted, it should include a Bechdel pass on Tale 5's
-  shelter-network chain. Tracked as the historical-sensitivity gap in
-  `progress.md` ("Not done yet") and `02` §17.
+  played for titillation. See the sensitivity checklist in §9.1 (section C,
+  including the Bechdel pass on Tale 5's shelter-network chain).
 - **Every event must pass the codex test:** "what true thing does this teach?" If
   the answer is nothing, the event gets a codex card or gets cut.
+
+### 9.1 Sensitivity checklist
+
+Run this on every event, ending epilogue, and ending historical note before it
+ships. Each item is a yes/no question. Skip a section that doesn't apply and mark
+it N/A. A "no" is a finding: log the id, the exact quoted text, the item number,
+and a suggested fix, in the format `08-sensitivity-review.md` uses. The goal is a
+dry, period-grounded treatment of hard subjects. A fix should remove
+gratuitousness or error, not the history.
+
+*Not on this list:* word caps, no exclamation points in narration, and detecting
+a term's first use against a glossary. Those are mechanical and belong to the
+schema validator in `04` §5.
+
+**A. Class and the sword-law** (§1 "Class is physics")
+- A1. Does every character, the PC included, act within their class's legal
+  reality? (A samurai doing manual labor pays in face. A commoner who strikes a
+  samurai risks death.)
+- A2. If kirisute-gomen comes up, does the text frame it the way `01` §B2 does?
+  That means a samurai's *claimed* right against a *commoner* for gross
+  insolence, followed by an investigation, and ruinous if unjustified. It is not
+  a free license, and it is not a power one two-sworded man holds over another.
+- A3. Does every killing raise Suspicion unless it's witnessed as lawful (§1)?
+  Is it clear whether the foe died or fled?
+- A4. When a lower-status character is humiliated, does it cost them something
+  (Resolve, Health)? Is it kept from being played as comedy?
+
+**B. Outcast groups: eta/hinin, beggars, actors** *(if applicable)*
+- B1. Is the outcast character an individual with a trade and dignity (§9
+  "Class & outcast groups")?
+- B2. Does the prejudice come from the world and its characters, not the
+  narration's voice? The narration never uses a slur as its own description.
+  Period terms spoken by characters get a codex card on the term's history.
+- B3. Do the mechanics indict the system, as §9 asks? (They are the only people
+  who'll do necessary work: corpse disposal, leather, execution-ground labor.)
+  Is the player kept from being rewarded just for avoiding them?
+- B4. If the player can act on prejudice, is that a real choice with a Gi/Aku
+  cost? Is the kind option kept from being framed as naive? (Model: the
+  charcoal burners' camp, §6 village.)
+
+**C. Women, the pleasure quarters, and Tale 5** *(if applicable)*
+- C1. Are period restrictions shown as the difficulty they were, never as
+  titillation (§9 "Women")? Is a woman's body kept out of the description in
+  threat scenes?
+- C2. Nightwalker / Yoshiwara (§6 post-town, city-edo): is she a person with her
+  own reason to be there? Do both accept and decline carry consequences? Does
+  the codex card cover the indenture/debt context?
+- C3. Is sexual violence kept off-screen, out of random-event outcomes, and out
+  of the mechanics? A threat may be stated. The act is never depicted.
+- C4. Does each woman in the scene want something of her own, beyond reacting to
+  the PC?
+- C5. `02` §4.1 lets players choose gender. Does the text avoid hard-coding the
+  PC's gender ("men like you")? If not, has the Tale deliberately fixed it for
+  historical reasons and said so?
+- C6. **Bechdel pass, Tale 5 shelter-network chain** (O-Kinu, Myōshin, the
+  sheltered-woman events, *Mother of the Road*). Record per event:
+  (a) two or more named women appear; (b) they talk to each other; (c) about
+  something other than a man. At least half the chain's events should pass
+  (a) to (c). Two further checks for the chain as a whole: (d) does each
+  sheltered woman have a trade, plan, or want, and not just the husband she
+  fled? (e) Is the chain resolved by women's choices? Gombei may help, but he
+  doesn't solve it.
+
+**D. Kakure kirishitan and fumi-e (Tale 6)** *(if applicable)*
+- D1. Is the persecution kept from being gamified as "fun evil" (§4 Tale 6)?
+  Informing never gets a victory framing, and betrayal reads as the darkest
+  ending (Gi/Aku −5).
+- D2. Is the fumi-e scene about the person's inner choice, told with restraint
+  and without spectacle?
+- D3. Is Christian practice shown as the hidden community practiced it (secret,
+  oral, syncretic)? It should be neither modern Catholicism nor a sinister cult.
+- D4. Is the martyrdom ending neither glorified as a victory nor mocked? Does its
+  historical note give the real context (Shimabara, temple registration,
+  paid informants; `01` §B1, §B6)?
+- D5. Are the shogunate's officials written as people carrying out a policy,
+  not cartoon villains?
+
+**E. Executions, seppuku, crucifixion**
+- E1. Is the execution referenced but not depicted (§9 "Violence")? The death
+  may be stated. The process is not narrated step by step.
+- E2. Are wounds stated as body-count reality, with no lingering gore?
+- E3. Is seppuku kept from being romanticized as a beautiful death or treated as
+  an exotic ritual? State the fact, the date, and what it meant for those left.
+- E4. Where the history includes collective punishment (conspirators' families,
+  gonin-gumi), does the text keep it in, rather than dropping it for a cleaner
+  ending?
+- E5. When the player sees heads on display or Kodenmachō, do they see it as a
+  person would, with a Resolve cost and no trophy framing?
+
+**F. Real historical figures** (§5 cameos policy)
+- F1. Is every named real person on the §5 list, and placed only where records
+  place them? Musashi never appears in person.
+- F2. Do the dates, places, and deeds match `01`? Tag the event with the `01`
+  line it relies on, e.g. `// source: 01 §B1, 1651 Sep row`.
+- F3. Is dialogue given to a real figure limited to character and plot? Nothing
+  the record contradicts, and no invented confessions.
+- F4. Does every fictional name avoid reading as a nod to a famous fictional
+  character (the O-Tsu rule)?
+
+**G. Japanese terms, idiom, exoticism** (§7 tone guide, §9 "Japanese terms")
+- G1. Is the text free of modern idiom in both narration and dialogue? (Examples
+  to avoid: "side-hustle", "processing fee", office vocabulary.)
+- G2. Is each Japanese term there because English lacks the word? Where plain
+  English works ("inn", "barrier"), use it and keep the term for the codex.
+- G3. Is each gloss accurate and short, a phrase in apposition rather than a
+  lecture? Is it free of condescension ("the strange custom of...")?
+- G4. Is the text free of exoticism? The setting is ordinary to the people in
+  it: no "mysterious East", no ninja/geisha set dressing, and no later
+  codified "bushidō" presented as if it governed 1648.
+- G5. Is each institution shown at its right place and scale? (Dōshin are Edo
+  city police. Sekisho guards are the domain's men.)
+
+**H. Rumor, never magic** (§1)
+- H1. Is anything supernatural-seeming framed as rumor, belief, or a
+  character's claim, and never confirmed by the narration?
+- H2. Where `01` hedges a claim ("rumored", "estimated"), does the text keep the
+  hedge?
+- H3. Is period belief (prayer, medicine, omens) treated as something people
+  really did, neither mocked nor confirmed?
+
+**I. The codex test** (§9)
+- I1. Can you name, in one sentence, the true thing this event teaches? If not,
+  add a codex card or cut the event.
+- I2. Is that thing true for the Tōkaidō in 1648–51, and not a later-Edo or
+  Sengoku fact? If `01` doesn't cover it, add the source to `01` first.
+- I3. Can every factual claim in an ending's historical note be traced to `01`,
+  or has it been added there?
