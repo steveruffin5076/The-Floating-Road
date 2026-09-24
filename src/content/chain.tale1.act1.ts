@@ -2,9 +2,10 @@
 // §1.2: C1 watch-list, S1 spine, C2 Fujieda, C3 O-Ryō, C4 old retainer. Each is
 // injected at a slot (never drawn). Nodes (acts: []) are reached by `goto`.
 //
-// C4's letter follows 03's premise (it proves Katsuragi's secret bargain). 11
-// §5.1 proposes that it also show Katsuragi's men killed the father, which a
-// licensed vendetta would need; that premise change is pending a decision.
+// C4: the letter proves Katsuragi's secret bargain; Sahei's account shows that
+// Katsuragi's men killed the father (03 §4 premise, 11 §5.1). A licensed
+// vendetta could only avenge a killing, so this is what the Lawful Vendetta
+// ending rests on.
 import type { GameEvent } from '../engine/types';
 
 export const TALE1_ACT1_CHAIN: GameEvent[] = [
@@ -360,8 +361,9 @@ export const TALE1_ACT1_CHAIN: GameEvent[] = [
       'His name is Sahei. He carried water in your father’s house, and he has kept one thing for ' +
       'thirty-three years: a letter in your father’s hand, written the night before the surrender. It ' +
       'names Katsuragi Hyōgo as the man who negotiated the castle’s surrender in secret, and it says your ' +
-      'father will refuse to sign. Sahei tells you the rest of that night, as much as he saw. His voice ' +
-      'comes and goes. The priest waits by the door.',
+      'father will refuse to sign. Sahei saw the rest. Your father did not die on the walls. Katsuragi’s ' +
+      'own men cut him down in the inner court before dawn, and the surrender was signed by noon. His ' +
+      'voice comes and goes. The priest waits by the door.',
     weight: 1,
     acts: [],
     choices: [
@@ -420,7 +422,9 @@ export const TALE1_ACT1_CHAIN: GameEvent[] = [
     body:
       'Sahei died two days ago, the priest says. He was a servant of your house, and he kept something ' +
       'for thirty-three years: a letter in your father’s hand, written the night before the surrender. The ' +
-      'priest holds it out. It names Katsuragi Hyōgo as the man who negotiated the surrender in secret.',
+      'priest holds it out. It names Katsuragi Hyōgo as the man who negotiated the surrender in secret. ' +
+      'Sahei told the priest one more thing before the end: your father did not die on the walls. ' +
+      'Katsuragi’s own men killed him.',
     weight: 1,
     acts: [],
     choices: [

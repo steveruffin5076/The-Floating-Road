@@ -138,8 +138,7 @@ re-reading the whole conversation history to pick back up.
     O-Ryō at Mariko, and Sahei near Sunpu (with the father's letter), plus
     their fight and follow-up nodes. Act 1 is now 14 events (11 §4.1), and
     carrying the letter to Edo gives a distinct ending (`reached_edo_letter`).
-    The letter follows `03`'s premise; the "Katsuragi's men killed him"
-    version from `11` §5.1 is still your call.
+    Premise decided afterwards: Katsuragi's men killed the father (item 22).
 
 21. **Sim harness and first Act 1 tuning** (`npm run sim`, `src/sim/`,
     `game-plan/12-act1-balance-report.md`) — the game's rules moved out of
@@ -150,6 +149,12 @@ re-reading the whole conversation history to pick back up.
     no Resolve, two humiliation/witness choices cost −2, and Resolve starts
     at 7/10. Pass rates (55–60% on-build) and combat accuracy (±1.7) meet
     `02` §15. Guard-rail tests keep it honest.
+
+22. **Decision: Katsuragi's men killed the father.** A licensed vendetta could
+    only avenge a killing (`11` §5.1), so `03` §4's premise now says the
+    father refused to sign the surrender and was cut down by Katsuragi's
+    men, not the besiegers. Katsuragi still believes the trade saved 400
+    households. Sahei's scenes in the Act 1 chain now say so outright.
 
 ## Not done yet (known gaps)
 
@@ -167,9 +172,6 @@ re-reading the whole conversation history to pick back up.
   ~40% full-run survival (Act 1 alone keeps ~93% of first-timers). See
   `12-act1-balance-report.md` for the Resolve-per-event guidance.
 - P1.5 has no Act 2/3 random pools yet; the `11` pacing needs ~15 draws from them.
-- Tale 1 premise: a licensed vendetta avenges a *killing*, not a surrender, so
-  `03` §4's premise should say Katsuragi's men cut the father down (`11` §5.1).
-  Not yet edited — it reshapes Katsuragi's character, so it's your call.
 - Research still owed to `01` before authoring: a rōnin's vendetta-license
   mechanism, where the Keian executions/display took place (`03` says
   Kodenmachō, which was the prison), recorded informants, and for Tale 3 the

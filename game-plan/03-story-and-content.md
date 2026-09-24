@@ -82,9 +82,13 @@ this is the connective tissue LiA lacked:
 
 ### TALE 1 — THE MASTERLESS BLADE (rōnin) *(default)*
 
-**Premise.** Your clan served a Tozama daimyō dispossessed after Osaka. Your father
-died in the siege; your karo (chief retainer), **Katsuragi Hyōgo**, walked out of the
-castle with the surrender papers — and a Tokugawa stipend. You kept two things: a
+**Premise.** Your clan served a Tozama daimyō dispossessed after Osaka. The night
+before the surrender, your father refused to sign it and was cut down, not by the
+besiegers but by the men of your karo (chief retainer), **Katsuragi Hyōgo**, who
+walked out of the castle with the surrender papers — and a Tokugawa stipend. For
+thirty-three years the story has been that your father died on the walls. (A
+licensed vendetta could only avenge a killing, which is what makes *The Lawful
+Vendetta* possible; `11` §5.1.) You kept two things: a
 katana with your family's crest-ground blade, and a name on a list of "unattached
 swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking east.
 
@@ -93,7 +97,8 @@ swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking
 **Cast.**
 - **Katsuragi Hyōgo** — the collaborator. Now a minor Edo official's hatamoto-adjacent
   functionary. Neither cartoon villain nor saint: he sold the clan to save 400
-  households from execution, and believes it. Confronting him is the Tale's crux.
+  households from execution, had your father killed when he stood in the way, and
+  still believes the trade was right. Confronting him is the Tale's crux.
 - **O-Ryō** — a widow running a teahouse at Mariko station; ex-Toyotomi camp follower;
   information broker for drifting samurai. (Recurring across Tales.)
 - **Yui Shōsetsu** — historical. Calm, courteous, terrifyingly reasonable. Offers the

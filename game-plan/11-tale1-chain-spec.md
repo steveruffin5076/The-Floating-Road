@@ -194,9 +194,9 @@ used for reactive injection. In Acts 2–3, Suspicion reaching 5 spawns
   for thirty-three years. The letter is in your father's hand, written the night
   before the surrender. It names Katsuragi as the man negotiating in secret and
   says your father will refuse. Sahei's account adds the rest: your father was
-  cut down by Katsuragi's own men, not by the besiegers. *(This refines `03`'s
-  "died in the siege". See §5, the adauchi finding. It's what makes a lawful
-  vendetta legally possible.)*
+  cut down by Katsuragi's own men, not by the besiegers. *(Adopted into `03`'s
+  premise. See §5, the adauchi finding. It's what makes a lawful vendetta
+  legally possible.)*
 - **Opening check** (a compound, `04` §3.1): with `oryo_lead` he is alive, so
   skip it. Without it: [Me DC 5] to find him in time. Fail: he died two days
   ago, and the priest gives you the letter. `add_item fathers_letter`, and the
@@ -856,7 +856,7 @@ again once it's written. Rows are ordered by how much care they need.
   Katsuragi guilty of *surrender*, which is not grounds for a licensed vendetta.
   The spec's fix is in C4: the letter plus Sahei's testimony show that the
   father was **cut down by Katsuragi's men** for refusing the surrender.
-  **`03` §4 Tale 1's premise should be updated to match.**
+  **Decided and applied:** `03` §4 Tale 1's premise now says this.
 - **Who authorizes, with the domain dissolved?** `01` says "domain
   authorization". The PC's domain no longer exists. C10/C13 assume a petition
   through the Edo city magistrate's office with a sponsor. **Research
