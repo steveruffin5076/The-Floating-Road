@@ -91,7 +91,7 @@ From reviews and player threads:
 | 1633–39 | Sakoku edicts; Christianity outlawed; Shimabara Rebellion crushed (1637–38) | Hidden-Christian persecution, fumi-e tests, paranoia about foreigners/smuggling |
 | 1635 | Buke shohatto revised; sankin-kōtai (alternate attendance) systematized | Daimyō processions clog the Tōkaidō — traffic, jobs, spectacle, checkpoints |
 | 1640–43 | Kan'ei famine | Peasant background: ruined villages, rice riots, desperate people |
-| 1645 | Miyamoto Musashi dies, completes *Go Rin no Sho* | Sword-saint legend freshly dead; his book circulates |
+| 1645 | Miyamoto Musashi dies, completes *Go Rin no Sho* | Sword-saint legend freshly dead. The book (written 1643–45) was a private transmission to his student Terao Magonojō and passed in manuscript within his school (Niten Ichi-ryū); in 1648 almost no one outside it had seen it. Its wide fame is much later. His *name* circulates; the book does not |
 | 1648 | **Keian era begins — game starts** | |
 | 1651, Jun | Shōgun Tokugawa Iemitsu dies; child successor Ietsuna | Power vacuum — the conspirators' trigger |
 | 1651, Sep | **Keian Uprising**: Marubashi Chūya's plot to burn Edo and storm the castle; Yui Shōsetsu to seize Sunpu. Betrayed by Marubashi's fever-talk; Marubashi crucified Sep 24; Yui commits seppuku at Sunpu Sep 10. Families of conspirators executed | The Act-3 climax for rōnin-aligned runs |
@@ -109,6 +109,9 @@ Scale of the rōnin problem: estimates run into the **hundreds of thousands** of
 
 Notable legal color for events:
 - **Kirisute gomen** — a samurai's claimed right to cut down a commoner for gross insolence. In practice it triggered investigations; unjustified use ruined the samurai. Great tension generator in samurai-vs-commoner events.
+  - *Rōnin and kirisute gomen.* It was a right against commoners, so an armed rōnin (still wearing two swords, still claiming samurai status) was not its proper target; a samurai who cut down a rōnin was in a quarrel between armed men, not exercising a privilege. Whether a rōnin, having no lord to answer to, could himself *invoke* it is unclear; treat his standing as ambiguous and never as a clean right. Needs verification: rōnin legal status in 1648 (in Edo they seem to have fallen under the town magistrates' registers, verify).
+  - *Timing.* The right was customary in 1648; its best-known written form is in the *Kujikata Osadamegaki* of 1742 (verify article), a century after our window. Event text should say "custom" or "claimed right", not "the law says".
+  - *Quarrels between samurai* fell under **kenka ryōseibai** ("both parties to a quarrel are punished"), a principle inherited from Sengoku domain codes (established as a principle; its exact application in 1648 needs verification). A retainer who draws on a rōnin risks his own position too, which is why "no easy cut" in `kirisute_tension` holds.
 - **Adauchi (vendetta)** — legal *only* with domain authorization and a paper trail. Unlicensed revenge = murder = crucifixion/exposure. This structures the ronin revenge quest honestly.
 - **Dueling** — the shogunate suppressed private hatashiai duels; they persist illegally. Duels are therefore always a crime-adjacent, secrecy-flavored affair.
 - **Sword carry** — a commoner owning a katana is itself suspicious; a ronin's sword is his only asset and his identity card.
@@ -117,9 +120,11 @@ Notable legal color for events:
 
 - **Gokaidō** — five shogunate highways; the Tōkaidō (~500 km, 53 post stations) runs Edo ↔ Kyoto along the coast. Zero point: Nihonbashi bridge, Edo.
 - **Post stations (shukuba)** — hatago inns for commoners/lower samurai, honjin for officials, toiyaba freight/porter offices, stables, teahouses. ~40–50 km per day on foot.
-- **Sekisho checkpoints** — inspect travel permits (**tegata**), look for wanted criminals, fleeing samurai, and (especially) "women entering Edo, guns leaving" — arms and hostages were the shogunate's nightmare. **Hakone and Arai** were famously the strictest.
+- **Sekisho checkpoints** — inspect travel permits (**tegata**), look for wanted criminals, fleeing samurai, and (especially) *iri-deppō ni de-onna*, "guns coming in, women going out": guns entering Edo, and women leaving it (daimyō wives were held in Edo as hostages under sankin-kōtai). Arms and escaping hostages were the shogunate's nightmare. Women traveling needed a women's permit (onna-tegata) checked against a written description; the scrutiny was hardest on the westbound road out of Edo (degree of eastbound scrutiny, verify). **Hakone and Arai** were famously the strictest.
 - **In practice the system leaks** — permits could be *bought* near lax checkpoints, guides led people around barriers at night (one barrier literally had a paid crawl-hole), peasants often waved through if they looked harmless. **This gap between law and practice is a skill-check goldmine**: bluff, bribe, sneak, or ford.
-- **Ōi river** — no bridges, no ferries allowed by policy (a deliberate military chokepoint); travelers paid porter-guilds to be carried across. Floods could strand a station for days.
+- **Sekisho-yaburi (barrier-breaking)** — on the books a capital crime. The 1742 *Kujikata Osadamegaki* sets crucifixion (haritsuke) for breaking or sneaking around a barrier, with guides/accomplices also punished severely (verify exact clauses); the code postdates 1648, so the penalty in our window is not codified in the same form (verify, but assume grave). Hakone's Otama-ga-ike is named for a woman executed for it (traditionally 1702, verify). In practice officials often avoided prosecution by recording a caught traveler as having "lost the way" and turning him back (partly verified; this is the argument of Vaporis's work on Edo travel, verify). Note: `checkpoint_hakone`'s "rough you up before letting you go" fits the in-practice leniency, but a codex card must state the capital penalty on paper.
+- **Ōi river** — no bridges, no ferries allowed by policy (a deliberate military chokepoint); travelers paid porters to be carried across. Floods could strand a station for days.
+  - *Dating the kawagoshi system.* The formal system (river offices, kawa-kaisho, at Shimada and Kanaya; fixed fares by water depth; paid tickets) is generally dated to 1696 (Genroku 9, verify). In 1648 porters worked the crossing, but on a looser, less regulated basis, so "guild" overstates the organization. Needs verification: whether unassisted fording was already forbidden before the formal system. After it, travelers were required to use the official porters, so self-fording became illegal, not just risky. Note: `river_ford_oi`'s "porter guild" is slightly anachronistic for 1648; its free self-ford is defensible only for the pre-formal period (verify).
 - **Transport** — walking, kago palanquins (expensive), pack horses at relay stations. Daimyō sankin-kōtai processions of hundreds to thousands of people take priority at fords and inns — a traveler can be stuck, robbed of lodging, or hired by the procession.
 
 ### B4. Money & prices (researched ranges; game will fix its own table)
@@ -140,6 +145,7 @@ Notable legal color for events:
 - City administration: **machi-bugyō** (magistrates) — famous Ōoka Tadasuke comes slightly later, but the office exists. Under them **dōshin** (low-ranking police officials, samurai) and their non-samurai assistants/informants (**okappiki/komono** — often ex-criminals themselves).
 - Justice is fast and brutal: crucifixion for arson/theft of arms, exposure of heads, tattooing, exile, imprisonment at Kodenmachō. Collective family punishment was normal (the Keian conspirators' families were executed).
 - Neighborhood self-surveillance: the **gonin-gumi** five-household responsibility system — your neighbors are legally liable for your crimes. Excellent for "the village turns on you" events.
+  - *Gonin-gumi and strangers.* The system was pushed by the shogunate in the 1630s–40s alongside the anti-Christian campaign, and mutual surveillance for Christians and criminals was part of its purpose from the start (established). Village gonin-gumi registers opened with lists of rules (maegaki); these commonly included not lodging or harboring suspicious persons and reporting strangers and rōnin (partly verified). Needs verification: how standard such clauses were by 1648, since the maegaki grew longer later in the century and rōnin controls tightened after the 1651 Keian plot. `five_households` ("any stranger they fail to report") is defensible but should read as local practice, not a uniform national rule.
 - Temple registration (**uke-sei/terauke**) — every person certified through a Buddhist temple; post-Shimabara, Christians were hunted with **fumi-e** (trampling sacred images) tests.
 
 ### B7. The underworld
@@ -155,6 +161,7 @@ Notable legal color for events:
 - Shelter: hatago inns (tiered by price), temple lodging, sleeping rough under eaves or in straw capes.
 - Sights on the road: ichirizuka distance mounds, pine-lined highway, Fuji views (the reason Fujisawa/Odawara stations were famous), pilgrim traffic to Ise, Mt. Fuji cults, beggars at bridges, sumo fundraisers at shrines (rōnin wrestlers performed street-corner sumo for money — documented ronin side-hustle), medicine peddlers, monkey trainers, biwa priests.
 - Sword culture: polishing, registering blades, famous smiths' signatures inflating value; daishō etiquette indoors (wakizashi stays on); a nicked blade = ruined asset.
+  - *Polishers (togishi).* Polishing was a specialist craft separate from smithing well before 1648 (established). The Hon'ami family served as hereditary polishers and appraisers to the Ashikaga and then the Tokugawa, and issued appraisal certificates (origami) (established; start date of origami, verify). Polishers worked from progressively finer stones, and removing a nick means taking steel off the whole surface around it, so a proper polish took days, not hours (modern practice is one to several weeks; period timescale needs verification). Amateur stone-work easily ruins a blade's geometry (established). Needs verification: how common polishers were in Tōkaidō post-towns, as against Kyoto, Edo and castle towns. Note: in `polishers_bench`, the paid option's "works through the afternoon" and "nick is gone" understates the time a real polish took.
 - Weather/seasons as mechanics: plum rains flood the Ōi river; summer heat and cholera-like illness; typhoon season wrecks the coast; winter snow closes mountain passes.
 
 ---
@@ -173,7 +180,7 @@ Notable legal color for events:
 | Uke-sei / fumi-e persecution | Hidden Christian bonus Tale — highest difficulty, paranoia-driven run |
 | Ōi river porter guild monopoly | Pay-vs-ford-vs-wait decision node; flood = stranded = forced events |
 | Sankin-kōtai processions | Random "road is jammed" events: hired as procession labor (safe money), or rob the baggage train (infamy) |
-| Loan-sharking at 100%+ interest | Debtor origin's ticking-clock quest: interest accrues per act |
+| Loan-sharking at 100%+ interest | Debtor origin's ticking-clock quest: interest accrues per season tick (`02` §9); repaid through leverage, not money |
 | Fire-prone Edo | Set-piece disaster events with save-people-vs-save-goods choices |
 | Musashi's fresh legend | Book/scroll items and a sword-school encounter; his *Go Rin no Sho* as a rare training item |
 

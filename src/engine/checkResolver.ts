@@ -10,17 +10,20 @@ export interface CheckOutcome {
   pityBonus: number;
 }
 
+// `modPct` is the sum of situational modifiers (items, flags, traits; 02 §6).
+// It never turns a roll into an auto-success.
 export function previewCheck(
   stat: number,
   dc: number,
-  consecutiveFails: number
+  consecutiveFails: number,
+  modPct = 0
 ): { autoSuccess: boolean; successPct: number } {
   const margin = stat - dc;
   if (dc <= 4 && margin >= 6) {
     return { autoSuccess: true, successPct: 100 };
   }
   const pityBonus = Math.min(25, Math.max(0, (consecutiveFails - 1) * 5));
-  const successPct = Math.min(95, Math.max(5, 50 + margin * 8 + pityBonus));
+  const successPct = Math.min(95, Math.max(5, 50 + margin * 8 + pityBonus + modPct));
   return { autoSuccess: false, successPct };
 }
 
@@ -28,9 +31,10 @@ export function resolveCheck(
   rng: Rng,
   stat: number,
   dc: number,
-  consecutiveFails: number
+  consecutiveFails: number,
+  modPct = 0
 ): CheckOutcome {
-  const preview = previewCheck(stat, dc, consecutiveFails);
+  const preview = previewCheck(stat, dc, consecutiveFails, modPct);
   if (preview.autoSuccess) {
     return { passed: true, autoSuccess: true, successPct: 100, pityBonus: 0 };
   }

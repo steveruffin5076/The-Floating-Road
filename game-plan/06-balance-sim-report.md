@@ -117,3 +117,17 @@ or enemies to draw from — that's still the job of the full harness in
 `04-technical-plan.md` §5, once there's content to run it against. Treat this
 as the thing that should have been true before content gets written, now
 confirmed, rather than a replacement for that harness.
+
+## Follow-up (2026-09-20): Act 1 combat numbers pinned
+
+The "Act 1 harder than Act 2/3" finding above was about this report's
+invented placeholder foe power (12, vs. this sim's placeholder weaponTier
+1/armor 0), not a formula problem. The vertical slice's actual Act 1
+content (`src/content/events.act1.ts`) has since had its two combat foe
+powers set for real — 8 (Bandit rōnin) and 9 (Night tsujigiri attacker) —
+calibrated directly against the real `combatResolver` formula and this
+slice's real starting loadout and stat ranges, landing base win% around
+44-68% and 38-62% respectively depending on Chikara/Waza investment. See
+`progress.md`'s "Real combat numbers" entry for the calibration method.
+This doesn't touch Acts 2-3 (they don't exist yet in the vertical slice),
+so the same check applies again once their content is written.

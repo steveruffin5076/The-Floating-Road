@@ -71,21 +71,34 @@ this is the connective tissue LiA lacked:
 
 > Each Tale: premise → opening scene → cast → act beats → endings (with requirements).
 > Requirements shown as the game will gate them. ~10–14 chain events per Tale at full content.
+>
+> **Gi/Aku notation.** Gi/Aku is the single slider from `02` §5 (−5…+5; positive =
+> Gi, negative = Aku), not two meters. Requirements are written as slider comparisons:
+> `Gi/Aku ≥ +2` = Gi-leaning, `Gi/Aku ≤ −3` = Aku-leaning. Effects are written as
+> slider deltas: `Gi/Aku +1` moves one step toward Gi, `Gi/Aku −1` one step toward Aku.
+> Prose like "slides Aku" only describes direction, meaning a negative Gi/Aku effect.
 
 ---
 
 ### TALE 1 — THE MASTERLESS BLADE (rōnin) *(default)*
 
-**Premise.** Your clan served a Tozama daimyō dispossessed after Osaka. Your father
-died in the siege; your karo (chief retainer), **Katsuragi Hyōgo**, walked out of the
-castle with the surrender papers — and a Tokugawa stipend. You kept two things: a
+**Premise.** Your clan served a Tozama daimyō dispossessed after Osaka. The night
+before the surrender, your father refused to sign it and was cut down, not by the
+besiegers but by the men of your karo (chief retainer), **Katsuragi Hyōgo**, who
+walked out of the castle with the surrender papers — and a Tokugawa stipend. For
+thirty-three years the story has been that your father died on the walls. (A
+licensed vendetta could only avenge a killing, which is what makes *The Lawful
+Vendetta* possible; `11` §5.1.) You kept two things: a
 katana with your family's crest-ground blade, and a name on a list of "unattached
 swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking east.
+
+*PC gender: male, fixed (a two-sworded rōnin, `01` §B2; `02` §4.1).*
 
 **Cast.**
 - **Katsuragi Hyōgo** — the collaborator. Now a minor Edo official's hatamoto-adjacent
   functionary. Neither cartoon villain nor saint: he sold the clan to save 400
-  households from execution, and believes it. Confronting him is the Tale's crux.
+  households from execution, had your father killed when he stood in the way, and
+  still believes the trade was right. Confronting him is the Tale's crux.
 - **O-Ryō** — a widow running a teahouse at Mariko station; ex-Toyotomi camp follower;
   information broker for drifting samurai. (Recurring across Tales.)
 - **Yui Shōsetsu** — historical. Calm, courteous, terrifyingly reasonable. Offers the
@@ -117,19 +130,21 @@ swordsmen" the sekisho are told to watch for. It is spring 1648. You are walking
 | **A New Banner** (bright) | Legal revenge path abandoned; earn adoption/employment under an honest lord via bodyguard arc | Reputation ≥ +3, Suspicion ≤ 1, completed 2+ employer contracts, refused Yui |
 | **The Lawful Vendetta** (solemn) | Adauchi authorized, Katsuragi killed in sanctioned duel, you submit to review | Chi ≥ 8 or Kuchi ≥ 8, item: father's letter, Suspicion ≤ 2, Reputation ≥ +1 |
 | **First Blood at Dawn** (dark-neutral) | Illegal hatashiai; you win, then live as hunted | Waza ≥ 9, won duel, escaped Sagawa chain |
-| **The Garden Gate** (dark) | Blackmail → Katsuragi's hired thugs → mutual destruction | Aku ≥ +3 |
+| **The Garden Gate** (dark) | Blackmail → Katsuragi's hired thugs → mutual destruction | Gi/Aku ≤ −3 |
 | **Sunpu, September 10th** (tragic-heroic) | Joined Yui; at Sunpu, seppuku as the walls close — historically accurate | Joined plot, reached Sunpu in Act 3, Resolve ≥ 6 |
 | **The Fever Betrayal** (tragic) | Joined; tried to warn Marubashi; died in the Edo arrest sweep | Joined, befriended Marubashi, in Edo Act 3 |
-| **Informant** (grim-survival) | Sold Yui's plan to the metsuke; rewarded, then despised; your name survives in no song | Kuchi ≥ 7, Chi ≥ 6, Aku path |
+| **Informant** (grim-survival) | Sold Yui's plan to the metsuke; rewarded, then despised; your name survives in no song | Kuchi ≥ 7, Chi ≥ 6, Gi/Aku ≤ −1 |
 | **Sword for Sale** (neutral) | Ignore everything; become a famous mercenary instructor — rich, hollow | 4+ combat wins, Reputation ≥ +2, refused all causes |
-| **The Plow** (quiet-bright) | Bury the sword; marry into O-Ryō's teahouse or a farm | Resolve ≥ 8, Gi ≥ +2, completed O-Ryō chain |
-| **Kabukimono** (dark) | Join the gangs; die in a street war or rule a slum | Aku ≥ +4, gang chain events |
+| **The Plow** (quiet-bright) | Bury the sword; marry into O-Ryō's teahouse or a farm | Resolve ≥ 8, Gi/Aku ≥ +2, completed O-Ryō chain |
+| **Kabukimono** (dark) | Join the gangs; die in a street war or rule a slum | Gi/Aku ≤ −4, gang chain events |
 | **Kodenmachō** (death) | Captured in sweeps | arrest chain failure |
 | **The Road Ends Here** (despair) | Resolve 0 | — |
 
 ---
 
 ### TALE 2 — THE FAMINE ROAD (runaway peasant)
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring: Jihei as a travel companion, and* Fireman of Edo*'s "strong desperate men", both assume a man.*
 
 **Premise.** Kan'ei famine took your village in Mikawa: first the seed rice, then the
 bracken roots, then your little sister. The village headman's granary had rice — tax
@@ -161,7 +176,7 @@ coat and your mother's wooden prayer tablet.
   strong desperate men), *[Tōzō's Guild]* vs *[Kichizo's Hill]* fork deepens,
   *[A Letter From Mikawa]* — your village is being punished for the granary crime;
   go home and confess (bright-sad), or earn enough to buy the village's fine from
-  afar (hard-economic), or let it burn (Aku).
+  afar (hard-economic), or let it burn (slides Aku).
 - Act 3: famine relief riots flare in the cities as Keian paranoia tightens policing;
   the rōnin plot's collapse means mass arrests of "suspicious drifters" — you are
   structurally one. Final movement: home, or a new name.
@@ -173,7 +188,7 @@ through the porter guild to legitimacy), **Kichizo's Heir** (bandit lord — dar
 **A Name Bought** (pay the village fine anonymously, live in Edo as a laborer —
 quiet-bright), **The Tablet** (die on the road home — tragic), plus shared death/
 despair family. Requirement examples: *Fireman* needs Chikara ≥ 7 + Tan ≥ 6 +
-the fire set-piece + Gi ≥ 0; *Confession* needs the Mikawa letter chain resolved
+the fire set-piece + Gi/Aku ≥ 0; *Confession* needs the Mikawa letter chain resolved
 toward home + Resolve ≥ 5.
 
 ---
@@ -204,25 +219,39 @@ with you, ticking every season.
   peddling goods between stations is unlocked as a mechanic-teaching chain,
   *[Brother's Sandals]* trail events.
 - Act 2 (Edo): *[The Ledger in Kanda]* — find Kikunosuke inside the ronin-plot
-  periphery; fork: pay Bunzō's Edo agent clean (needs big money), renegotiate into
-  servitude (Aku, safe), or turn evidence of Bunzō's illegal lending to the machi-bugyō
-  (dangerous — the bakuto and the police understand each other).
-- Act 3: interest finalizes; Keian sweeps make Bunzō nervous — a nervous oyabun calls
-  in debts violently. Climax: the confrontation at his teahouse on the night the
-  Marubashi arrests begin.
+  periphery. The debt can't be paid in money (`02` §9, Debt mechanic), so the fork
+  is about *leverage* (counter `bunzo_leverage`): gather evidence of Bunzō's
+  illegal lending, pull your brother out of Yui's circle, or win O-Sumi's father as
+  surety. Each is a point. One point makes Bunzō stop the interest; two make him
+  tear up the note for a 1-ryō face payment. Or renegotiate into servitude: each
+  favor waives a season's interest (slides Aku). Taking the evidence to the
+  machi-bugyō instead of to Bunzō is the dangerous branch — the bakuto and the
+  police understand each other.
+- Act 3: interest is frozen; Keian sweeps make Bunzō nervous — a nervous oyabun calls
+  in debts violently, and a player with fewer than two points has to find one fast.
+  Climax: the confrontation at his teahouse on the night the Marubashi arrests begin.
 
-**Endings (10).** Includes: **Ledger Closed** (pay in full — bright, requires
-accumulated wealth ≥ 130 ryō-equiv), **The New Bunzō** (take over his territory —
-dark, Aku ≥ +4), **Bugyō's Witness** (testify; enter witness protection-ish exile
-with a new town registration — neutral-bright, Chi/Kuchi gates), **Brothers in
+**Endings (10).** Includes: **Ledger Closed** (settled privately: Bunzō tears up
+the note — bright, needs `bunzo_leverage` ≥ 2, the 1-ryō face payment, and you did
+*not* testify), **The New Bunzō** (take over his territory — dark, Gi/Aku ≤ −4,
+reached through favors), **Bugyō's Witness** (testify publicly instead of settling;
+enter witness protection-ish exile with a new town registration — neutral-bright,
+needs the evidence point, flag `testified`, and Chi/Kuchi gates), **Brothers in
 Kodenmachō** (Kikunosuke arrested as conspirator, you take his debt-cell — tragic),
-**Dōtonbori Water** (default-failure death), **The Pawnshop** (marry into O-Sumi's
-family business, debt absorbed as bride-price negotiation — quiet-bright, needs her
-chain + Gi ≥ +1 + ≥ 40 ryō goodwill).
+**Dōtonbori Water** (default-failure death: fewer than two points by the climax and
+no Aku route), **The Pawnshop** (marry into O-Sumi's family business; her father's
+surety is one of your leverage points, not the payment — quiet-bright, needs her
+chain, `bunzo_leverage` ≥ 2 including `osumi_surety`, and Gi/Aku ≥ +1).
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring:
+a woman as her brother's guarantor, and The Pawnshop's marriage, both need a
+source and possibly a variant.*
 
 ---
 
 ### TALE 4 — ROLLING BONES (bakuto gambler) *(unlocked after finishing Tales 1–3)*
+
+*PC gender: chosen at creation (`02` §4.1). Premise audit needed before authoring: the den circuit and* Ninkyō*'s marriage alliance assume a man.*
 
 **Premise.** You grew up holding the cup in your mother's roadside den. You can call
 chō-han honest or crooked, and you have a burn scar proving which teacher you had.
@@ -234,6 +263,10 @@ collecting a funeral list.
 **Mechanics hook:** this Tale *starts with* the chō-han system fully unlocked
 (other Tales discover it mid-run) and gets a den-network reputation track instead of
 the usual employer track. Gambling is income AND combat-adjacent (den brawls).
+*(Specified in `02` §9.2–§9.4: den stakes and payouts in §9.2, including what
+"fully unlocked" means (`cup_mastery` tiers from *[The Cup Remembers]*), and the
+den-network track in §9.4. It's a per-den standing (`den_standing.<station>`, −2…+2),
+separate from Reputation, and "5+ dens allied" means `dens_allied` ≥ 5.)*
 
 **Cast.** **Oyabun "Iron Cup" Gonbei** (your dead mentor, in flashbacks), **Koharu**
 (a tekiya peddler boss's sharp-tongued daughter — the rival network is her family;
@@ -261,11 +294,14 @@ raids), plus shared family. The finger-forfeit choice gates a secret variant of
 
 ### TALE 5 — THE PILGRIM'S WAY (woman traveling alone) *(omoide unlock)*
 
+*PC gender: female, fixed (`02` §4.1).*
+
 **Premise.** Period-accurate difficulty Tale. You are **O-Tsu**, a widow (or a
 divorced daughter, chosen at creation) of a minor samurai household dissolved in a
 domain confiscation. The law and the road both treat a traveling woman as either
 cargo or prey: sekisho inspect women's permits against written descriptions to stop
-daimyō families smuggling hostages ("irappo donna"), inns segregate, and every
+daimyō families smuggling hostages out of Edo (*de-onna*, "women going out"; `01`
+§B3), inns segregate, and every
 labor job is closed. Your goal is Ise — then, when Ise doesn't fix anything, whatever
 you decide the road is *for*.
 
@@ -300,6 +336,8 @@ real dangers.
 
 ### TALE 6 — THE HIDDEN CROSS (kakure kirishitan) *(post-MVP, omoide unlock)*
 
+*PC gender: chosen at creation (`02` §4.1). Premise audit at full design (V1.x).*
+
 **Premise.** Ten years after Shimabara, the shogunate's terror of Christianity is
 bureaucratic, patient, and total: temple-registration checks, fumi-e (image-trampling)
 tests at checkpoints and during village sweeps, and informants paid per head. You are
@@ -313,7 +351,7 @@ never gamified as "fun evil" — the codex treats it as history.
 
 **Endings (6, sketched):** community preserved in hiding (bright-somber), martyrdom
 choice at the fumi-e (tragic — handled with total restraint), the name-list burned
-(neutral), betrayal-for-survival (darkest choice in the game, Aku −5), plus shared
+(neutral), betrayal-for-survival (darkest choice in the game, Gi/Aku = −5), plus shared
 family. Full design deferred to V1.x pass.
 
 ---
@@ -327,7 +365,14 @@ documented), Sagawa the dōshin is fictional. Miyamoto Musashi (died 1645) appea
 honest. O-Tsu (Tale 5 name) is deliberately a common period name, not the *Musashi
 novel* character; we will rename if it reads as reference.
 
-## 6. Event content bank (MVP list, by pool)
+## 6. Event content bank (full-content list, by pool)
+
+> **Scope note.** This bank (92 generic events) is the full-content (V1.x) target,
+> not the MVP list. `02` §16 defines which slice of it gets authored in which phase
+> (vertical slice → MVP → V1.0 → V1.x). `progress.md` tracks what's actually built,
+> and the built vertical slice does not currently draw from this bank. For example,
+> its `checkpoint_hakone` is a simpler stand-in, not sample 1's
+> `checkpoint_hakone_papers`.
 
 **road (18):** procession-jammed highway (hired as labor / robbed by watching
 kabukimono / wait); ichirizuka night camp (thief / stranger's fire / quiet XP);
@@ -368,11 +413,11 @@ dangerous social event in the game, see sample 5); pawnshop; the letter-writer
 Chikara+Tan, drowning risk); flood-stranded station (3-day micro-arc: money burns,
 forced social events); ferry that isn't allowed here (smuggler boat, Suspicion);
 salvage divers' find; the palanquin dropped mid-river; porter strike; rainy
-swim-rescue (Reputation+ Gi+); the toll-collector's fake receipt scam.
+swim-rescue (Reputation+ Gi/Aku+); the toll-collector's fake receipt scam.
 
 **checkpoint (10):** see sample 1 (the flagship); permit inspector who can't read
-your dialect (Kuchi); the "guns leaving Edo, women entering" search (Tale-gated
-terror); wanted-poster board (if Suspicion ≥ 3 your face is there — instant
+your dialect (Kuchi); the "guns coming in, women going out" search (Tale-gated
+terror); wanted-poster board (if Suspicion ≥ 5 your face is there — instant
 crisis); bribable junior guard vs incorruptible senior (Me check to tell which);
 temple-certified paper loophole (Chi); nighttime crawl-around with a paid guide
 (Me/Tan, historical at Sekigawa-style barriers); the daimyō procession that
@@ -413,7 +458,7 @@ magic).
 
 > The barrier at Hakone sits across the road like a closed hand. Pine timbers, a
 > tiled guardhouse, and the notice board where the shogunate's fears are posted in
-> ink: *women entering Edo. Guns leaving Edo.* Three guards warm their hands over a
+> ink: *guns coming into Edo. Women going out.* Three guards warm their hands over a
 > brazier. The line ahead of you is eleven people long, and the inspector is
 > reading each permit aloud, slowly, comparing face to paper.
 >
@@ -447,7 +492,7 @@ magic).
   - Failure: Your hand keeps drifting to your weapon/belongings. He reads it as
     prey-scent. → *Ambushed* (combat, +10% to enemy — surprise; foe: `tsujigiri_swordsman` Power 9)
 - **Turn and face him now, on your ground.** [Me DC 3 to see his stance; then combat at your choice of stance]
-  - He is young. His sleeves are tied back with a woman's cord. Combat (foe Power 8, no surprise). Win → loot: *unmarked blade, condition 100%* + **the decision**: it is evidence and a good sword both. (Keep: Suspicion-risk flag `cursed_blade_carried` if any witness events fire; Leave it for the magistrates: Reputation +1, Gi +1.)
+  - He is young. His sleeves are tied back with a woman's cord. Combat (foe Power 8, no surprise). Win → loot: *unmarked blade, condition 100%* + **the decision**: it is evidence and a good sword both. (Keep: Suspicion-risk flag `cursed_blade_carried` if any witness events fire; Leave it for the magistrates: Reputation +1, Gi/Aku +1.)
 - **Into the bamboo. You know these bends; he doesn't.** [Me DC 5]
   - Success: You are a rumor by the time he reaches the bend. (Advance.)
   - Failure: Bamboo rhizomes take your ankle. → *Cornered* (combat at enemy +15%)
@@ -466,20 +511,25 @@ magic).
 > Minimum bet: 20 mon. The house takes a tenth.
 
 - **Play honest. One round.** (chō-han mini-game: call chō/han; 50/50 minus house
-  cut; can stop anytime — greed is the mechanic)
+  cut; can stop anytime — greed is the mechanic) *[`02` §9.2: stop anytime, but
+  capped at 5 rounds per visit; honest EV is −5% of stake per round.]*
 - **Play deep.** (same, stakes ×5; at loss ≥ 100 mon the dealer offers a loan —
   Tale 3 special dialogue: *"Bunzō-san sends his regards."*)
 - **Watch the cup. Not the dice — the dealer's wrist.** [Me DC 6]
   - Success: He favors chō on the third shake — a wrist-lock tells. You win four
     rounds in a row. The mat goes quiet in a way that has edges. (money +160 mon,
     flag `den_marked_you` → next den visit at this town: hostile variant)
+    *[Revised in `02` §9.2: pays 7.2 × base stake, i.e. **+144 mon** at a 20-mon
+    den (four wins at double stake, less the house tenth). The flag is per-town
+    `den_marked.<station>`. Failure costs 2 × base stake plus this visit's
+    winnings. Accuse success, "10% of the night", = 5 × base stake.]*
   - Failure: Your eyes moved. His stopped. "Friend," the dealer says, warmly, "you
     have a *stare* problem." Two men stand up. → *Leave winnings and go* (−all
     round's profit) or *Accuse him of loaded dice first* [Kuchi DC 7 — brilliant
     desperate gambit: success → he cuts you in for 10% of the night (Tale 4 hook);
     failure → combat vs `den_enforcers` Power 10, in a hut, with witnesses]
 - **Cheat: sleeve the die you palmed from the mat.** [Waza DC 7]
-  - Success: +250 mon. −Gi 1. Flag `cheated_den` (Tale 4: the cup remembers —
+  - Success: +250 mon *[`02` §9.2: 12.5 × base stake, unchanged at a 20-mon den]*. Gi/Aku −1. Flag `cheated_den` (Tale 4: the cup remembers —
     Koharu's people hear about it; reputation among gamblers becomes double-edged).
   - Failure: Burn scars, they say, come from holding hot dice. They don't tell you
     whose hand was holding. → *Caught* (fingers broken: −Health 4, permanent −1
@@ -534,7 +584,7 @@ magic).
     remembers your back. 30% chance he's the duel-challenger in a later Act 2
     event — the game reuses grudges.)
   - Failure: His fan cracks across your shoulders. → *Take it* (−Health 1,
-    −Resolve 3, Gi 0 — the street remembers your patience, Reputation ±0, but
+    −Resolve 3, Gi/Aku ±0 — the street remembers your patience, Reputation ±0, but
     flag `patient_one` unlocks a later ally) or *Shove back* — **this is the
     worst choice in the game and it is offered honestly**: a commoner's hand on a
     samurai. His sword is half out before you finish the motion. Combat vs
@@ -606,7 +656,135 @@ magic).
   trades and dignity; the game's lens indicts the *system* through mechanics
   (they are the only people who'll do certain work, and the work is necessary).
 - **Women:** period restrictions are *depicted as the difficulty they were*, never
-  played for titillation; Tale 5's writers' checklist includes the Bechdel pass on
-  its shelter-network chain.
+  played for titillation. See the sensitivity checklist in §9.1 (section C,
+  including the Bechdel pass on Tale 5's shelter-network chain).
 - **Every event must pass the codex test:** "what true thing does this teach?" If
   the answer is nothing, the event gets a codex card or gets cut.
+
+### 9.1 Sensitivity checklist
+
+Run this on every event, ending epilogue, and ending historical note before it
+ships. Each item is a yes/no question. Skip a section that doesn't apply and mark
+it N/A. A "no" is a finding: log the id, the exact quoted text, the item number,
+and a suggested fix, in the format `08-sensitivity-review.md` uses. The goal is a
+dry, period-grounded treatment of hard subjects. A fix should remove
+gratuitousness or error, not the history.
+
+*Not on this list:* word caps, no exclamation points in narration, and detecting
+a term's first use against a glossary. Those are mechanical and belong to the
+schema validator in `04` §5.
+
+**A. Class and the sword-law** (§1 "Class is physics")
+- A1. Does every character, the PC included, act within their class's legal
+  reality? (A samurai doing manual labor pays in face. A commoner who strikes a
+  samurai risks death.)
+- A2. If kirisute-gomen comes up, does the text frame it the way `01` §B2 does?
+  That means a samurai's *claimed* right against a *commoner* for gross
+  insolence, followed by an investigation, and ruinous if unjustified. It is not
+  a free license, and it is not a power one two-sworded man holds over another.
+- A3. Does every killing raise Suspicion unless it's witnessed as lawful (§1)?
+  Is it clear whether the foe died or fled?
+- A4. When a lower-status character is humiliated, does it cost them something
+  (Resolve, Health)? Is it kept from being played as comedy?
+
+**B. Outcast groups: eta/hinin, beggars, actors** *(if applicable)*
+- B1. Is the outcast character an individual with a trade and dignity (§9
+  "Class & outcast groups")?
+- B2. Does the prejudice come from the world and its characters, not the
+  narration's voice? The narration never uses a slur as its own description.
+  Period terms spoken by characters get a codex card on the term's history.
+- B3. Do the mechanics indict the system, as §9 asks? (They are the only people
+  who'll do necessary work: corpse disposal, leather, execution-ground labor.)
+  Is the player kept from being rewarded just for avoiding them?
+- B4. If the player can act on prejudice, is that a real choice with a Gi/Aku
+  cost? Is the kind option kept from being framed as naive? (Model: the
+  charcoal burners' camp, §6 village.)
+
+**C. Women, the pleasure quarters, and Tale 5** *(if applicable)*
+- C1. Are period restrictions shown as the difficulty they were, never as
+  titillation (§9 "Women")? Is a woman's body kept out of the description in
+  threat scenes?
+- C2. Nightwalker / Yoshiwara (§6 post-town, city-edo): is she a person with her
+  own reason to be there? Do both accept and decline carry consequences? Does
+  the codex card cover the indenture/debt context?
+- C3. Is sexual violence kept off-screen, out of random-event outcomes, and out
+  of the mechanics? A threat may be stated. The act is never depicted.
+- C4. Does each woman in the scene want something of her own, beyond reacting to
+  the PC?
+- C5. `02` §4.1 fixes gender for Tale 1 (male) and Tale 5 (female) and lets the
+  other Tales choose. Tale-exclusive text may assume the Tale's fixed gender if
+  `03` §4 states it. Does any *shared* event or shared ending hard-code the PC's
+  gender ("men like you")? It must not.
+- C6. **Bechdel pass, Tale 5 shelter-network chain** (O-Kinu, Myōshin, the
+  sheltered-woman events, *Mother of the Road*). Record per event:
+  (a) two or more named women appear; (b) they talk to each other; (c) about
+  something other than a man. At least half the chain's events should pass
+  (a) to (c). Two further checks for the chain as a whole: (d) does each
+  sheltered woman have a trade, plan, or want, and not just the husband she
+  fled? (e) Is the chain resolved by women's choices? Gombei may help, but he
+  doesn't solve it.
+
+**D. Kakure kirishitan and fumi-e (Tale 6)** *(if applicable)*
+- D1. Is the persecution kept from being gamified as "fun evil" (§4 Tale 6)?
+  Informing never gets a victory framing, and betrayal reads as the darkest
+  ending (Gi/Aku −5).
+- D2. Is the fumi-e scene about the person's inner choice, told with restraint
+  and without spectacle?
+- D3. Is Christian practice shown as the hidden community practiced it (secret,
+  oral, syncretic)? It should be neither modern Catholicism nor a sinister cult.
+- D4. Is the martyrdom ending neither glorified as a victory nor mocked? Does its
+  historical note give the real context (Shimabara, temple registration,
+  paid informants; `01` §B1, §B6)?
+- D5. Are the shogunate's officials written as people carrying out a policy,
+  not cartoon villains?
+
+**E. Executions, seppuku, crucifixion**
+- E1. Is the execution referenced but not depicted (§9 "Violence")? The death
+  may be stated. The process is not narrated step by step.
+- E2. Are wounds stated as body-count reality, with no lingering gore?
+- E3. Is seppuku kept from being romanticized as a beautiful death or treated as
+  an exotic ritual? State the fact, the date, and what it meant for those left.
+- E4. Where the history includes collective punishment (conspirators' families,
+  gonin-gumi), does the text keep it in, rather than dropping it for a cleaner
+  ending?
+- E5. When the player sees heads on display or Kodenmachō, do they see it as a
+  person would, with a Resolve cost and no trophy framing?
+
+**F. Real historical figures** (§5 cameos policy)
+- F1. Is every named real person on the §5 list, and placed only where records
+  place them? Musashi never appears in person.
+- F2. Do the dates, places, and deeds match `01`? Tag the event with the `01`
+  line it relies on, e.g. `// source: 01 §B1, 1651 Sep row`.
+- F3. Is dialogue given to a real figure limited to character and plot? Nothing
+  the record contradicts, and no invented confessions.
+- F4. Does every fictional name avoid reading as a nod to a famous fictional
+  character (the O-Tsu rule)?
+
+**G. Japanese terms, idiom, exoticism** (§7 tone guide, §9 "Japanese terms")
+- G1. Is the text free of modern idiom in both narration and dialogue? (Examples
+  to avoid: "side-hustle", "processing fee", office vocabulary.)
+- G2. Is each Japanese term there because English lacks the word? Where plain
+  English works ("inn", "barrier"), use it and keep the term for the codex.
+- G3. Is each gloss accurate and short, a phrase in apposition rather than a
+  lecture? Is it free of condescension ("the strange custom of...")?
+- G4. Is the text free of exoticism? The setting is ordinary to the people in
+  it: no "mysterious East", no ninja/geisha set dressing, and no later
+  codified "bushidō" presented as if it governed 1648.
+- G5. Is each institution shown at its right place and scale? (Dōshin are Edo
+  city police. Sekisho guards are the domain's men.)
+
+**H. Rumor, never magic** (§1)
+- H1. Is anything supernatural-seeming framed as rumor, belief, or a
+  character's claim, and never confirmed by the narration?
+- H2. Where `01` hedges a claim ("rumored", "estimated"), does the text keep the
+  hedge?
+- H3. Is period belief (prayer, medicine, omens) treated as something people
+  really did, neither mocked nor confirmed?
+
+**I. The codex test** (§9)
+- I1. Can you name, in one sentence, the true thing this event teaches? If not,
+  add a codex card or cut the event.
+- I2. Is that thing true for the Tōkaidō in 1648–51, and not a later-Edo or
+  Sengoku fact? If `01` doesn't cover it, add the source to `01` first.
+- I3. Can every factual claim in an ending's historical note be traced to `01`,
+  or has it been added there?
